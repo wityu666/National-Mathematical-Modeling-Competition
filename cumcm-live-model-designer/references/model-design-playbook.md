@@ -12,6 +12,13 @@
 
 先写 baseline 的公式、指标和通过线，再讨论复杂模型。复杂度本身不是贡献。
 
+同时为每个小问执行一次差异化登记：
+
+1. 写出评委或透明标准解法的默认预期；
+2. 登记至少一条 `CONTRIB-CANDIDATE`，说明可证伪差异、证伪结果、预期证据、代价和回退；
+3. 若没有可靠差异化机会，明确写 `无差异化机会` 并将记录设为 `DROPPED`；
+4. 不允许跳过登记，也不允许把复杂模型名称直接当成亮点。
+
 ## 2. 数学模型的统一语法
 
 按顺序定义：
@@ -122,6 +129,18 @@
 - 失败情况和回退语句已写进合同；
 - 主模型不稳定超过 baseline 时选择 baseline。
 
+### 亮点升级门
+
+`CONTRIB-CANDIDATE` 只有同时满足以下条件才能升级为 `PROVEN`：
+
+- 绑定的模型合同状态为 `FROZEN`，且 `freeze_id` 与账本一致；
+- 数据门、模型门和结论门中的必需检查全部通过；
+- 有专门的 `RID-*`、`FIG-*` 或 `TAB-*` 运行产物，并能从新进程复现；
+- `proof` 使用与 baseline 相同的数据、切分、指标、约束和统计口径；
+- `claim` 的证伪实验已执行，`cost_risk`、`placement` 和 `fallback` 已填写。
+
+任一条件失败即保持 `CANDIDATE` 或降级为 `DROPPED`，不得进入论文。
+
 ## 7. 防止数据泄漏和伪复杂度
 
 硬性排除：
@@ -155,8 +174,9 @@ seed_and_repetitions
 resource_budget
 stop_conditions
 expected_outputs
+contribution_candidates[]
 fallback_and_trigger
 known_limitations
 ```
 
-只有合同状态为 `FROZEN` 才能进入编码。数据、参数、公式、指标或代码接口改变后，旧合同和下游论文产物立即标记 `STALE`。
+只有合同状态为 `FROZEN` 才能进入编码。`contribution_candidates[]` 每问至少有一条记录，或明确写 `无差异化机会`。数据、参数、公式、指标或代码接口改变后，旧合同、亮点账本和下游论文产物立即标记 `STALE`。
