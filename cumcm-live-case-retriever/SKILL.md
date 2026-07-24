@@ -29,7 +29,7 @@ description: 面向中国大学生数学建模竞赛（CUMCM）进行中的自�
    - `uncertainty`：抽样误差、随机过程、参数区间、情景或测量误差；
    - `acceptance`：预测误差、分类指标、排名稳定性、约束可行性、守恒、置信区间等。
 3. 按签名选择 1 个主模式、最多 2 个辅助模式，并强制附加 `ROBUST-01` 与 `VALID-01`。
-4. 输出每个匹配的依据、最低数据、baseline、增强路线、验证方法、失败信号和回退。
+4. 输出每个匹配的依据、最低数据、baseline、增强路线、验证方法、失败信号、回退和 `differentiation_hint`。该提示必须同时写明常见标准解法预期和可能形成可验证差异的方向。
 
 ## 20 分钟赛时节奏
 
@@ -46,6 +46,7 @@ description: 面向中国大学生数学建模竞赛（CUMCM）进行中的自�
 - 先根据目标输出选择模式，不按题目领域套模。
 - 每个小问至少给出一个可运行 baseline。
 - 只有候选模型能增加精度、机制解释或约束处理能力时才保留。
+- 对每个候选写出评委最可能预期的标准解法及差异化提示，供模型角色登记 `CONTRIB-CANDIDATE`；提示本身不是亮点证据。
 - 复杂模型超过剩余时间、依赖不可用或无法验证时降低优先级。
 
 ### T+15：检查迁移边界
@@ -61,7 +62,7 @@ description: 面向中国大学生数学建模竞赛（CUMCM）进行中的自�
 
 - `retrieval_version`
 - `problem_id`、`question_id`、`problem_signature`
-- `pattern_matches[]`：`pattern_id`、匹配理由、最低数据、baseline、候选模型、验证、失败信号、回退、置信度
+- `pattern_matches[]`：`pattern_id`、匹配理由、最低数据、baseline、候选模型、验证、失败信号、回退、`differentiation_hint`、置信度
 - `required_companion_patterns[]`：至少包含 `ROBUST-01`、`VALID-01`
 - `missing_information[]`、`originality_constraints[]`、`blockers[]`
 - `recommended_chain`、`next_action`、负责人和截止时间
