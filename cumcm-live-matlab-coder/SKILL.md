@@ -106,7 +106,20 @@ end
 
 交接至少包含运行清单、`.m` 源码、配置、`ver`/许可记录、输入清单、日志、baseline/主模型指标、结果表、图、失败与降级说明、批处理复现命令和输出哈希。
 
+## 论文图生成门
+
+先读 [references/matlab-figure-recipes.md](references/matlab-figure-recipes.md)，并可复制 [assets/cumcm_plot_style.m](assets/cumcm_plot_style.m) 到本次最小源码目录。每张图先声明唯一结论，再按机理、结果、验证或敏感性选择图型。
+
+- 同一对象跨图保持颜色、线型和标记一致。
+- 拟合图必须保留观测点；预测图区分训练/验证/测试；随机结果显示区间或分布。
+- 优化与仿真图标出基准、约束、推荐解、收敛容差或稳定区间。
+- 禁止 3D 饼图、彩虹色带、无说明双轴、截断柱轴和不可读的密集子图。
+- 保存图源 table/MAT、绘图函数、配置、`FIG-*` 和导出命令。
+- 优先使用 `exportgraphics` 输出矢量 PDF 和 300 dpi 以上 PNG；不使用交互式编辑器手工改图。
+- 从最终论文 PDF 检查中文字体、字号、图例、单位、灰度和裁切。
+
 ## 资源路由
 
 - 使用 [assets/run-manifest.md](assets/run-manifest.md) 记录环境、运行、冻结与交接。
 - 需要函数结构、数据类型、工具箱预检、求解器复核、矩阵陷阱和降级配方时读取 [references/matlab-contest-recipes.md](references/matlab-contest-recipes.md)。
+- 需要论文图型选择、统一风格、导出和视觉 QA 时读取 [references/matlab-figure-recipes.md](references/matlab-figure-recipes.md)。
