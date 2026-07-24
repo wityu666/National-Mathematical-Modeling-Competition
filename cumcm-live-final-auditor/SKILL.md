@@ -67,6 +67,14 @@ python3 scripts/audit_submission.py /absolute/path/to/submission --max-pdf-mb 20
 
 脚本通过不代表论文内容或官方规则已经通过。
 
+修改审计脚本后，在 Skill 根目录运行回归测试：
+
+```bash
+python3 -m pytest -q tests
+```
+
+测试 fixture 仅包含不可执行的占位字节和假文件名；不得运行其中的 `.exe`。
+
 ## 3. 核对当届官方规则
 
 逐条建立“官方要求—证据—状态”矩阵，至少覆盖：
