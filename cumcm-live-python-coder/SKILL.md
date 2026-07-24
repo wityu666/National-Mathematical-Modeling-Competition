@@ -1,6 +1,6 @@
 ---
 name: cumcm-live-python-coder
-description: 面向中国大学生数学建模竞赛正在进行时，把已冻结的模型合同快速实现为可复现、可验证、可降级、可交接的 Python 代码与结果。用户要求赛时用 Python 完成 baseline、主模型、数据处理、求解、指标、结果表或论文图，并需要固定 seed、环境记录、结果冻结和失败回退时使用；不用于赛前 Python 教学或直接运行下载代码。
+description: 面向中国大学生数学建模竞赛正在进行时，把已冻结的模型合同快速实现为可复现、可验证、可降级、可交接的 Python 代码与结果。用户要求赛时用 Python 完成 baseline、主模型、数据处理、求解、指标、结果表或论文图，并需要固定 seed、环境记录、结果冻结和失败回退时使用；内置通用实现配方，不用于赛前 Python 教学。
 ---
 
 # CUMCM 赛时 Python 编码
@@ -10,7 +10,7 @@ description: 面向中国大学生数学建模竞赛正在进行时，把已冻�
 - 先读取问题合同和冻结的模型合同。没有 `model_contract_version`、`freeze_id`、输出字段或验收指标时停止并请求模型角色补齐。
 - 确认本届规则允许当前 AI 使用方式；否则输出 `BLOCKED_RULES`。
 - 原始题面与附件只读。所有代码、临时文件和结果写入独立比赛工作目录。
-- 下载代码库只作 clean-room 索引。不要复制或执行其中的脚本、Notebook、EXE、Wheel、宏、注册材料或压缩包。
+- 使用 Skill 内置的原创实现配方，从模型合同重新编写本题代码；不读取或执行作者的私有代码库。
 - 先交付 baseline，再实现主模型。接近截止时优先保住已验证的可提交版本。
 
 复制 [assets/run-manifest.md](assets/run-manifest.md) 到本次运行目录并从开始时持续填写。
@@ -100,4 +100,4 @@ if __name__ == "__main__":
 ## 资源路由
 
 - 使用 [assets/run-manifest.md](assets/run-manifest.md) 记录运行、冻结和交接。
-- 需要本地代码路径、旧 API、缺失依赖和二进制风险时读取 [references/local-sources.md](references/local-sources.md)。
+- 需要工程结构、数据断言、现代库路由、数值稳定性、测试与降级配方时读取 [references/python-contest-recipes.md](references/python-contest-recipes.md)。
