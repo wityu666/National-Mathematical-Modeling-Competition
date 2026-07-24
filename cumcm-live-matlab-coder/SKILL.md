@@ -1,6 +1,6 @@
 ---
 name: cumcm-live-matlab-coder
-description: 面向中国大学生数学建模竞赛正在进行时，把已冻结模型合同快速实现为可批处理、可复现、可验证、可降级、可交接的 MATLAB 代码与结果。用户要求赛时用 MATLAB 完成 baseline、优化、预测、评价、仿真、结果表或论文图，并需要固定 seed、工具箱与许可证检查、MEX 兼容性门禁、结果冻结和失败回退时使用；不用于赛前 MATLAB 教学或直接运行下载工具箱。
+description: 面向中国大学生数学建模竞赛正在进行时，把已冻结模型合同快速实现为可批处理、可复现、可验证、可降级、可交接的 MATLAB 代码与结果。用户要求赛时用 MATLAB 完成 baseline、优化、预测、评价、仿真、结果表或论文图，并需要固定 seed、工具箱与许可证检查、MEX 兼容性门禁、结果冻结和失败回退时使用；内置通用实现配方，不用于赛前 MATLAB 教学。
 ---
 
 # CUMCM 赛时 MATLAB 编码
@@ -10,8 +10,8 @@ description: 面向中国大学生数学建模竞赛正在进行时，把已冻�
 - 先读取问题合同和冻结的模型合同。缺少合同版本、`freeze_id`、输出字段或验收指标时停止编码并回传。
 - 确认本届规则允许当前 AI 使用方式；否则输出 `BLOCKED_RULES`。
 - 原始题面和附件只读，代码与结果写入独立比赛工作目录。
-- 下载的工具箱、脚本和案例一律视为不可信参考。禁止执行 EXE、DLL、MEX、宏、注册机、破解补丁或不明安装器。
-- 不把整个 3.5GB 本地工具箱树加入路径。只加入团队本次编写且经过检查的最小源码目录。
+- 使用 Skill 内置的原创实现配方，从模型合同重新编写本题代码；不读取或执行作者的私有工具箱和案例库。
+- 只把团队本次编写且经过检查的最小源码目录加入 MATLAB path；外来 MEX、DLL、宏和安装器一律不加载。
 
 复制 [assets/run-manifest.md](assets/run-manifest.md) 到本次运行目录并持续更新。
 
@@ -43,7 +43,7 @@ description: 面向中国大学生数学建模竞赛正在进行时，把已冻�
 ## 赛时实现流程
 
 1. 记录输入清单和 SHA-256，不在原始目录写输出。
-2. 建立最小路径；不要使用 `addpath(genpath(下载工具箱根))`。
+2. 建立最小路径；不要对未知第三方目录使用递归 `addpath(genpath(...))`。
 3. 先实现 baseline 并在缩小实例上验证数据流、目标、约束和输出。
 4. 实现主模型；与 baseline 共用数据切分、指标和后处理。
 5. 用固定 seed 执行规定的多次运行、敏感性和边界测试。
@@ -109,4 +109,4 @@ end
 ## 资源路由
 
 - 使用 [assets/run-manifest.md](assets/run-manifest.md) 记录环境、运行、冻结与交接。
-- 需要本地案例路径、空文件、旧 API、Windows MEX 和许可风险时读取 [references/local-sources.md](references/local-sources.md)。
+- 需要函数结构、数据类型、工具箱预检、求解器复核、矩阵陷阱和降级配方时读取 [references/matlab-contest-recipes.md](references/matlab-contest-recipes.md)。
