@@ -14,6 +14,8 @@
 | contract_version |  |
 | model_contract_version |  |
 | model_freeze_id |  |
+| contribution_ledger_version |  |
+| contribution_ledger_path |  |
 | started_at |  |
 | finished_at |  |
 | operator |  |
@@ -95,13 +97,23 @@
 | 新进程完整重跑 |  |  |  |  |
 | 输出 schema、排序、精度 |  |  |  |  |
 
-## 7. 故障与降级
+## 7. 亮点证明产物
+
+亮点不能只靠文字主张。每条拟升级为 `PROVEN` 的 `CONTRIB-*` 必须拥有一个专门的冻结产物，并用与 baseline 相同的数据、切分、指标和约束口径比较。
+
+| contrib_id | baseline_expectation | falsification_test | 专门 evidence_id | 产物路径 | 量化 proof | cost_risk | 状态 |
+|---|---|---|---|---|---|---|---|
+| `CONTRIB-Q?-###` |  |  | `RID/FIG/TAB-Q?-###` |  |  |  | CANDIDATE / PROVEN / DROPPED |
+
+`evidence_id` 为空、证伪实验未运行、模型未冻结或必需验证门失败时，状态不得为 `PROVEN`。
+
+## 8. 故障与降级
 
 | 时间 | 故障/触发器 | 诊断证据 | 采取的回退 | 结果影响 | 论文披露 |
 |---|---|---|---|---|---|
 |  |  |  |  |  |  |
 
-## 8. 冻结产物
+## 9. 冻结产物
 
 | 角色 | 路径 | SHA-256 | 来源代码/命令 | 状态 |
 |---|---|---|---|---|
@@ -111,6 +123,7 @@
 | 指标 |  |  |  |  |
 | 结果表 |  |  |  |  |
 | 图与图源数据 |  |  |  |  |
+| 亮点证明产物 |  |  |  |  |
 | 日志 |  |  |  |  |
 
 ### 图表登记
@@ -119,10 +132,12 @@
 |---|---|---|---|---|---|---|---|
 | `FIG-Q*-###` |  |  |  |  |  |  | PASS / FAIL |
 
-## 9. 交接
+## 10. 交接
 
 - 可供论文引用的冻结数字：
 - 可供论文使用的冻结图表：
+- 可供论文使用的 `CONTRIB-PROVEN` 及专门证据：
+- 保持 `CANDIDATE` 或已 `DROPPED` 的亮点：
 - 失败路线与不得宣称的内容：
 - 已知限制：
 - 论文需要披露的降级：
