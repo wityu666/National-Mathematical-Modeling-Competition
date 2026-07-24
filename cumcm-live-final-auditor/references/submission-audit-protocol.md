@@ -34,7 +34,7 @@
 
 ## 3. 严重级别
 
-- `P0`：无法提交、违规、结论错误、身份泄露、危险文件或关键数字不可追溯；
+- `P0`：无法提交、违规、结论错误、身份泄露、危险文件、关键数字不可追溯或论文亮点无冻结证据；
 - `P1`：明显影响可信度、复现、评阅或主要图表可读性；
 - `P2`：不阻塞提交的措辞、轻微版式或可维护性改进。
 
@@ -47,6 +47,9 @@
 ```text
 题面 -> problem_contract -> model_contract -> code/config
      -> frozen output -> paper claim
+
+model_contract -> contribution_ledger -> CONTRIB-PROVEN
+              -> dedicated RID/FIG/TAB -> paper contribution claim
 ```
 
 反向检查：
@@ -58,6 +61,12 @@
 -> code/config
 -> DATA
 -> 题面字段或明确假设
+
+摘要/正文中的差异化主张
+-> CONTRIB-PROVEN
+-> dedicated RID/FIG/TAB/MODEL
+-> frozen model/run
+-> baseline expectation 与证伪实验
 ```
 
 任一关键边断开就是阻塞。模型、代码和论文使用同名变量不等于语义一致，还要核对单位、方向、粒度和时间范围。
@@ -83,7 +92,24 @@
 
 任一核心数字无法追溯，标记 `P0`。
 
-## 6. 模型与代码审计
+## 6. 亮点真实性审计
+
+先枚举摘要、引言、正文洞察、模型评价和推广中的全部差异化主张，再与当前 `contribution_ledger` 双向比对：
+
+| 检查 | 通过条件 | 失败级别 |
+|---|---|---|
+| 账本存在 | 文中每条亮点都有稳定 `CONTRIB-*` | P0 |
+| 状态有效 | 账本 `FROZEN`，记录 `PROVEN`，绑定当前模型冻结版本 | P0 |
+| 可证伪 | `claim` 有实际执行的 `falsification_test` | P0 |
+| 对照真实 | `baseline_expectation` 与实际运行使用同口径 | P0 |
+| 专门证据 | `evidence_ids` 指向冻结、可复现的 `RID/FIG/TAB/MODEL` | P0 |
+| 量化一致 | `proof` 可由运行产物重算，未挑最好 seed/折/情景 | P0 |
+| 代价披露 | `cost_risk`、失效条件和 `fallback` 与正文一致 | P1；隐瞒会改变结论时 P0 |
+| 放置一致 | `placement` 覆盖实际摘要/正文位置 | P1 |
+
+额外反向检查：账本中的 `CANDIDATE`、`DROPPED` 或 `STALE` 不得在论文中被表述为已证明贡献。无证据亮点不得通过润色降级为模糊优点；必须删除、明确为待验证，或重新运行并冻结。
+
+## 7. 模型与代码审计
 
 ### 数据
 
@@ -111,7 +137,7 @@
 - 输出文件与运行清单一一对应；
 - 本机绝对路径、密钥和临时状态没有成为依赖。
 
-## 7. 提交包审计
+## 8. 提交包审计
 
 检查：
 
@@ -126,7 +152,7 @@
 
 静态扫描脚本通过只表示目录硬检查通过，不代表内容、规则和视觉已经通过。
 
-## 8. Word/LaTeX 源与 PDF 对应
+## 9. Word/LaTeX 源与 PDF 对应
 
 ### Word
 
@@ -144,7 +170,7 @@
 
 同时存在两种源时，明确唯一主稿，避免误交另一份。
 
-## 9. PDF 逐页视觉 QA
+## 10. PDF 逐页视觉 QA
 
 必须查看真实渲染 PDF，至少覆盖：
 
@@ -157,7 +183,7 @@
 
 发现问题要记录页码、对象和截图证据，不能只写“排版有问题”。
 
-## 10. AI 使用审计
+## 11. AI 使用审计
 
 以当届规则为准，检查：
 
@@ -170,7 +196,7 @@
 
 工具清单与记录错配、关键交互缺失或采用内容无法定位时标记阻塞。
 
-## 11. 判定算法
+## 12. 判定算法
 
 只有以下项目全部满足才可 `PASS`：
 
@@ -179,6 +205,7 @@ rules_verified
 and files_valid
 and no_P0
 and content_traceable
+and contributions_verified
 and model_validated
 and reproducibility_evidence
 and ai_record_compliant
@@ -187,7 +214,7 @@ and visual_qa_complete
 
 否则输出 `BLOCKED`。不要使用“基本通过”“大概可提交”掩盖硬门失败。
 
-## 12. 修复与复审
+## 13. 修复与复审
 
 - P0 修复后完整复审规则、文件、追踪和视觉；
 - P1 修复后至少复审受影响章节、结果和 PDF；
@@ -195,4 +222,4 @@ and visual_qa_complete
 - 临近截止优先恢复最近一次已验证可提交版本；
 - 不在终审阶段引入未经 baseline、验证和复跑的新模型。
 
-最终报告必须包含状态、规则矩阵、问题清单、关键数字抽样、目录哈希、视觉 QA 范围、未核验项和最小下一步。
+最终报告必须包含状态、规则矩阵、问题清单、关键数字抽样、亮点真实性抽样、目录哈希、视觉 QA 范围、未核验项和最小下一步。
