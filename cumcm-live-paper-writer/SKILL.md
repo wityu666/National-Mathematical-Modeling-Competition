@@ -8,16 +8,16 @@ description: 比赛进行中用于中国大学生数学建模竞赛赛时成稿�
 ## 总原则
 
 - 仅在比赛进行中使用本技能推进赛时成稿；不把它变成长期学习计划。
-- 先取得并记录当届官方规则、通知或提交系统要求。官方规则与本地资料冲突时，以官方规则为准。
+- 先取得并记录当届官方规则、通知或提交系统要求。官方规则与内置经验冲突时，以官方规则为准。
 - 先冻结结果，再写结论。未冻结的数值只能写成明确占位符，不得猜测、补齐或润色成确定事实。
 - 只写团队实际采用、能够解释且有结果证据的模型。不得为显得复杂而堆叠模型。
 - 采用一个内容母版和一条主排版路线，避免 Word、LaTeX 两份正文各自漂移。
-- 不执行旧 `.exe`、`.lnk`，不启用 Office 宏；不把美赛 MCM/ICM 规则混入国赛论文。
+- 不执行外来 `.exe`、`.lnk`，不启用 Office 宏；不把其他竞赛规则混入国赛论文。
 
 开始前按需读取：
 
-- 本地资料边界与已知风险：`references/local-sources.md`
-- 原创论文骨架：`assets/cumcm-paper-skeleton.md`
+- 证据驱动成稿与一致性协议：[references/evidence-driven-writing-playbook.md](references/evidence-driven-writing-playbook.md)
+- 原创论文骨架：[assets/cumcm-paper-skeleton.md](assets/cumcm-paper-skeleton.md)
 
 ## 1. 建立赛时事实表
 
@@ -55,7 +55,7 @@ description: 比赛进行中用于中国大学生数学建模竞赛赛时成稿�
 
 ## 3. 用骨架完成正文
 
-复制 `assets/cumcm-paper-skeleton.md` 到比赛工作目录作为原创内容骨架，不复制本地商业模板正文。
+复制 `assets/cumcm-paper-skeleton.md` 到比赛工作目录作为原创内容骨架，不复制外来论文或商业模板正文。
 
 按以下顺序成稿：
 
