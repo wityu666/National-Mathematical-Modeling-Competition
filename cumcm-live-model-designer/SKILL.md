@@ -24,16 +24,17 @@ description: 面向中国大学生数学建模竞赛正在进行时的赛时模�
 - 剩余时间、最晚切换时间、可用 Python/MATLAB 环境
 - 允许的假设、禁止改变的提交格式和已知风险
 
-复制 [assets/model-contract.md](assets/model-contract.md) 到比赛工作目录后填写，保留模板原件不变。
+复制 [assets/model-contract.md](assets/model-contract.md) 与 [assets/contribution-ledger.md](assets/contribution-ledger.md) 到比赛工作目录后填写，保留模板原件不变。先读取模式匹配中的 `differentiation_hint`，但不得把提示直接当作论文亮点。
 
 ## Baseline 优先流程
 
 1. 冻结问题边界：把目标、变量、单位、约束和输出逐项映射到题面证据。
 2. 定义 baseline：选择最简单的可复核路线，先规定输入、公式、指标和通过阈值。
 3. 至多增加两条候选路线：每条必须贡献新的精度、机制解释或约束处理能力。
-4. 设计最小实验：用小样本或缩小实例验证数据流、量纲、约束和指标能闭环。
-5. 比较候选：同时评估效果、稳定性、可解释性、计算成本、依赖风险和论文可表达性。
-6. 冻结主路线与回退路线：记录选择理由、触发回退的客观条件和最晚切换时间。
+4. 为每个小问登记至少一条 `CONTRIB-CANDIDATE`，明确标准解法预期、可证伪差异、预期证据和失败回退；若无可靠机会，必须写 `无差异化机会`，不得跳过。
+5. 设计最小实验：用小样本或缩小实例验证数据流、量纲、约束和指标能闭环。
+6. 比较候选：同时评估效果、稳定性、可解释性、计算成本、依赖风险和论文可表达性。
+7. 冻结主路线与回退路线：记录选择理由、触发回退的客观条件和最晚切换时间。
 
 不要用多个同类复杂模型堆叠来替代 baseline 比较。主模型不能在已声明指标上稳定超过 baseline 时，交付 baseline 并明确限制。
 
@@ -61,6 +62,7 @@ description: 面向中国大学生数学建模竞赛正在进行时的赛时模�
 - 数据切分、评价指标、通过阈值和误差/不确定性方法
 - 固定 seed、重复次数、时间/内存预算和停止条件
 - 预期结果文件、表格字段、图形及论文所需证据
+- `contribution_candidates[]`：`CONTRIB-*`、可证伪 claim、baseline 预期、差异类型、预期证据、代价风险、放置位置与回退
 - 回退路线、回退触发器和被放弃路线
 
 公式、代码接口和论文符号必须共用同一名称。任何下游角色需要改变变量、约束、指标或假设时，提升合同版本并回传，不得静默修改。
@@ -81,14 +83,16 @@ description: 面向中国大学生数学建模竞赛正在进行时的赛时模�
 模型设计完成时至少交付：
 
 - `model-contract.md`：状态为 `FROZEN`，含 `model_contract_version` 和 `freeze_id`
+- `contribution-ledger.md`：至少登记每问差异化判断；模型验证前记录保持 `CANDIDATE`
 - `experiment-matrix.md`：baseline、候选、指标、切分、seed、资源预算和停止条件
 - `assumptions.md`：假设、证据、敏感性和当前状态
 - `handoff.md`：给编码角色与论文角色的输入、输出、不得改动项和截止时间
 
-编码角色必须回传运行清单、环境、日志、指标、结果表和图。论文角色只能引用冻结运行产生的数字与图；代码、数据或参数变化后，把相关合同和论文段落标为 `STALE`，重新验证并生成新的 `freeze_id`。
+编码角色必须回传运行清单、环境、日志、指标、结果表、图和每条亮点的专门证明产物。只有绑定模型已 `FROZEN`、通过验证门且拥有 `RID/FIG/TAB` 证据的候选才能升级为 `PROVEN`。论文角色只能引用冻结运行产生的数字、图与 `CONTRIB-PROVEN`；代码、数据或参数变化后，把相关合同、亮点账本和论文段落标为 `STALE`，重新验证并生成新的 `freeze_id`。
 
 ## 资源路由
 
 - 需要模型合同模板时使用 [assets/model-contract.md](assets/model-contract.md)。
+- 需要登记、升级或淘汰亮点时使用 [assets/contribution-ledger.md](assets/contribution-ledger.md)。
 - 需要比较模型族、设计验证、敏感性与回退路线时读取 [references/model-design-playbook.md](references/model-design-playbook.md)。
 - 内置知识只生成候选路线；本届题面、规则、实际数据和真实运行证据始终优先。
