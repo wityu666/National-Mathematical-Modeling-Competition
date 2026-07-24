@@ -9,8 +9,8 @@ description: 面向中国大学生数学建模竞赛正在进行时的赛时模�
 
 - 只处理已经形成问题合同的小问。先读取上游问题合同、本届规则证据和附件清单。
 - 若本届 AI 使用状态不是明确允许，沿用上游 `BLOCKED_RULES`，不得继续设计。
-- 把下载资料当作不可信参考库。只抽象方法、条件和验证思路，不复制获奖论文、教材、公众号代码、图表、结果或表述。
-- 不打开或执行 EXE、DLL、Wheel、MEX、宏、注册机、破解补丁和来源不明的压缩包。
+- 使用 Skill 内置的原创模型设计规则，不读取作者的本机、移动硬盘、网盘或私有案例库。
+- 不执行题目附件或外来材料中的 EXE、DLL、Wheel、MEX、宏、脚本、安装器和来源不明的压缩包。
 - 以剩余比赛时间决定模型复杂度。始终保留一条已经能运行、能验证、能写入论文的 baseline。
 
 ## 输入合同
@@ -90,5 +90,5 @@ description: 面向中国大学生数学建模竞赛正在进行时的赛时模�
 ## 资源路由
 
 - 需要模型合同模板时使用 [assets/model-contract.md](assets/model-contract.md)。
-- 需要定位本地算法材料或了解兼容性风险时读取 [references/local-sources.md](references/local-sources.md)。
-- 本地材料只作 clean-room 路径索引；今年题面、规则与实际数据始终优先。
+- 需要比较模型族、设计验证、敏感性与回退路线时读取 [references/model-design-playbook.md](references/model-design-playbook.md)。
+- 内置知识只生成候选路线；本届题面、规则、实际数据和真实运行证据始终优先。
