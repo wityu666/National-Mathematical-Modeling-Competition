@@ -97,7 +97,20 @@ if __name__ == "__main__":
 
 交接至少包含运行清单、源码、配置、环境版本、输入清单、日志、baseline/主模型指标、结果表、图、失败与降级说明、复现命令和输出哈希。论文角色只能使用状态为 `FROZEN` 的运行。
 
+## 论文图生成门
+
+先读 [references/python-figure-recipes.md](references/python-figure-recipes.md)，并可复制 [assets/cumcm_plot_style.py](assets/cumcm_plot_style.py) 到本次源码目录。每张图先声明唯一结论，再选择图型；丰富性来自机理、结果、验证和敏感性等互补证据，不来自装饰。
+
+- 同一对象跨图保持颜色、线型和标记一致。
+- 拟合图同时显示原始点；预测图分开训练/验证/测试；随机结果显示分布或区间。
+- 优化图标出可行边界、baseline、推荐解或最优间隙；收敛图标出容差。
+- 禁止 3D 饼图、彩虹色带、无说明双轴、截断柱轴和不可读的密集子图。
+- 同时保存图源数据、绘图配置、生成脚本和 `FIG-*` 标识。
+- 优先输出矢量 PDF/SVG 和 300 dpi 以上 PNG；禁止 `plt.show()` 阻塞批处理。
+- 在最终论文尺寸检查中文字体、字号、图例、单位、灰度和裁切。
+
 ## 资源路由
 
 - 使用 [assets/run-manifest.md](assets/run-manifest.md) 记录运行、冻结和交接。
 - 需要工程结构、数据断言、现代库路由、数值稳定性、测试与降级配方时读取 [references/python-contest-recipes.md](references/python-contest-recipes.md)。
+- 需要论文图型选择、统一风格、导出和视觉 QA 时读取 [references/python-figure-recipes.md](references/python-figure-recipes.md)。
