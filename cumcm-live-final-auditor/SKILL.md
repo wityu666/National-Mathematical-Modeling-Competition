@@ -11,12 +11,12 @@ description: 比赛进行中用于中国大学生数学建模竞赛提交前终�
 - 对冻结后的提交候选目录执行只读审计，不在审计过程中偷偷修改论文或代码。
 - 同时检查内容、文件、安全、可复现性和真实渲染效果。
 - 任何关键证据缺失都应标记为阻塞，而不是推断通过。
-- 不执行旧 `.exe`、`.lnk`、破解工具或 Office 宏；不引用美赛 MCM/ICM 规则判断国赛。
+- 不执行外来 `.exe`、`.lnk`、未知二进制或 Office 宏；不引用其他竞赛规则判断国赛。
 
 开始前按需读取：
 
-- 本地资料边界与已知风险：`references/local-sources.md`
-- 报告格式：`assets/audit-report-template.md`
+- 自包含提交审计协议：[references/submission-audit-protocol.md](references/submission-audit-protocol.md)
+- 报告格式：[assets/audit-report-template.md](assets/audit-report-template.md)
 
 ## 1. 固定审计输入
 
