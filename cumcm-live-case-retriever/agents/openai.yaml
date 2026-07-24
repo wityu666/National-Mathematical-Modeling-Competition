@@ -1,0 +1,4 @@
+interface:
+  display_name: "CUMCM 赛时案例检索"
+  short_description: "赛时检索本地历届赛题、获奖作品、教材与算法代码并建立类比证据"
+  default_prompt: "Use $cumcm-live-case-retriever to find structurally similar local CUMCM cases and reusable methods without copying conclusions."
