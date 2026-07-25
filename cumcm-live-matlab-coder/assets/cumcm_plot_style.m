@@ -1,5 +1,5 @@
 function style = cumcm_plot_style(fig, ax, fontName)
-%CUMCM_PLOT_STYLE Apply a restrained paper style to figure axes.
+%CUMCM_PLOT_STYLE Apply the low-saturation cumcm-morandi-v1 paper style.
 %   STYLE = CUMCM_PLOT_STYLE(FIG, AX, FONTNAME) changes presentation only.
 %   FONTNAME must be an installed font verified on the current machine.
 
@@ -13,18 +13,28 @@ if nargin < 3 || isempty(fontName)
     fontName = get(groot, "FactoryAxesFontName");
 end
 
+style.paletteId = "cumcm-morandi-v1";
 style.colors = [ ...
-     47 107 154; ... % blue
-    224 122  95; ... % orange
-     61 153 112; ... % green
-    107 114 128; ... % gray
-    196  78  82  ... % red
+    111 143 175; ... % mist blue
+    196 154 122; ... % terracotta
+    143 166 142; ... % sage green
+    139 141 143; ... % warm gray
+    183 123 130; ... % dusty rose accent
+    148 138 168  ... % muted purple
     ] / 255;
-style.light = [243 244 246] / 255;
+style.light = [242 239 234] / 255;
+style.sequential = interp1( ...
+    linspace(0, 1, 5), ...
+    [242 239 234; 200 208 197; 143 166 142; 111 143 175; 89 102 115] / 255, ...
+    linspace(0, 1, 256));
+style.diverging = interp1( ...
+    linspace(0, 1, 5), ...
+    [127 154 175; 215 223 220; 242 239 234; 225 210 201; 183 123 130] / 255, ...
+    linspace(0, 1, 256));
 style.fontName = fontName;
 style.lineWidth = 1.5;
 style.markerSize = 5;
-textColor = [55 65 81] / 255;
+textColor = [79 85 90] / 255;
 
 if exist("theme", "file") == 2
     try
@@ -53,7 +63,7 @@ for k = 1:numel(ax)
         "TickDir", "out", ...
         "XGrid", "on", ...
         "YGrid", "on", ...
-        "GridColor", [209 213 219] / 255, ...
+        "GridColor", [216 211 204] / 255, ...
         "GridAlpha", 0.65, ...
         "Layer", "top");
 end
@@ -63,6 +73,6 @@ if ~isempty(legends)
     set(legends, ...
         "Color", "w", ...
         "TextColor", textColor, ...
-        "EdgeColor", [156 163 175] / 255);
+        "EdgeColor", [168 155 140] / 255);
 end
 end
