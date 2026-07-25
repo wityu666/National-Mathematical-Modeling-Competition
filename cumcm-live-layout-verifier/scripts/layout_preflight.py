@@ -145,6 +145,62 @@ def find_unembedded_fonts(output: str) -> list[str]:
     return unembedded
 
 
+def evaluate_page_limit(
+    total_pages: int | None,
+    main_start_page: int,
+    appendix_start_page: int | None,
+    max_main_pages: int,
+    pdf: Path,
+    issues: list[dict[str, str]],
+    warnings: list[str],
+) -> dict[str, Any]:
+    """Evaluate the physical-PDF-page boundary between body and appendix."""
+    result: dict[str, Any] = {
+        "status": "UNVERIFIED",
+        "max_main_pages": max_main_pages,
+        "main_start_pdf_page": main_start_page,
+        "appendix_start_pdf_page": appendix_start_page,
+        "total_pdf_pages": total_pages,
+        "main_body_pages": None,
+        "appendix_pages": None,
+    }
+    if total_pages is None:
+        warnings.append("无法自动取得 PDF 总页数；Round B 必须人工核验正文不超过 30 页。")
+        return result
+
+    appendix_start = appendix_start_page or total_pages + 1
+    result["appendix_start_pdf_page"] = appendix_start
+    if not (1 <= main_start_page < appendix_start <= total_pages + 1):
+        issues.append(
+            issue(
+                "invalid-body-appendix-boundary",
+                pdf,
+                "正文起始页、附录起始页与 PDF 总页数的关系无效。",
+                "P0",
+            )
+        )
+        result["status"] = "BLOCKED"
+        return result
+
+    main_pages = appendix_start - main_start_page
+    appendix_pages = total_pages - appendix_start + 1 if appendix_start <= total_pages else 0
+    result["main_body_pages"] = main_pages
+    result["appendix_pages"] = appendix_pages
+    if main_pages > max_main_pages:
+        issues.append(
+            issue(
+                "main-body-over-page-limit",
+                pdf,
+                f"正文 {main_pages} 页，超过 {max_main_pages} 页上限；附录页数不计入上限。",
+                "P0",
+            )
+        )
+        result["status"] = "BLOCKED"
+    else:
+        result["status"] = "PASS"
+    return result
+
+
 def external_pdf_checks(
     pdf: Path,
     issues: list[dict[str, str]],
@@ -203,6 +259,9 @@ def build_report(
     pdf: Path,
     source: Path | None,
     max_pdf_mb: float | None,
+    main_start_page: int,
+    appendix_start_page: int | None,
+    max_main_pages: int,
     skip_external_tools: bool,
 ) -> dict[str, Any]:
     issues: list[dict[str, str]] = []
@@ -234,6 +293,22 @@ def build_report(
     elif header.startswith(b"%PDF-"):
         metadata = external_pdf_checks(pdf, issues, warnings, tool_status)
 
+    total_pages: int | None = None
+    try:
+        if "pages" in metadata:
+            total_pages = int(metadata["pages"])
+    except (TypeError, ValueError):
+        warnings.append("PDF 总页数字段无法解析；Round B 必须人工核验页数。")
+    page_limit = evaluate_page_limit(
+        total_pages,
+        main_start_page,
+        appendix_start_page,
+        max_main_pages,
+        pdf,
+        issues,
+        warnings,
+    )
+
     return {
         "status": "BLOCKED" if issues else "PRECHECK_PASS",
         "visual_qa_required": True,
@@ -245,6 +320,7 @@ def build_report(
         "warnings": warnings,
         "tools": tool_status,
         "metadata": metadata,
+        "page_limit": page_limit,
     }
 
 
@@ -253,6 +329,23 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("pdf", type=Path)
     parser.add_argument("--source", type=Path)
     parser.add_argument("--max-pdf-mb", type=float)
+    parser.add_argument(
+        "--main-start-page",
+        type=int,
+        default=1,
+        help="正文在最终 PDF 中的起始物理页，默认 1。",
+    )
+    parser.add_argument(
+        "--appendix-start-page",
+        type=int,
+        help="附录在最终 PDF 中的起始物理页；无附录时省略。",
+    )
+    parser.add_argument(
+        "--max-main-pages",
+        type=int,
+        default=30,
+        help="正文页数上限，默认且最高为 30；只允许按更严格规则调低，附录不计入。",
+    )
     parser.add_argument("--json", action="store_true")
     parser.add_argument(
         "--skip-external-tools",
@@ -273,11 +366,23 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_pdf_mb is not None and args.max_pdf_mb <= 0:
         print("错误：--max-pdf-mb 必须大于 0。", file=sys.stderr)
         return 2
+    if args.main_start_page <= 0:
+        print("错误：--main-start-page 必须大于 0。", file=sys.stderr)
+        return 2
+    if args.appendix_start_page is not None and args.appendix_start_page <= 0:
+        print("错误：--appendix-start-page 必须大于 0。", file=sys.stderr)
+        return 2
+    if not 1 <= args.max_main_pages <= 30:
+        print("错误：--max-main-pages 必须在 1–30 之间，不能放宽 30 页硬门。", file=sys.stderr)
+        return 2
 
     report = build_report(
         args.pdf.resolve(),
         args.source.resolve() if args.source else None,
         args.max_pdf_mb,
+        args.main_start_page,
+        args.appendix_start_page,
+        args.max_main_pages,
         args.skip_external_tools,
     )
     if args.json:
@@ -286,6 +391,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"status={report['status']}")
         print(f"visual_qa_required={str(report['visual_qa_required']).lower()}")
         print(f"pdf_sha256={report['pdf_sha256']}")
+        print(f"page_limit_status={report['page_limit']['status']}")
+        print(f"main_body_pages={report['page_limit']['main_body_pages']}")
         for found in report["issues"]:
             print(f"{found['severity']} {found['code']}: {found['path']} - {found['detail']}")
         for warning in report["warnings"]:
