@@ -96,3 +96,26 @@ def test_every_question_completeness_gate_is_present() -> None:
     assert "全局完整性配平" in problem_contract
     assert "每个小问都有可提交的实质答案" in paper_skill
 
+
+def test_result_verifier_is_integrated_across_the_suite() -> None:
+    verifier = read("cumcm-live-result-verifier/SKILL.md")
+    report = read("cumcm-live-result-verifier/assets/verification-report.md")
+    protocol = read(
+        "cumcm-live-result-verifier/references/repeated-verification-protocol.md"
+    )
+    readme = read("README.md")
+    suite = read("SUITE.md")
+    python_skill = read("cumcm-live-python-coder/SKILL.md")
+    matlab_skill = read("cumcm-live-matlab-coder/SKILL.md")
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    auditor = read("cumcm-live-final-auditor/SKILL.md")
+
+    assert "cumcm-live-result-verifier" in readme
+    assert "result_verifier" in suite
+    assert "Round A" in verifier and "Round B" in verifier
+    assert "DRAFT / FROZEN / STALE / BLOCKED / PASS" in report
+    assert "同一错误重复两次" in protocol
+    assert "cumcm-live-result-verifier" in python_skill
+    assert "cumcm-live-result-verifier" in matlab_skill
+    assert "VER-* PASS" in paper_skill
+    assert "VER-* PASS" in auditor
