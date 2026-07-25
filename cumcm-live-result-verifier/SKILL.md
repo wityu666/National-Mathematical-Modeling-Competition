@@ -1,6 +1,6 @@
 ---
 name: cumcm-live-result-verifier
-description: 面向中国大学生数学建模竞赛进行中的首次求解完成后结果复核。适用于 Python/MATLAB 初始运行已经冻结，需要通过同环境复跑、独立重算、小样本手核、约束与不变量检查、边界情景和论文数字反向追踪来重复验证结果，并在同一冻结版本上输出 PASS 或 BLOCKED；不用于替代建模、编写首次求解代码或提交前版式审计。
+description: 面向中国大学生数学建模竞赛 A、B、C 题进行中的首次求解完成后结果复核。适用于 Python/MATLAB 初始运行已经冻结，需要通过同环境复跑、独立重算、小样本手核、约束与不变量检查、边界情景和论文数字反向追踪来重复验证结果，并在同一冻结版本上输出 PASS 或 BLOCKED；不用于替代建模、编写首次求解代码或提交前版式审计。
 ---
 
 # CUMCM 首次结果重复复核
@@ -128,4 +128,3 @@ FROZEN run_manifest
 - 使用 [assets/verification-report.md](assets/verification-report.md) 记录轮次、差异、修复和签核。
 - 使用 [references/repeated-verification-protocol.md](references/repeated-verification-protocol.md) 选择独立复核方法和错误循环。
 - 使用 [scripts/compare_runs.py](scripts/compare_runs.py) 比较重复运行的目录、CSV/TSV、JSON 和其他冻结文件。
-
