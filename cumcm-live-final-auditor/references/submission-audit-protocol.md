@@ -12,6 +12,7 @@
 - 题号、预期文件名和附件结构；
 - 当届官方规则快照及证据位置；
 - AI 使用记录位置；
+- `VER-*` 重复复核报告位置及其冻结版本；
 - 审计工具、版本和命令。
 
 审计过程中任一候选文件变化，旧审计立即失效。修复后重新冻结并完整复审。
@@ -46,7 +47,7 @@
 
 ```text
 题面 -> problem_contract -> model_contract -> code/config
-     -> frozen output -> paper claim
+     -> frozen output -> VER-PASS -> paper claim
 
 model_contract -> contribution_ledger -> CONTRIB-PROVEN
               -> dedicated RID/FIG/TAB -> paper contribution claim
@@ -57,6 +58,7 @@ model_contract -> contribution_ledger -> CONTRIB-PROVEN
 ```text
 摘要/结论/核心表中的主张
 -> RID/FIG/TAB
+-> VER-PASS
 -> RUN
 -> code/config
 -> DATA
@@ -133,6 +135,7 @@ model_contract -> contribution_ledger -> CONTRIB-PROVEN
 
 - 入口、配置、依赖、版本、seed 和运行命令完整；
 - 新进程重跑证据可用；
+- 同版本 `VER-*` 报告为 `PASS`，且同时包含同环境复跑和不复用主求解逻辑的独立复核；
 - 日志没有被忽略的致命错误；
 - 输出文件与运行清单一一对应；
 - 本机绝对路径、密钥和临时状态没有成为依赖。
@@ -205,6 +208,7 @@ rules_verified
 and files_valid
 and no_P0
 and content_traceable
+and repeated_verification_pass
 and contributions_verified
 and model_validated
 and reproducibility_evidence
