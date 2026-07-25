@@ -194,7 +194,7 @@ def test_main_body_has_30_page_hard_limit_while_appendix_is_unlimited() -> None:
     assert "规避 30 页限制" in paper_skill
 
 
-def test_morandi_palette_is_consistent_across_plotting_and_audit() -> None:
+def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() -> None:
     python_skill = read("cumcm-live-python-coder/SKILL.md")
     python_style = read("cumcm-live-python-coder/assets/cumcm_plot_style.py")
     python_recipe = read(
@@ -212,18 +212,14 @@ def test_morandi_palette_is_consistent_across_plotting_and_audit() -> None:
     layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
     auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
 
-    expected_hex = {
-        "#6F8FAF",
-        "#C49A7A",
-        "#8FA68E",
-        "#8B8D8F",
-        "#B77B82",
-        "#948AA8",
-        "#F2EFEA",
-    }
-    for color in expected_hex:
+    palette_sets = ("SET-A", "SET-B", "SET-C", "SET-D")
+    legacy_hex = {"#2F6B9A", "#E07A5F", "#3D9970", "#6B7280", "#C44E52"}
+    for palette_set in palette_sets:
+        assert palette_set in python_style
+        assert palette_set in matlab_style
+        assert palette_set in playbook
+    for color in legacy_hex:
         assert color in python_style
-        assert color in python_recipe
         assert color in playbook
     for content in (
         python_skill,
@@ -234,10 +230,11 @@ def test_morandi_palette_is_consistent_across_plotting_and_audit() -> None:
         layout_skill,
         auditor_skill,
     ):
-        assert "cumcm-morandi-v1" in content
-    assert "111 143 175" in matlab_style
-    assert "183 123 130" in matlab_style
+        assert "palette_set" in content
+    assert "47 107 154" in matlab_style
+    assert "196 78 82" in matlab_style
     assert "style.sequential" in matlab_style
     assert "style.diverging" in matlab_style
-    assert "CUMCM_SEQUENTIAL_CMAP" in python_style
-    assert "CUMCM_DIVERGING_CMAP" in python_style
+    assert "get_palette_set" in python_style
+    assert "CUMCM_PALETTE_ID" not in python_style
+    assert "style.paletteId" not in matlab_style
