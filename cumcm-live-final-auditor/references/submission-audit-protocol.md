@@ -13,6 +13,7 @@
 - 当届官方规则快照及证据位置；
 - AI 使用记录位置；
 - `VER-*` 重复复核报告位置及其冻结版本；
+- `LAYOUT-*` 排版复核报告、源版本及其绑定的 PDF SHA-256；
 - 审计工具、版本和命令。
 
 审计过程中任一候选文件变化，旧审计立即失效。修复后重新冻结并完整复审。
@@ -47,10 +48,12 @@
 
 ```text
 题面 -> problem_contract -> model_contract -> code/config
-     -> frozen output -> VER-PASS -> paper claim
+    -> frozen output -> VER-PASS -> paper claim
 
 model_contract -> contribution_ledger -> CONTRIB-PROVEN
               -> dedicated RID/FIG/TAB -> paper contribution claim
+
+paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 ```
 
 反向检查：
@@ -173,6 +176,8 @@ model_contract -> contribution_ledger -> CONTRIB-PROVEN
 
 同时存在两种源时，明确唯一主稿，避免误交另一份。
 
+在检查源与 PDF 对应关系前，先验证 `layout-report.md` 状态为 `PASS/FROZEN`、绑定当前源版本和当前 PDF SHA-256，并同时包含自动预检、真实页面查看、修复后重查证据。只有 `PRECHECK_PASS`、报告已 `STALE` 或哈希不一致均为 `P0`。
+
 ## 10. PDF 逐页视觉 QA
 
 必须查看真实渲染 PDF，至少覆盖：
@@ -185,6 +190,8 @@ model_contract -> contribution_ledger -> CONTRIB-PROVEN
 - 灰度辨识、细线和缩放后的可读性。
 
 发现问题要记录页码、对象和截图证据，不能只写“排版有问题”。
+
+终审需独立抽查 `LAYOUT-*` 报告中的截图与问题关闭状态，并重新查看当前 PDF 的关键页面；排版技能的 PASS 不是免检凭证。
 
 ## 11. AI 使用审计
 
@@ -209,6 +216,7 @@ and files_valid
 and no_P0
 and content_traceable
 and repeated_verification_pass
+and same_hash_layout_pass
 and contributions_verified
 and model_validated
 and reproducibility_evidence
