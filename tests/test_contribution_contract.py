@@ -192,3 +192,52 @@ def test_main_body_has_30_page_hard_limit_while_appendix_is_unlimited() -> None:
     assert "main_body_pages <= 30" in audit_protocol
     assert "核心结果、关键验证、符号说明或复现入口" in paper_skill
     assert "规避 30 页限制" in paper_skill
+
+
+def test_morandi_palette_is_consistent_across_plotting_and_audit() -> None:
+    python_skill = read("cumcm-live-python-coder/SKILL.md")
+    python_style = read("cumcm-live-python-coder/assets/cumcm_plot_style.py")
+    python_recipe = read(
+        "cumcm-live-python-coder/references/python-figure-recipes.md"
+    )
+    matlab_skill = read("cumcm-live-matlab-coder/SKILL.md")
+    matlab_style = read("cumcm-live-matlab-coder/assets/cumcm_plot_style.m")
+    matlab_recipe = read(
+        "cumcm-live-matlab-coder/references/matlab-figure-recipes.md"
+    )
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    playbook = read(
+        "cumcm-live-paper-writer/references/abc-figure-design-playbook.md"
+    )
+    layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+
+    expected_hex = {
+        "#6F8FAF",
+        "#C49A7A",
+        "#8FA68E",
+        "#8B8D8F",
+        "#B77B82",
+        "#948AA8",
+        "#F2EFEA",
+    }
+    for color in expected_hex:
+        assert color in python_style
+        assert color in python_recipe
+        assert color in playbook
+    for content in (
+        python_skill,
+        matlab_skill,
+        python_recipe,
+        matlab_recipe,
+        paper_skill,
+        layout_skill,
+        auditor_skill,
+    ):
+        assert "cumcm-morandi-v1" in content
+    assert "111 143 175" in matlab_style
+    assert "183 123 130" in matlab_style
+    assert "style.sequential" in matlab_style
+    assert "style.diverging" in matlab_style
+    assert "CUMCM_SEQUENTIAL_CMAP" in python_style
+    assert "CUMCM_DIVERGING_CMAP" in python_style
