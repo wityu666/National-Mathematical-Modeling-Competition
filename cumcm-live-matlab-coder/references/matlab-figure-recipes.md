@@ -32,6 +32,8 @@ ax2 = nexttile(tl);
 style = cumcm_plot_style(fig, [ax1 ax2], cfg.figure_font);
 ```
 
+默认 `style.paletteId` 为 `cumcm-morandi-v1`，颜色依次为雾霾蓝 `#6F8FAF`、陶土棕 `#C49A7A`、鼠尾草绿 `#8FA68E`、暖中灰 `#8B8D8F`、灰豆沙红 `#B77B82` 和灰紫 `#948AA8`。不得退回 MATLAB 默认高饱和 `ColorOrder`；颜色之外同时使用线型、标记、纹理或直接标签。
+
 `cfg.figure_font` 必须是在当前机器上验证过的中文字体。记录字体名和 MATLAB 版本；导出 PDF 后检查是否发生替换。
 
 ## 3. 原始点、拟合线和区间
@@ -60,7 +62,7 @@ plot(ax, xGrid, yHat, "Color", style.colors(2,:), ...
 
 - 使用 `axis(ax, "equal")` 保持几何比例；
 - 标出坐标、边界、角度、尺寸、方向和关键点；
-- 连续场优先 `parula` 或自定义感知均匀色带；
+- 连续场默认 `colormap(ax, style.sequential)`；正负中心场使用 `style.diverging` 和对称 `clim`；
 - 禁止 `jet`；
 - 有正负中心时使用对称 `clim` 和含义明确的双向色带；
 - `colorbar` 必须写变量名和单位；
@@ -112,6 +114,7 @@ exportgraphics(fig, "figures/fig_q2_sensitivity.png", ...
 - 中文、公式和负号字体正确；
 - 最终尺寸下字号约不低于 8 pt；
 - 线型、标记和颜色在灰度下可分；
+- 图表使用 `cumcm-morandi-v1`，没有混入默认高饱和色或临时荧光重点色；
 - 图例不遮挡数据，单位和色条完整；
 - 柱轴、对数尺度、平滑和归一化已说明；
 - 没有软件界面、个人路径、水印或低清截图；
