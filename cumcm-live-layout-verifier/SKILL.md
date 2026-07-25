@@ -25,6 +25,7 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 3. 最终 PDF 路径、SHA-256、生成命令和生成时间；
 4. 当届官方版式、匿名、首页、页数和文件大小规则的证据位置；
 5. 上游论文版本、`VER-* PASS` 与 `CONTRIB-*` 账本版本。
+6. 正文起始 PDF 物理页、附录起始 PDF 物理页和 30 页上限；没有附录时标记为 `N/A`。
 
 任一源文件、图表、字体、编译配置或 PDF 字节变化，旧 `LAYOUT-* PASS` 立即变为 `STALE`。
 
@@ -35,8 +36,13 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 ```bash
 python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
   --source /absolute/path/to/paper-source \
+  --main-start-page 1 \
+  --appendix-start-page 31 \
+  --max-main-pages 30 \
   --json
 ```
+
+`--main-start-page` 与 `--appendix-start-page` 都使用 PDF 查看器显示的物理页序号，不使用印刷页码。示例表示第 1–30 个物理页属于正文，第 31 页开始是附录。若没有附录，省略 `--appendix-start-page`，工具会把正文计算到 PDF 最后一页。若官方规则明确排除封面等前置页，按规则证据填写正文起始页；否则保守地从第 1 页计。
 
 只有当届规则明确给出 PDF 大小限制时再加入：
 
@@ -44,13 +50,14 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 --max-pdf-mb 20
 ```
 
-脚本只读检查 PDF 文件头/尾、文件大小、源文件占位符、LaTeX 致命错误与未定义引用、明显 overfull 风险、Word 批注/修订、宏文档，并在系统工具可用时检查 PDF 元数据、字体和文本提取。退出码：
+脚本只读检查 PDF 文件头/尾、正文页数上限、文件大小、源文件占位符、LaTeX 致命错误与未定义引用、明显 overfull 风险、Word 批注/修订、宏文档，并在系统工具可用时检查 PDF 元数据、字体和文本提取。退出码：
 
 - `0`：`PRECHECK_PASS`，仍必须完成 Round B；
 - `1`：发现阻塞项；
 - `2`：参数或路径错误。
 
 找不到外部 PDF 工具时记录能力缺口，不得据此直接判定阻塞或假装已检查。
+如果自动工具无法取得总页数，必须在 Round B 用 PDF 查看器人工记录总页数和正文/附录边界；页数状态为 `UNVERIFIED` 时不得给最终 `PASS`。
 
 ## 3. Round B：真实渲染复核
 
@@ -64,6 +71,7 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 
 - 文字、公式、图表无裁切、重叠、乱码、缺字、字体替换和异常空白；
 - 页码、页眉页脚、章节层级、段前段后、行距与分页一致；
+- 正文实测页数不超过 30；附录页数不限制，但附录标题和起始物理页清楚，边界没有被伪造或错认；
 - 正文“符号说明”表位于模型假设之后、数据/建模章节之前，没有被移入附录；
 - 符号表列宽合理，数学符号、上下标、单位和取值范围清晰；跨页时重复表头，不出现表头与内容分离、整行截断或字号过小；
 - 不出现孤立标题、标题落在页末、正文孤行寡行或不合理整页留白；
@@ -97,6 +105,7 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 只有同时满足以下条件才能写 `PASS`：
 
 - 当前 PDF SHA-256 与报告完全一致；
+- 已记录 `main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages` 和 `main_body_pages`，且 `main_body_pages <= 30`；
 - Round A 为 `PRECHECK_PASS`；
 - Round B 已检查规定范围并保存页码/截图证据；
 - 当届排版与匿名硬规则已核验；
@@ -105,7 +114,7 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 - 修复后的 PDF 已从 Round A 重新复核，而非只看局部截图；
 - 报告状态为 `FROZEN`。
 
-未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。
+正文超过 30 页、页数或正文/附录边界未核验、未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。
 
 ## 6. 交接
 
