@@ -10,37 +10,81 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from matplotlib.colors import LinearSegmentedColormap
 
-CUMCM_PALETTE_ID = "cumcm-morandi-v1"
-CUMCM_COLORS = {
-    "blue": "#6F8FAF",    # 雾霾蓝
-    "orange": "#C49A7A",  # 陶土棕
-    "green": "#8FA68E",   # 鼠尾草绿
-    "gray": "#8B8D8F",    # 暖中灰
-    "red": "#B77B82",     # 灰豆沙红（重点色）
-    "purple": "#948AA8",  # 灰紫（扩展色）
-    "light": "#F2EFEA",   # 米灰背景
-    "text": "#4F555A",
-    "grid": "#D8D3CC",
+PALETTE_SETS = {
+    "SET-A": {
+        "primary": "#2F6B9A",
+        "contrast": "#E07A5F",
+        "auxiliary": "#3D9970",
+        "neutral": "#6B7280",
+        "accent": "#C44E52",
+        "basis": "蓝—橙—绿的色相间距较大，重点红与主蓝具有明显明度差。",
+    },
+    "SET-B": {
+        "primary": "#6F8FAF",
+        "contrast": "#C49A7A",
+        "auxiliary": "#8FA68E",
+        "neutral": "#8B8D8F",
+        "accent": "#B77B82",
+        "basis": "低饱和冷暖分离，并以线型和标记补足相近灰度层级。",
+    },
+    "SET-C": {
+        "primary": "#4C78A8",
+        "contrast": "#F2A65A",
+        "auxiliary": "#72A98F",
+        "neutral": "#7A7F87",
+        "accent": "#B56576",
+        "basis": "主蓝、赭橙和重点玫红具有较大的色相与明度跨度。",
+    },
+    "SET-D": {
+        "primary": "#5B6C8F",
+        "contrast": "#C08A65",
+        "auxiliary": "#789A9F",
+        "neutral": "#77757A",
+        "accent": "#A46F91",
+        "basis": "蓝灰、陶棕和灰紫分处不同色相区，重点色与中性灰明度可分。",
+    },
 }
 
-CUMCM_PALETTE = [
-    CUMCM_COLORS["blue"],
-    CUMCM_COLORS["orange"],
-    CUMCM_COLORS["green"],
-    CUMCM_COLORS["gray"],
-    CUMCM_COLORS["red"],
-]
+_SERIES_ROLES = ("primary", "contrast", "auxiliary", "neutral", "accent")
+_CHROME_COLORS = {
+    "light": "#F5F5F2",
+    "text": "#4F555A",
+    "grid": "#D1D5DB",
+}
 
-CUMCM_SEQUENTIAL_CMAP = LinearSegmentedColormap.from_list(
-    "cumcm_morandi_sequential",
-    ["#F2EFEA", "#C8D0C5", "#8FA68E", "#6F8FAF", "#596673"],
-    N=256,
-)
-CUMCM_DIVERGING_CMAP = LinearSegmentedColormap.from_list(
-    "cumcm_morandi_diverging",
-    ["#7F9AAF", "#D7DFDC", "#F2EFEA", "#E1D2C9", "#B77B82"],
-    N=256,
-)
+
+def get_palette_set(palette_set: str) -> dict[str, object]:
+    """Return one explicitly selected, internally consistent palette set."""
+    if not palette_set or not palette_set.strip():
+        raise ValueError(
+            "palette_set is required; explicitly choose SET-A, SET-B, SET-C, or SET-D"
+        )
+    normalized = palette_set.strip().upper()
+    if normalized not in PALETTE_SETS:
+        choices = ", ".join(PALETTE_SETS)
+        raise ValueError(f"unknown palette_set {palette_set!r}; choose one of: {choices}")
+
+    definition = PALETTE_SETS[normalized]
+    colors = {role: definition[role] for role in _SERIES_ROLES}
+    palette = [colors[role] for role in _SERIES_ROLES]
+    sequential = LinearSegmentedColormap.from_list(
+        f"cumcm_{normalized.lower()}_sequential",
+        [_CHROME_COLORS["light"], colors["auxiliary"], colors["primary"], colors["neutral"]],
+        N=256,
+    )
+    diverging = LinearSegmentedColormap.from_list(
+        f"cumcm_{normalized.lower()}_diverging",
+        [colors["primary"], "#DCE4E8", _CHROME_COLORS["light"], "#E8DAD7", colors["accent"]],
+        N=256,
+    )
+    return {
+        "palette_set": normalized,
+        "colors": colors,
+        "palette": palette,
+        "sequential": sequential,
+        "diverging": diverging,
+        "basis": definition["basis"],
+    }
 
 _CJK_CANDIDATES = [
     "Heiti TC",
@@ -79,15 +123,16 @@ def choose_cjk_font(candidates: Sequence[str] = _CJK_CANDIDATES) -> str:
     return next((name for name in candidates if name in installed), "DejaVu Sans")
 
 
-def apply_cumcm_style(font_name: str | None = None) -> str:
-    """Apply the low-saturation cumcm-morandi-v1 paper style."""
+def apply_cumcm_style(palette_set: str, font_name: str | None = None) -> str:
+    """Apply one explicitly selected paper palette without changing plotted data."""
+    selected_palette = get_palette_set(palette_set)
     selected = font_name or choose_cjk_font()
     mpl.rcParams.update(
         {
             "font.family": "sans-serif",
             "font.sans-serif": [selected, "DejaVu Sans"],
             "axes.unicode_minus": False,
-            "axes.prop_cycle": mpl.cycler(color=CUMCM_PALETTE),
+            "axes.prop_cycle": mpl.cycler(color=selected_palette["palette"]),
             "font.size": 9,
             "axes.labelsize": 9,
             "axes.titlesize": 10,
@@ -97,12 +142,12 @@ def apply_cumcm_style(font_name: str | None = None) -> str:
             "axes.linewidth": 0.8,
             "lines.linewidth": 1.5,
             "lines.markersize": 4.5,
-            "text.color": CUMCM_COLORS["text"],
-            "axes.labelcolor": CUMCM_COLORS["text"],
-            "axes.edgecolor": CUMCM_COLORS["text"],
-            "xtick.color": CUMCM_COLORS["text"],
-            "ytick.color": CUMCM_COLORS["text"],
-            "grid.color": CUMCM_COLORS["grid"],
+            "text.color": _CHROME_COLORS["text"],
+            "axes.labelcolor": _CHROME_COLORS["text"],
+            "axes.edgecolor": _CHROME_COLORS["text"],
+            "xtick.color": _CHROME_COLORS["text"],
+            "ytick.color": _CHROME_COLORS["text"],
+            "grid.color": _CHROME_COLORS["grid"],
             "grid.linewidth": 0.6,
             "grid.alpha": 0.65,
             "figure.facecolor": "white",
@@ -117,7 +162,7 @@ def apply_cumcm_style(font_name: str | None = None) -> str:
 
 
 def style_axes(ax, *, grid: bool = True) -> None:
-    """Apply consistent Morandi axes treatment without changing plotted data."""
+    """Apply consistent axes treatment without changing plotted data."""
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     if grid:
