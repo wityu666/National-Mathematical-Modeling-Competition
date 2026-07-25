@@ -12,6 +12,7 @@
 | 数据 | `DATA-*` | 文件、字段、单位、哈希 |
 | 模型 | `MODEL-*` | 合同、公式、假设、版本 |
 | 运行 | `RUN-*` | 配置、环境、seed、日志 |
+| 复核 | `VER-*` | 同环境复跑、独立重算、硬门和冻结版本 |
 | 结果 | `RID-*` | 机器可读文件与定位 |
 | 图 | `FIG-*` | 图源数据与生成命令 |
 | 表 | `TAB-*` | 表源数据与生成命令 |
@@ -29,7 +30,7 @@
 
 ## 2. 建立亮点账本
 
-`evidence_ledger` 回答“每个数字是否真实”，`contribution_ledger` 回答“本文相对透明 baseline 的差异是否已经被证明”。两者平级，缺一不能把亮点写入论文。
+`verification_report` 回答“首次结果是否经重复与独立方法复核”，`evidence_ledger` 回答“每个数字是否真实”，`contribution_ledger` 回答“本文相对透明 baseline 的差异是否已经被证明”。三者缺一不能把相关结果或亮点写入论文。
 
 每条 `CONTRIB-*` 必须包含可证伪 `claim`、`baseline_expectation`、`delta_type`、`falsification_test`、`evidence_ids`、量化 `proof`、`cost_risk`、`status`、具体 `placement` 和 `fallback`。规则：
 
@@ -42,8 +43,11 @@
 论文追踪图使用：
 
 ```text
-model_contract ─┬─> run_manifest -> evidence_ledger ─┐
-                └─> contribution_ledger ─────────────┴─> paper
+model_contract ─┬─> run_manifest ───────────────────────┐
+                └─> contribution_ledger (CANDIDATE) ────┤
+                                                        └─> verification_report
+                                                             ├─> evidence_ledger ─────────────────────┐
+                                                             └─> contribution_ledger (PROVEN/DROPPED) ┴─> paper
 ```
 
 ## 3. 论文总结构
@@ -217,6 +221,7 @@ CONTRIB-PROVEN claim -> 专门 RID/FIG/TAB -> 为什么不同于 baseline
 - 符号、单位、时间范围、样本量和有效数字一致；
 - 所有图、表、公式、章节和引文被引用；
 - 结果均来自 `FROZEN` 运行；
+- 结果均绑定同版本 `VER-* PASS`，且复跑与独立复核两轮完整；
 - 摘要和正文亮点均存在于当前 `FROZEN` 亮点账本，且状态为 `PROVEN`；
 - 每个小问都有可提交的实质答案；任一小问空白则整稿 `BLOCKED`；
 - 占位符、模板提示、示例数据、批注和修订已清除；
