@@ -119,3 +119,30 @@ def test_result_verifier_is_integrated_across_the_suite() -> None:
     assert "cumcm-live-result-verifier" in matlab_skill
     assert "VER-* PASS" in paper_skill
     assert "VER-* PASS" in auditor
+
+
+def test_layout_verifier_is_integrated_after_paper_and_before_final_audit() -> None:
+    layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_report = read("cumcm-live-layout-verifier/assets/layout-report.md")
+    layout_protocol = read(
+        "cumcm-live-layout-verifier/references/layout-verification-protocol.md"
+    )
+    readme = read("README.md")
+    suite = read("SUITE.md")
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    audit_protocol = read(
+        "cumcm-live-final-auditor/references/submission-audit-protocol.md"
+    )
+
+    assert "cumcm-live-layout-verifier" in readme
+    assert suite.index("cumcm-live-paper-writer") < suite.index(
+        "cumcm-live-layout-verifier"
+    ) < suite.index("cumcm-live-final-auditor")
+    assert "PRECHECK_PASS" in layout_skill
+    assert "Round A" in layout_skill and "Round B" in layout_skill
+    assert "DRAFT / FROZEN / STALE / BLOCKED / PASS" in layout_report
+    assert "visual_scope_complete" in layout_protocol
+    assert "LAYOUT-* PASS" in paper_skill
+    assert "LAYOUT-* PASS" in auditor_skill
+    assert "same_hash_layout_pass" in audit_protocol
