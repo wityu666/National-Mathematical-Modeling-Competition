@@ -27,6 +27,7 @@
 | 正文不超过 30 页，附录页数不限 | `【PASS/BLOCKED】` | `【物理页边界/计算式/截图】` |
 | 摘要与正文关键数值一致 | `【PASS/BLOCKED】` | `【】` |
 | 符号说明表位于正文且与公式定义一致 | `【PASS/BLOCKED】` | `【正文节号/页码/公式编号】` |
+| 图表采用 `cumcm-morandi-v1` 且灰度可辨 | `【PASS/BLOCKED】` | `【图号/截图/例外说明】` |
 | 同版本 `VER-*` 重复复核报告为 PASS | `【PASS/BLOCKED】` | `【Round A / Round B / 硬门】` |
 | 同哈希 `LAYOUT-*` 排版复核报告为 PASS | `【PASS/BLOCKED】` | `【自动预检 / 逐页查看 / PDF SHA-256】` |
 | 亮点账本已冻结且论文亮点均为 `CONTRIB-PROVEN` | `【PASS/BLOCKED】` | `【】` |
