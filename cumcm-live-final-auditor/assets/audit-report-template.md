@@ -24,6 +24,7 @@
 | 无危险文件 | `【PASS/BLOCKED】` | `【】` |
 | 文件大小符合已提供规则 | `【PASS/BLOCKED/N/A】` | `【】` |
 | 摘要与正文关键数值一致 | `【PASS/BLOCKED】` | `【】` |
+| 符号说明表位于正文且与公式定义一致 | `【PASS/BLOCKED】` | `【正文节号/页码/公式编号】` |
 | 同版本 `VER-*` 重复复核报告为 PASS | `【PASS/BLOCKED】` | `【Round A / Round B / 硬门】` |
 | 同哈希 `LAYOUT-*` 排版复核报告为 PASS | `【PASS/BLOCKED】` | `【自动预检 / 逐页查看 / PDF SHA-256】` |
 | 亮点账本已冻结且论文亮点均为 `CONTRIB-PROVEN` | `【PASS/BLOCKED】` | `【】` |
