@@ -62,6 +62,7 @@
 | primary_metric |  |
 | timeout_or_stop_condition |  |
 | fallback_deadline |  |
+| palette_set | `SET-A / SET-B / SET-C / SET-D；出图前显式选择` |
 
 ### 精确复现命令
 
@@ -128,9 +129,9 @@
 
 ### 图表登记
 
-| `figure_id` | 小问 | 唯一结论 | 图型 | palette_id | 图源数据 | 生成代码/命令 | PDF/PNG | 最终尺寸/灰度 QA |
+| `figure_id` | 小问 | 唯一结论 | 图型 | palette_set | 图源数据 | 生成代码/命令 | PDF/PNG | 最终尺寸/灰度 QA |
 |---|---|---|---|---|---|---|---|---|
-| `FIG-Q*-###` |  |  |  | `cumcm-morandi-v1` |  |  |  | PASS / FAIL |
+| `FIG-Q*-###` |  |  |  | `【与运行配置相同】` |  |  |  | PASS / FAIL |
 
 ## 10. 交接
 
