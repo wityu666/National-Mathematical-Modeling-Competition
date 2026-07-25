@@ -123,7 +123,28 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 
 额外反向检查：账本中的 `CANDIDATE`、`DROPPED` 或 `STALE` 不得在论文中被表述为已证明贡献。无证据亮点不得通过润色降级为模糊优点；必须删除、明确为待验证，或重新运行并冻结。
 
-## 7. 模型与代码审计
+## 7. 模板指纹审计
+
+该项由人工或 Agent 对真实成稿执行，静态目录扫描脚本不解析 PDF、Word 或 LaTeX 正文。机器可读检查项：
+
+```text
+template_fingerprint_checked: PASS / P1 / P0 / UNVERIFIED
+```
+
+### 指纹短语清单
+
+以下内容只用于终审逐条比对，不是可复制的写作素材。命中后按 `SKILL.md` 分级，并记录论文页码、章节和连续文本范围：
+
+1. 摘要填空骨架：`针对问题一，基于【数据和关键处理】，建立【模型/数学构造】并采用【求解方法】，得到【有 RID 的关键结果】；通过【有指标的验证】检验。`
+2. 摘要同构片段：`针对问题 n：数据/处理动作 -> 模型或数学构造 -> 求解方法 -> 关键数值或决策结果 -> 验证方式与指标`
+3. 结果叙事示例：`在已定义情景和约束下，方案 A 的目标值为 RID-Q2-004，相对 baseline 的变化见 TAB-Q2-002。逐约束复核未超过合同容差；当参数超过敏感性区间时，该排序可能改变。`
+4. 结果闭环占位结构：`结论 -> 图表/数值证据 -> 比较 -> 解释 -> 适用范围`
+
+逐字沿用单句或短片段为 `P1`；摘要或任一核心章节出现大段、连续成句沿用为 `P0`。同时检查问题分析、结果解释和模型评价是否机械复制手册的固定子结构顺序，或把候选配色说明文字原样写入论文。修复必须由本队依据真实模型、证据和逻辑重新表达，不得用同义词替换或机械调序；修复后重新冻结并复审。
+
+通用章节名“问题重述、问题分析、模型假设、符号说明、模型的建立与求解、模型检验、模型评价与推广、参考文献、附录”不计为指纹，不得要求改名。未核对真实成稿或未完成清单时状态为 `UNVERIFIED`，最终结论不得为 `PASS`。
+
+## 8. 模型与代码审计
 
 ### 数据
 
@@ -152,7 +173,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 - 输出文件与运行清单一一对应；
 - 本机绝对路径、密钥和临时状态没有成为依赖。
 
-## 8. 提交包审计
+## 9. 提交包审计
 
 检查：
 
@@ -168,7 +189,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 
 静态扫描脚本通过只表示目录硬检查通过，不代表内容、规则和视觉已经通过。
 
-## 9. Word/LaTeX 源与 PDF 对应
+## 10. Word/LaTeX 源与 PDF 对应
 
 ### Word
 
@@ -188,7 +209,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 
 在检查源与 PDF 对应关系前，先验证 `layout-report.md` 状态为 `PASS/FROZEN`、绑定当前源版本和当前 PDF SHA-256，并同时包含自动预检、真实页面查看、修复后重查证据。只有 `PRECHECK_PASS`、报告已 `STALE` 或哈希不一致均为 `P0`。
 
-## 10. PDF 逐页视觉 QA
+## 11. PDF 逐页视觉 QA
 
 必须查看真实渲染 PDF，至少覆盖：
 
@@ -203,7 +224,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 
 终审需独立抽查 `LAYOUT-*` 报告中的截图与问题关闭状态，并重新查看当前 PDF 的关键页面；排版技能的 PASS 不是免检凭证。
 
-## 11. AI 使用审计
+## 12. AI 使用审计
 
 以当届规则为准，检查：
 
@@ -216,7 +237,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 
 工具清单与记录错配、关键交互缺失或采用内容无法定位时标记阻塞。
 
-## 12. 判定算法
+## 13. 判定算法
 
 只有以下项目全部满足才可 `PASS`：
 
@@ -230,6 +251,7 @@ and same_hash_layout_pass
 and main_body_pages <= 30
 and page_boundary_verified
 and contributions_verified
+and template_fingerprint_checked == PASS
 and model_validated
 and reproducibility_evidence
 and ai_record_compliant
@@ -238,7 +260,7 @@ and visual_qa_complete
 
 否则输出 `BLOCKED`。不要使用“基本通过”“大概可提交”掩盖硬门失败。
 
-## 13. 修复与复审
+## 14. 修复与复审
 
 - P0 修复后完整复审规则、文件、追踪和视觉；
 - P1 修复后至少复审受影响章节、结果和 PDF；
@@ -246,4 +268,4 @@ and visual_qa_complete
 - 临近截止优先恢复最近一次已验证可提交版本；
 - 不在终审阶段引入未经 baseline、验证和复跑的新模型。
 
-最终报告必须包含状态、规则矩阵、问题清单、关键数字抽样、亮点真实性抽样、目录哈希、视觉 QA 范围、未核验项和最小下一步。
+最终报告必须包含状态、规则矩阵、问题清单、关键数字抽样、亮点真实性抽样、模板指纹核对结果及命中位置、目录哈希、视觉 QA 范围、未核验项和最小下一步。
