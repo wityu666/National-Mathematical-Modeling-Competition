@@ -14,6 +14,7 @@
 - AI 使用记录位置；
 - `VER-*` 重复复核报告位置及其冻结版本；
 - `LAYOUT-*` 排版复核报告、源版本及其绑定的 PDF SHA-256；
+- 正文起始页、附录起始页、总页数、正文实测页数和边界截图；
 - 审计工具、版本和命令。
 
 审计过程中任一候选文件变化，旧审计立即失效。修复后重新冻结并完整复审。
@@ -33,6 +34,14 @@
 | 截止与重传 | 提交系统说明 | 提交回执 |  |
 
 任何硬性规则为 `UNVERIFIED` 时，最终状态不得为 `PASS`。
+
+固定执行正文页数硬门：
+
+```text
+main_body_pages = appendix_start_pdf_page - main_start_pdf_page <= 30
+```
+
+没有附录时正文计到 PDF 最后一页。附录页数不设上限。正文/附录边界必须由最终 PDF 物理页和章节内容共同证明；核心模型、结果、验证、符号表或复现入口不得为规避页数被移入附录。
 
 ## 3. 严重级别
 
@@ -154,6 +163,7 @@ paper source -> rendered PDF -> LAYOUT-PASS -> final audit
 - 无教材、论文、商业模板、第三方工具箱或许可不明数据；
 - 无 API key、密码、用户名、本机路径和不应披露的身份信息；
 - PDF 文件头、可打开性、页数和大小真实检测；
+- 正文实测不超过 30 页，附录页数不限，正文/附录物理页边界有截图；
 - 目录清单与 SHA-256 已冻结。
 
 静态扫描脚本通过只表示目录硬检查通过，不代表内容、规则和视觉已经通过。
@@ -217,6 +227,8 @@ and no_P0
 and content_traceable
 and repeated_verification_pass
 and same_hash_layout_pass
+and main_body_pages <= 30
+and page_boundary_verified
 and contributions_verified
 and model_validated
 and reproducibility_evidence
