@@ -146,3 +146,24 @@ def test_layout_verifier_is_integrated_after_paper_and_before_final_audit() -> N
     assert "LAYOUT-* PASS" in paper_skill
     assert "LAYOUT-* PASS" in auditor_skill
     assert "same_hash_layout_pass" in audit_protocol
+
+
+def test_symbol_table_is_required_in_main_body_and_audited() -> None:
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
+    layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_report = read("cumcm-live-layout-verifier/assets/layout-report.md")
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    audit_report = read(
+        "cumcm-live-final-auditor/assets/audit-report-template.md"
+    )
+
+    assert "符号说明”必须是正文独立章节" in paper_skill
+    assert "不得只放在附录" in paper_skill
+    assert "模型假设”之后、“数据与预处理/模型建立”之前" in paper_skill
+    assert "本节属于正文" in skeleton
+    assert "取值范围/类型" in skeleton
+    assert "正文“符号说明”表" in layout_skill
+    assert "正文符号表位置正确且清晰可读" in layout_report
+    assert "完整符号表只放在附录" in auditor_skill
+    assert "符号说明表位于正文且与公式定义一致" in audit_report
