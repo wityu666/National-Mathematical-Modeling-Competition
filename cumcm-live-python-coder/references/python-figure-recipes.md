@@ -27,6 +27,9 @@
 ```python
 from cumcm_plot_style import (
     CUMCM_COLORS,
+    CUMCM_DIVERGING_CMAP,
+    CUMCM_PALETTE_ID,
+    CUMCM_SEQUENTIAL_CMAP,
     apply_cumcm_style,
     export_figure,
     label_panels,
@@ -37,6 +40,20 @@ font = apply_cumcm_style()
 fig, ax = plt.subplots(figsize=(7.1, 4.2), constrained_layout=True)
 style_axes(ax)
 ```
+
+默认色板为 `cumcm-morandi-v1`：
+
+| 角色 | 色值 |
+|---|---|
+| 雾霾蓝 | `#6F8FAF` |
+| 陶土棕 | `#C49A7A` |
+| 鼠尾草绿 | `#8FA68E` |
+| 暖中灰 | `#8B8D8F` |
+| 灰豆沙红（重点） | `#B77B82` |
+| 灰紫（扩展） | `#948AA8` |
+| 米灰浅背景 | `#F2EFEA` |
+
+不得改用 Matplotlib 默认高饱和循环色。颜色之外必须使用线型、标记、纹理或直接标签；低饱和不等于低对比。记录 `CUMCM_PALETTE_ID` 到图表清单。
 
 记录实际选中的中文字体。若最终 PDF 出现方框或替换字体，修复字体后重跑，不用图片编辑器补字。
 
@@ -78,8 +95,8 @@ for i, (name, values) in enumerate(series.items()):
 
 - 使用相同尺度和坐标比例，必要时 `ax.set_aspect("equal")`。
 - 用 `patches`、`annotate` 和箭头直接标尺寸、角度、方向和边界。
-- 连续场使用 `viridis`、`cividis` 等感知均匀色带。
-- 有正负中心时使用 `TwoSlopeNorm(vcenter=0)` 和明确的双向色带。
+- 连续场默认使用 `CUMCM_SEQUENTIAL_CMAP`。
+- 有正负中心时使用 `TwoSlopeNorm(vcenter=0)` 和 `CUMCM_DIVERGING_CMAP`。
 - 色条必须有变量名、单位、范围。
 - 路径、可行域和障碍物使用不同线型/填充，不只依赖颜色。
 
@@ -141,6 +158,7 @@ PNG 只用于栅格内容或兼容路线；线图、流程图和示意图优先�
 - 中文与数学符号字体正确；
 - 单栏/双栏实际尺寸下文字可读；
 - 颜色、线型、标记在灰度下可区分；
+- 图表使用 `cumcm-morandi-v1`，没有混入默认高饱和色或临时荧光重点色；
 - 图例不挡数据，轴标签与色条有单位；
 - 没有多余边框、软件界面或个人路径；
 - 没有截断柱轴、彩虹色带、3D 饼图；
