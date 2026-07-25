@@ -136,3 +136,74 @@ def test_pdffonts_fixed_width_parser_detects_unembedded_font() -> None:
 
     assert len(unembedded) == 1
     assert "SimSun" in unembedded[0]
+
+
+def test_30_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=47,
+        main_start_page=1,
+        appendix_start_page=31,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert result["status"] == "PASS"
+    assert result["main_body_pages"] == 30
+    assert result["appendix_pages"] == 17
+    assert issues == []
+
+
+def test_31_body_pages_is_blocked_even_with_appendix(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=47,
+        main_start_page=1,
+        appendix_start_page=32,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert result["status"] == "BLOCKED"
+    assert result["main_body_pages"] == 31
+    assert any(item["code"] == "main-body-over-page-limit" for item in issues)
+
+
+def test_no_appendix_counts_body_through_last_page(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=31,
+        main_start_page=1,
+        appendix_start_page=None,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert result["appendix_pages"] == 0
+    assert result["main_body_pages"] == 31
+    assert result["status"] == "BLOCKED"
+
+
+def test_cli_cannot_relax_30_page_hard_limit(tmp_path: Path) -> None:
+    pdf = tmp_path / "paper.pdf"
+    write_minimal_pdf(pdf)
+
+    result = run_preflight(pdf, "--max-main-pages", "31")
+
+    assert result.returncode == 2
+    assert "不能放宽 30 页硬门" in result.stderr
