@@ -1,4 +1,5 @@
 import json
+import importlib.util
 import subprocess
 import sys
 import zipfile
@@ -7,6 +8,14 @@ from pathlib import Path
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = SKILL_ROOT / "scripts" / "layout_preflight.py"
+
+
+def load_preflight_module():
+    spec = importlib.util.spec_from_file_location("layout_preflight", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def run_preflight(pdf: Path, *extra: str) -> subprocess.CompletedProcess[str]:
@@ -112,3 +121,18 @@ def test_missing_pdf_path_returns_exit_2(tmp_path: Path) -> None:
 
     assert result.returncode == 2
     assert "不存在" in result.stderr
+
+
+def test_pdffonts_fixed_width_parser_detects_unembedded_font() -> None:
+    module = load_preflight_module()
+    output = (
+        "name                                 type              encoding         emb sub uni object ID\n"
+        "------------------------------------ ----------------- ---------------- --- --- --- ---------\n"
+        "ABCDEE+CMR10                        Type 1            Builtin          yes yes yes      5  0\n"
+        "SimSun                               TrueType          WinAnsi          no  no  yes      8  0\n"
+    )
+
+    unembedded = module.find_unembedded_fonts(output)
+
+    assert len(unembedded) == 1
+    assert "SimSun" in unembedded[0]
