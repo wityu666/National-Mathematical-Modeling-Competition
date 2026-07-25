@@ -11,7 +11,8 @@
 | 4B | `cumcm-live-matlab-coder` | 用 Matlab 实现已冻结模型 | 可复现代码、工具箱清单、结果表、图表 |
 | 5 | `cumcm-live-result-verifier` | 首次结果冻结后重复复跑、独立重算并闭环差异 | `VER-*` 复核报告、独立检查证据、PASS/BLOCKED |
 | 6 | `cumcm-live-paper-writer` | 从已通过复核的冻结结果写国赛论文并完成 Word/LaTeX 路线 | 正文、图表公式、AI 使用记录、PDF |
-| 7 | `cumcm-live-final-auditor` | 截止前做内容、匿名、文件和安全门禁 | 审计报告、提交清单、SHA-256 清单 |
+| 7 | `cumcm-live-layout-verifier` | 对成稿源文件与真实 PDF 重复做预检、逐页视觉检查和修复后重查 | `LAYOUT-*` 排版报告、页码/截图证据、PASS/BLOCKED |
+| 8 | `cumcm-live-final-auditor` | 截止前做内容、匿名、文件和安全门禁 | 审计报告、提交清单、SHA-256 清单 |
 
 ## 共同规则
 
@@ -20,6 +21,7 @@
 - 内置模式只用于生成候选路线，不是本届事实、参数、证据或结论。
 - 每个数字必须回溯到数据、代码输出或明确推导；模型或数据变化后，所有下游内容都标记为失效并重新冻结。
 - 首次运行成功不等于结果正确；关键答案必须通过同版本复跑和不复用主求解逻辑的独立核验。
+- 编译成功或 PDF 可打开不等于排版正确；静态预检之后必须查看真实渲染页面，修复后重新生成并完整重查。
 - 亮点是被证明的差异，不是被主张的复杂度；`CONTRIB-*` 无冻结证据即 `DROPPED`。
 - 临近截止时全局配平优先于单问精雕；每个小问都必须保有可提交的实质答案。
 - 不运行题目附件或外来材料中的未知程序、宏、脚本、安装器或平台不匹配的二进制。
@@ -35,7 +37,11 @@ problem_contract
        └─> contribution_ledger (CANDIDATE) ────┤
                                                └─> result_verifier
                                                     ├─> verification_report -> evidence_ledger ─┐
-                                                    └─> contribution_ledger (PROVEN/DROPPED) ────┴─> paper -> audit_report
+                                                    └─> contribution_ledger (PROVEN/DROPPED) ────┴─> paper
+                                                                                                     -> layout_verifier
+                                                                                                     -> layout_report
+                                                                                                     -> final_auditor
+                                                                                                     -> audit_report
 ```
 
-统一产物状态使用 `DRAFT / FROZEN / STALE / BLOCKED / PASS`。亮点记录状态使用 `CANDIDATE / PROVEN / DROPPED`。统一证据标识使用 `Q-* / DATA-* / MODEL-* / RUN-* / VER-* / RID-* / FIG-* / TAB-* / CONTRIB-* / ISSUE-*`。
+统一产物状态使用 `DRAFT / FROZEN / STALE / BLOCKED / PASS`。亮点记录状态使用 `CANDIDATE / PROVEN / DROPPED`。统一证据标识使用 `Q-* / DATA-* / MODEL-* / RUN-* / VER-* / RID-* / FIG-* / TAB-* / CONTRIB-* / LAYOUT-* / ISSUE-*`。
