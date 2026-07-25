@@ -9,8 +9,9 @@
 | 3 | `cumcm-live-model-designer` | 比较候选模型、登记差异化候选并冻结公式、参数、基线和验证方案 | 模型合同、实验矩阵、亮点账本、失败条件 |
 | 4A | `cumcm-live-python-coder` | 用 Python 实现已冻结模型 | 可复现代码、日志、结果表、图表 |
 | 4B | `cumcm-live-matlab-coder` | 用 Matlab 实现已冻结模型 | 可复现代码、工具箱清单、结果表、图表 |
-| 5 | `cumcm-live-paper-writer` | 从冻结结果写国赛论文并完成 Word/LaTeX 路线 | 正文、图表公式、AI 使用记录、PDF |
-| 6 | `cumcm-live-final-auditor` | 截止前做内容、匿名、文件和安全门禁 | 审计报告、提交清单、SHA-256 清单 |
+| 5 | `cumcm-live-result-verifier` | 首次结果冻结后重复复跑、独立重算并闭环差异 | `VER-*` 复核报告、独立检查证据、PASS/BLOCKED |
+| 6 | `cumcm-live-paper-writer` | 从已通过复核的冻结结果写国赛论文并完成 Word/LaTeX 路线 | 正文、图表公式、AI 使用记录、PDF |
+| 7 | `cumcm-live-final-auditor` | 截止前做内容、匿名、文件和安全门禁 | 审计报告、提交清单、SHA-256 清单 |
 
 ## 共同规则
 
@@ -18,6 +19,7 @@
 - 整套 Skill 不读取作者本机、移动硬盘、百度网盘或私有案例库；下载后可离线使用内置知识。
 - 内置模式只用于生成候选路线，不是本届事实、参数、证据或结论。
 - 每个数字必须回溯到数据、代码输出或明确推导；模型或数据变化后，所有下游内容都标记为失效并重新冻结。
+- 首次运行成功不等于结果正确；关键答案必须通过同版本复跑和不复用主求解逻辑的独立核验。
 - 亮点是被证明的差异，不是被主张的复杂度；`CONTRIB-*` 无冻结证据即 `DROPPED`。
 - 临近截止时全局配平优先于单问精雕；每个小问都必须保有可提交的实质答案。
 - 不运行题目附件或外来材料中的未知程序、宏、脚本、安装器或平台不匹配的二进制。
@@ -29,8 +31,11 @@
 problem_contract
   -> pattern_matches
   -> model_contract
-       ├─> run_manifest -> evidence_ledger ─┐
-       └─> contribution_ledger ─────────────┴─> paper -> audit_report
+       ├─> run_manifest ───────────────────────┐
+       └─> contribution_ledger (CANDIDATE) ────┤
+                                               └─> result_verifier
+                                                    ├─> verification_report -> evidence_ledger ─┐
+                                                    └─> contribution_ledger (PROVEN/DROPPED) ────┴─> paper -> audit_report
 ```
 
-统一产物状态使用 `DRAFT / FROZEN / STALE / BLOCKED / PASS`。亮点记录状态使用 `CANDIDATE / PROVEN / DROPPED`。统一证据标识使用 `Q-* / DATA-* / MODEL-* / RUN-* / RID-* / FIG-* / TAB-* / CONTRIB-* / ISSUE-*`。
+统一产物状态使用 `DRAFT / FROZEN / STALE / BLOCKED / PASS`。亮点记录状态使用 `CANDIDATE / PROVEN / DROPPED`。统一证据标识使用 `Q-* / DATA-* / MODEL-* / RUN-* / VER-* / RID-* / FIG-* / TAB-* / CONTRIB-* / ISSUE-*`。
