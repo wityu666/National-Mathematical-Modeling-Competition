@@ -167,3 +167,28 @@ def test_symbol_table_is_required_in_main_body_and_audited() -> None:
     assert "正文符号表位置正确且清晰可读" in layout_report
     assert "完整符号表只放在附录" in auditor_skill
     assert "符号说明表位于正文且与公式定义一致" in audit_report
+
+
+def test_main_body_has_30_page_hard_limit_while_appendix_is_unlimited() -> None:
+    readme = read("README.md")
+    suite = read("SUITE.md")
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
+    layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_protocol = read(
+        "cumcm-live-layout-verifier/references/layout-verification-protocol.md"
+    )
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    audit_protocol = read(
+        "cumcm-live-final-auditor/references/submission-audit-protocol.md"
+    )
+
+    for content in (readme, suite, paper_skill, skeleton, layout_skill, auditor_skill):
+        assert "30 页" in content
+        assert "附录" in content and (
+            "不限" in content or "不设上限" in content or "不设页数上限" in content
+        )
+    assert "main_body_pages <= 30" in layout_protocol
+    assert "main_body_pages <= 30" in audit_protocol
+    assert "核心结果、关键验证、符号说明或复现入口" in paper_skill
+    assert "规避 30 页限制" in paper_skill
