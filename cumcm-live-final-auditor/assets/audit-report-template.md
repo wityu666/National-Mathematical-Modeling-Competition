@@ -24,6 +24,7 @@
 | 无危险文件 | `【PASS/BLOCKED】` | `【】` |
 | 文件大小符合已提供规则 | `【PASS/BLOCKED/N/A】` | `【】` |
 | 摘要与正文关键数值一致 | `【PASS/BLOCKED】` | `【】` |
+| 同版本 `VER-*` 重复复核报告为 PASS | `【PASS/BLOCKED】` | `【Round A / Round B / 硬门】` |
 | 亮点账本已冻结且论文亮点均为 `CONTRIB-PROVEN` | `【PASS/BLOCKED】` | `【】` |
 | 亮点量化 proof 可由专门运行证据复现 | `【PASS/BLOCKED】` | `【】` |
 | 引文可定位 | `【PASS/BLOCKED】` | `【】` |
@@ -43,6 +44,12 @@
 | 抽查项 | 论文位置 | 论文值/陈述 | 溯源标识 | 源文件位置 | 结果 |
 |---|---|---|---|---|---|
 | `【】` | `【】` | `【】` | `【RID/CIT】` | `【】` | `【PASS/BLOCKED】` |
+
+## 重复复核报告抽查
+
+| verification_id | model_freeze_id/run_id | Round A 复跑 | Round B 独立复核 | 题型硬门 | 未覆盖范围 | 结果 |
+|---|---|---|---|---|---|---|
+| `VER-Q?-###` | `【】` | `【】` | `【】` | `【】` | `【】` | `【PASS/BLOCKED】` |
 
 ## AI 使用记录抽查
 
