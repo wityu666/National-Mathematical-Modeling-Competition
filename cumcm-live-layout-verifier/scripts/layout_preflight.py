@@ -125,6 +125,26 @@ def run_tool(command: list[str]) -> tuple[int, str]:
     return completed.returncode, completed.stdout
 
 
+def find_unembedded_fonts(output: str) -> list[str]:
+    """Parse the fixed-width `pdffonts` table without guessing split columns."""
+    lines = output.splitlines()
+    header_index = next((i for i, line in enumerate(lines) if " emb " in line), None)
+    if header_index is None:
+        return []
+    header = lines[header_index]
+    emb_start = header.find("emb")
+    sub_start = header.find("sub", emb_start + 3)
+    if emb_start < 0 or sub_start < 0:
+        return []
+    unembedded: list[str] = []
+    for line in lines[header_index + 2 :]:
+        if not line.strip():
+            continue
+        if line[emb_start:sub_start].strip().lower() == "no":
+            unembedded.append(line.strip())
+    return unembedded
+
+
 def external_pdf_checks(
     pdf: Path,
     issues: list[dict[str, str]],
@@ -147,6 +167,13 @@ def external_pdf_checks(
                 key = key.strip().lower().replace(" ", "_")
                 if key in {"pages", "page_size", "encrypted", "pdf_version"}:
                     metadata[key] = value.strip()
+            if metadata.get("encrypted", "").lower() not in {"", "no"}:
+                issues.append(issue("encrypted-pdf", pdf, "PDF 已加密，可能无法按要求评阅。", "P0"))
+            try:
+                if int(metadata.get("pages", "1")) <= 0:
+                    issues.append(issue("invalid-page-count", pdf, "PDF 页数不是正数。", "P0"))
+            except ValueError:
+                warnings.append("pdfinfo 页数字段无法解析，需人工确认。")
 
     if tool_status["pdffonts"] == "available":
         code, output = run_tool(["pdffonts", str(pdf)])
@@ -154,10 +181,8 @@ def external_pdf_checks(
             warnings.append(f"pdffonts 无法完成字体检查：{output.strip()[:200]}")
         else:
             metadata["font_table_checked"] = True
-            for line in output.splitlines()[2:]:
-                columns = line.split()
-                if len(columns) >= 5 and columns[-2].lower() == "no":
-                    issues.append(issue("font-not-embedded", pdf, f"字体可能未嵌入：{line[:240]}", "P1"))
+            for line in find_unembedded_fonts(output):
+                issues.append(issue("font-not-embedded", pdf, f"字体未嵌入：{line[:240]}", "P1"))
 
     if tool_status["pdftotext"] == "available":
         with tempfile.TemporaryDirectory(prefix="cumcm-layout-") as temp_dir:
