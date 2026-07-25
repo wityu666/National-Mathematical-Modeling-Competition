@@ -11,6 +11,7 @@
 - `layout_id`；
 - 论文源版本与主排版路线；
 - PDF SHA-256、字节数、页数和生成命令；
+- `main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages`、`main_body_pages`；
 - 检查时间、工具版本和当届规则快照；
 - 截图或页码证据。
 
@@ -22,12 +23,21 @@
 
 | 对象 | 硬检查 |
 |---|---|
-| PDF | 存在、文件头/尾、可选大小限制、可选元数据/文本工具结果 |
+| PDF | 存在、文件头/尾、正文最多 30 页、附录不限页、可选大小限制、可选元数据/文本工具结果 |
 | LaTeX | 致命错误、未定义引用/引文、明显 overfull、占位符 |
 | Word | 宏文档、批注、修订、占位符、损坏的 OOXML |
 | 通用源 | `TODO/TBD/待补/待复核/待冻结` 等残留 |
 
 它不能可靠判断审美、阅读流、图表是否过小、灰度是否可辨或分页是否舒服，所以输出只能是 `PRECHECK_PASS/BLOCKED`。
+
+页数使用 PDF 物理页序号：
+
+```text
+main_body_pages = appendix_start_pdf_page - main_start_pdf_page
+appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
+```
+
+没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。正文必须 `<= 30`；附录页数不设上限。只有官方规则明确排除封面等前置页时，`main_start_pdf_page` 才能大于 1，并必须记录规则证据。
 
 ## 4. 视觉检查抽样
 
@@ -40,6 +50,8 @@
 5. 随机页面：从其余页面中随机抽查，防止只看已知热点。
 
 抽样范围必须写入报告；“快速翻过”不算检查。
+
+必须实际查看正文结束页、附录起始页及其前后页，确认附录分界是真实章节边界。核心模型、结果、验证、符号表或复现入口被移入附录以规避 30 页限制时，按 `P0` 处理。
 
 ## 5. Word 路线
 
@@ -86,6 +98,8 @@
 rules_verified
 and pdf_sha_matches
 and precheck_pass
+and main_body_pages <= 30
+and page_boundary_verified
 and visual_scope_complete
 and no_open_P0_or_P1
 and regenerated_after_fix
