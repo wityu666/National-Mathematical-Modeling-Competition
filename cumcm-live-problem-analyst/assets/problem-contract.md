@@ -14,6 +14,8 @@
 | generated_at |  |
 | switch_deadline |  |
 
+> `problem_id` 只能填写 `A`、`B`、`C`。若为 D、E 或其他竞赛题目，将整份合同状态设为 `BLOCKED` 并停止下游交接。
+
 ## 1. 规则与合规
 
 | 字段 | 值 |
