@@ -8,14 +8,19 @@ from typing import Iterable, Sequence
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
+from matplotlib.colors import LinearSegmentedColormap
 
+CUMCM_PALETTE_ID = "cumcm-morandi-v1"
 CUMCM_COLORS = {
-    "blue": "#2F6B9A",
-    "orange": "#E07A5F",
-    "green": "#3D9970",
-    "gray": "#6B7280",
-    "red": "#C44E52",
-    "light": "#F3F4F6",
+    "blue": "#6F8FAF",    # 雾霾蓝
+    "orange": "#C49A7A",  # 陶土棕
+    "green": "#8FA68E",   # 鼠尾草绿
+    "gray": "#8B8D8F",    # 暖中灰
+    "red": "#B77B82",     # 灰豆沙红（重点色）
+    "purple": "#948AA8",  # 灰紫（扩展色）
+    "light": "#F2EFEA",   # 米灰背景
+    "text": "#4F555A",
+    "grid": "#D8D3CC",
 }
 
 CUMCM_PALETTE = [
@@ -25,6 +30,17 @@ CUMCM_PALETTE = [
     CUMCM_COLORS["gray"],
     CUMCM_COLORS["red"],
 ]
+
+CUMCM_SEQUENTIAL_CMAP = LinearSegmentedColormap.from_list(
+    "cumcm_morandi_sequential",
+    ["#F2EFEA", "#C8D0C5", "#8FA68E", "#6F8FAF", "#596673"],
+    N=256,
+)
+CUMCM_DIVERGING_CMAP = LinearSegmentedColormap.from_list(
+    "cumcm_morandi_diverging",
+    ["#7F9AAF", "#D7DFDC", "#F2EFEA", "#E1D2C9", "#B77B82"],
+    N=256,
+)
 
 _CJK_CANDIDATES = [
     "Heiti TC",
@@ -64,7 +80,7 @@ def choose_cjk_font(candidates: Sequence[str] = _CJK_CANDIDATES) -> str:
 
 
 def apply_cumcm_style(font_name: str | None = None) -> str:
-    """Apply a restrained, colorblind-aware paper style and return the font."""
+    """Apply the low-saturation cumcm-morandi-v1 paper style."""
     selected = font_name or choose_cjk_font()
     mpl.rcParams.update(
         {
@@ -81,7 +97,12 @@ def apply_cumcm_style(font_name: str | None = None) -> str:
             "axes.linewidth": 0.8,
             "lines.linewidth": 1.5,
             "lines.markersize": 4.5,
-            "grid.color": "#D1D5DB",
+            "text.color": CUMCM_COLORS["text"],
+            "axes.labelcolor": CUMCM_COLORS["text"],
+            "axes.edgecolor": CUMCM_COLORS["text"],
+            "xtick.color": CUMCM_COLORS["text"],
+            "ytick.color": CUMCM_COLORS["text"],
+            "grid.color": CUMCM_COLORS["grid"],
             "grid.linewidth": 0.6,
             "grid.alpha": 0.65,
             "figure.facecolor": "white",
@@ -96,7 +117,7 @@ def apply_cumcm_style(font_name: str | None = None) -> str:
 
 
 def style_axes(ax, *, grid: bool = True) -> None:
-    """Apply consistent axes treatment without changing the plotted data."""
+    """Apply consistent Morandi axes treatment without changing plotted data."""
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     if grid:
