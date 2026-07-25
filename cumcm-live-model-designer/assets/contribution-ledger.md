@@ -30,6 +30,7 @@
 | `delta_type` | 只取：`建模创新` / `机理洞察` / `更强验证` / `反直觉结论` / `更优结果` / `更好泛化` |
 | `falsification_test` | 哪个具体运行结果会推翻 `claim`；写不出即保持 `DRAFT` |
 | `evidence_ids` | 绑定 `RID-*` / `FIG-*` / `TAB-*` / `MODEL-*`；无证据 ID 自动降级为 `DROPPED` |
+| `verification_ids` | 绑定同版本 `VER-* PASS`；缺失、失效或未完成独立复核时不得 `PROVEN` |
 | `proof` | 已运行结果给出的量化差异、发现或稳定区间，不得写计划和设想 |
 | `cost_risk` | 额外计算/数据代价、适用边界、失效条件和过拟合风险 |
 | `status` | `CANDIDATE` / `PROVEN` / `DROPPED` |
@@ -46,6 +47,7 @@
 | delta_type |  |
 | falsification_test |  |
 | evidence_ids |  |
+| verification_ids |  |
 | proof |  |
 | cost_risk |  |
 | status | CANDIDATE / PROVEN / DROPPED |
@@ -59,6 +61,7 @@ CANDIDATE
   ├─ 模型合同已 FROZEN
   ├─ 对应模型通过全部必需验证门
   ├─ 有专门的 RID/FIG/TAB 运行产物
+  ├─ 同版本 VER-* 报告 PASS
   ├─ proof 与产物一致
   └─ cost_risk、placement、fallback 已填写
         -> PROVEN
@@ -93,9 +96,9 @@ CANDIDATE
 
 - [ ] 每个小问都登记了候选，或明确写明 `无差异化机会`。
 - [ ] 所有 `PROVEN` 记录绑定当前冻结模型和专门运行产物。
+- [ ] 所有 `PROVEN` 记录绑定同版本 `VER-* PASS`，且量化 proof 已独立复核。
 - [ ] 所有 `claim` 均可由明确结果证伪。
 - [ ] 所有 `proof` 均为实际运行结果且可复现。
 - [ ] 所有 `cost_risk`、`placement` 和 `fallback` 已填写。
 - [ ] 无证据、证伪或超时的候选均已 `DROPPED`。
 - [ ] 论文位置与账本一致，未在正文额外发明亮点。
-
