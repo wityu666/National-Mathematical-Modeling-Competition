@@ -26,45 +26,37 @@
 
 ```python
 from cumcm_plot_style import (
-    CUMCM_COLORS,
-    CUMCM_DIVERGING_CMAP,
-    CUMCM_PALETTE_ID,
-    CUMCM_SEQUENTIAL_CMAP,
+    PALETTE_SETS,
     apply_cumcm_style,
     export_figure,
+    get_palette_set,
     label_panels,
     style_axes,
 )
 
-font = apply_cumcm_style()
+palette_set = cfg["palette_set"]  # 必须预先显式选择 SET-A/B/C/D
+palette_spec = get_palette_set(palette_set)
+colors = palette_spec["colors"]
+palette = palette_spec["palette"]
+sequential_cmap = palette_spec["sequential"]
+diverging_cmap = palette_spec["diverging"]
+font = apply_cumcm_style(palette_set)
 fig, ax = plt.subplots(figsize=(7.1, 4.2), constrained_layout=True)
 style_axes(ax)
 ```
 
-默认色板为 `cumcm-morandi-v1`：
-
-| 角色 | 色值 |
-|---|---|
-| 雾霾蓝 | `#6F8FAF` |
-| 陶土棕 | `#C49A7A` |
-| 鼠尾草绿 | `#8FA68E` |
-| 暖中灰 | `#8B8D8F` |
-| 灰豆沙红（重点） | `#B77B82` |
-| 灰紫（扩展） | `#948AA8` |
-| 米灰浅背景 | `#F2EFEA` |
-
-不得改用 Matplotlib 默认高饱和循环色。颜色之外必须使用线型、标记、纹理或直接标签；低饱和不等于低对比。记录 `CUMCM_PALETTE_ID` 到图表清单。
+不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-D` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。各组色值和可辨依据见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外必须使用线型、标记、纹理或直接标签。
 
 记录实际选中的中文字体。若最终 PDF 出现方框或替换字体，修复字体后重跑，不用图片编辑器补字。
 
 ## 3. 原始点、拟合线与区间
 
 ```python
-ax.scatter(x, y, s=22, color=CUMCM_COLORS["blue"],
+ax.scatter(x, y, s=22, color=colors["primary"],
            alpha=0.75, label="观测")
-ax.plot(x_grid, y_hat, color=CUMCM_COLORS["orange"],
+ax.plot(x_grid, y_hat, color=colors["contrast"],
         linewidth=1.6, label="模型")
-ax.fill_between(x_grid, lo, hi, color=CUMCM_COLORS["orange"],
+ax.fill_between(x_grid, lo, hi, color=colors["contrast"],
                 alpha=0.18, linewidth=0, label="95% 区间")
 ```
 
@@ -95,8 +87,8 @@ for i, (name, values) in enumerate(series.items()):
 
 - 使用相同尺度和坐标比例，必要时 `ax.set_aspect("equal")`。
 - 用 `patches`、`annotate` 和箭头直接标尺寸、角度、方向和边界。
-- 连续场默认使用 `CUMCM_SEQUENTIAL_CMAP`。
-- 有正负中心时使用 `TwoSlopeNorm(vcenter=0)` 和 `CUMCM_DIVERGING_CMAP`。
+- 连续场使用所选组派生的 `sequential_cmap`。
+- 有正负中心时使用 `TwoSlopeNorm(vcenter=0)` 和所选组派生的 `diverging_cmap`。
 - 色条必须有变量名、单位、范围。
 - 路径、可行域和障碍物使用不同线型/填充，不只依赖颜色。
 
@@ -105,8 +97,8 @@ for i, (name, values) in enumerate(series.items()):
 ## 7. 优化、收敛与敏感性
 
 ```python
-ax.semilogy(iteration, error, color=CUMCM_COLORS["blue"])
-ax.axhline(tol, color=CUMCM_COLORS["red"], linestyle="--",
+ax.semilogy(iteration, error, color=colors["primary"])
+ax.axhline(tol, color=colors["accent"], linestyle="--",
            linewidth=1.0, label=f"容差={tol:g}")
 ```
 
@@ -158,7 +150,7 @@ PNG 只用于栅格内容或兼容路线；线图、流程图和示意图优先�
 - 中文与数学符号字体正确；
 - 单栏/双栏实际尺寸下文字可读；
 - 颜色、线型、标记在灰度下可区分；
-- 图表使用 `cumcm-morandi-v1`，没有混入默认高饱和色或临时荧光重点色；
+- 图表登记使用同一个 `palette_set`，没有逐图换组或混入默认高饱和色；
 - 图例不挡数据，轴标签与色条有单位；
 - 没有多余边框、软件界面或个人路径；
 - 没有截断柱轴、彩虹色带、3D 饼图；
