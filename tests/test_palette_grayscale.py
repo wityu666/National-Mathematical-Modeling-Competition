@@ -8,7 +8,16 @@ import re
 
 SUITE_ROOT = Path(__file__).resolve().parents[1]
 ROLES = {"primary", "contrast", "auxiliary", "neutral", "accent"}
+COLORED_ROLES = ("primary", "contrast", "auxiliary", "accent")
 LSTAR_ROLE_ORDER = ("primary", "accent", "neutral", "contrast", "auxiliary")
+TARGET_LSTAR = {
+    "primary": 29.6,
+    "accent": 41.8,
+    "neutral": 53.9,
+    "contrast": 66.2,
+    "auxiliary": 78.3,
+}
+LSTAR_TOLERANCE = 0.5
 
 
 def read(relative_path: str) -> str:
@@ -92,6 +101,19 @@ def hls_saturation(hex_value: str) -> float:
     return colorsys.rgb_to_hls(*rgb)[2]
 
 
+def hls_hue_degrees(hex_value: str) -> float:
+    rgb = tuple(
+        int(hex_value[index : index + 2], 16) / 255
+        for index in (1, 3, 5)
+    )
+    return colorsys.rgb_to_hls(*rgb)[0] * 360
+
+
+def hue_distance(left: float, right: float) -> float:
+    absolute = abs(left - right)
+    return min(absolute, 360 - absolute)
+
+
 def parsed_palettes() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, str]]]:
     python_palettes = parse_python_palettes(
         read("cumcm-live-python-coder/assets/cumcm_plot_style.py")
@@ -119,6 +141,12 @@ def test_series_colors_have_monotonic_and_print_safe_lstar_spacing() -> None:
 
     for palette_name, colors in python_palettes.items():
         levels = {role: lstar(value) for role, value in colors.items()}
+        for role, target in TARGET_LSTAR.items():
+            assert abs(levels[role] - target) <= LSTAR_TOLERANCE, (
+                palette_name,
+                role,
+                levels[role],
+            )
         assert all(
             levels[left] < levels[right]
             for left, right in zip(LSTAR_ROLE_ORDER, LSTAR_ROLE_ORDER[1:])
@@ -138,6 +166,35 @@ def test_series_colors_have_monotonic_and_print_safe_lstar_spacing() -> None:
         assert min(adjacent_differences) >= 10, palette_name
         assert min(sorted_levels) >= 20, palette_name
         assert max(sorted_levels) <= 82, palette_name
+
+
+def test_colored_roles_are_saturated_but_academically_restrained() -> None:
+    python_palettes, _ = parsed_palettes()
+
+    for palette_name, colors in python_palettes.items():
+        for role in COLORED_ROLES:
+            saturation = hls_saturation(colors[role])
+            assert 0.20 <= saturation <= 0.65, (
+                palette_name,
+                role,
+                saturation,
+            )
+        assert hls_saturation(colors["neutral"]) <= 0.10, palette_name
+
+
+def test_same_role_hues_are_separated_across_palette_sets() -> None:
+    python_palettes, _ = parsed_palettes()
+
+    for role in COLORED_ROLES:
+        hues = [
+            hls_hue_degrees(colors[role])
+            for colors in python_palettes.values()
+        ]
+        distances = [
+            hue_distance(left, right)
+            for left, right in combinations(hues, 2)
+        ]
+        assert min(distances) >= 60, (role, min(distances))
 
 
 def test_accent_is_the_most_saturated_series_color() -> None:
