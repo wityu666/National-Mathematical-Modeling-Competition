@@ -213,12 +213,12 @@ def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() ->
     auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
 
     palette_sets = ("SET-A", "SET-B", "SET-C", "SET-D")
-    legacy_hex = {"#2F6B9A", "#E07A5F", "#3D9970", "#6B7280", "#C44E52"}
+    set_a_hex = {"#204968", "#E48971", "#8AD0B1", "#7A8190", "#BF2228"}
     for palette_set in palette_sets:
         assert palette_set in python_style
         assert palette_set in matlab_style
         assert palette_set in playbook
-    for color in legacy_hex:
+    for color in set_a_hex:
         assert color in python_style
         assert color in playbook
     for content in (
@@ -231,8 +231,8 @@ def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() ->
         auditor_skill,
     ):
         assert "palette_set" in content
-    assert "47 107 154" in matlab_style
-    assert "196 78 82" in matlab_style
+    assert "32 73 104" in matlab_style
+    assert "191 34 40" in matlab_style
     assert "style.sequential" in matlab_style
     assert "style.diverging" in matlab_style
     assert "get_palette_set" in python_style
