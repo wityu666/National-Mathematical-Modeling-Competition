@@ -22,40 +22,40 @@ paletteSet = upper(strtrim(string(paletteSet)));
 switch paletteSet
     case "SET-A"
         style.colors = [ ...
-            47 107 154;  ... % primary #2F6B9A
-            224 122 95;  ... % contrast #E07A5F
-            61 153 112;  ... % auxiliary #3D9970
-            107 114 128; ... % neutral #6B7280
-            196 78 82     ... % accent #C44E52
+            32 73 104;   ... % primary #204968
+            228 137 113; ... % contrast #E48971
+            138 208 177; ... % auxiliary #8AD0B1
+            122 129 144; ... % neutral #7A8190
+            191 34 40     ... % accent #BF2228
             ] / 255;
-        style.paletteBasis = "大色相间距，主色、对比色和重点色具有明显明度差";
+        style.paletteBasis = "深海蓝—暖珊瑚—薄荷绿与强调红；CIELAB L*≈29.6–78.3，相邻最小 ΔL*=12.07";
     case "SET-B"
         style.colors = [ ...
-            111 143 175; ... % primary #6F8FAF
-            196 154 122; ... % contrast #C49A7A
-            143 166 142; ... % auxiliary #8FA68E
-            139 141 143; ... % neutral #8B8D8F
-            183 123 130  ... % accent #B77B82
+            51 72 92;    ... % primary #33485C
+            195 153 120; ... % contrast #C39978
+            183 198 183; ... % auxiliary #B7C6B7
+            127 129 132; ... % neutral #7F8184
+            162 68 79     ... % accent #A2444F
             ] / 255;
-        style.paletteBasis = "低饱和冷暖分离，并由线型和标记补足相近灰度层级";
+        style.paletteBasis = "低饱和蓝灰—陶土棕—鼠尾草绿与灰豆沙红；CIELAB L*≈29.7–78.4，相邻最小 ΔL*=12.07";
     case "SET-C"
         style.colors = [ ...
-            76 120 168;  ... % primary #4C78A8
-            242 166 90;  ... % contrast #F2A65A
-            114 169 143; ... % auxiliary #72A98F
-            122 127 135; ... % neutral #7A7F87
-            181 101 118  ... % accent #B56576
+            45 72 100;   ... % primary #2D4864
+            238 135 33;  ... % contrast #EE8721
+            167 202 185; ... % auxiliary #A7CAB9
+            125 129 137; ... % neutral #7D8189
+            197 13 52     ... % accent #C50D34
             ] / 255;
-        style.paletteBasis = "主蓝、赭橙和重点玫红具有较大的色相与明度跨度";
+        style.paletteBasis = "清晰蓝—赭橙—柔绿与饱和玫红；CIELAB L*≈29.7–78.4，相邻最小 ΔL*=12.03";
     case "SET-D"
         style.colors = [ ...
-            91 108 143;  ... % primary #5B6C8F
-            192 138 101; ... % contrast #C08A65
-            120 154 159; ... % auxiliary #789A9F
-            119 117 122; ... % neutral #77757A
-            164 111 145  ... % accent #A46F91
+            59 70 92;    ... % primary #3B465C
+            199 151 118; ... % contrast #C79776
+            178 198 200; ... % auxiliary #B2C6C8
+            131 128 134; ... % neutral #838086
+            160 62 125    ... % accent #A03E7D
             ] / 255;
-        style.paletteBasis = "蓝灰、陶棕和灰紫分处不同色相区，重点色与中性灰明度可分";
+        style.paletteBasis = "蓝紫灰—陶棕—青灰与梅紫；CIELAB L*≈29.6–78.5，相邻最小 ΔL*=12.17";
     otherwise
         error("cumcm_plot_style:UnknownPalette", ...
             "Unknown palette_set %s; choose SET-A, SET-B, SET-C, or SET-D", paletteSet);
@@ -64,8 +64,9 @@ end
 style.paletteSet = paletteSet;
 style.light = [245 245 242] / 255;
 style.sequential = interp1( ...
-    linspace(0, 1, 4), ...
-    [style.light; style.colors(3,:); style.colors(1,:); style.colors(4,:)], ...
+    linspace(0, 1, 6), ...
+    [style.light; style.colors(3,:); style.colors(2,:); ...
+     style.colors(4,:); style.colors(5,:); style.colors(1,:)], ...
     linspace(0, 1, 256));
 style.diverging = interp1( ...
     linspace(0, 1, 5), ...
