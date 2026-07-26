@@ -12,36 +12,36 @@ from matplotlib.colors import LinearSegmentedColormap
 
 PALETTE_SETS = {
     "SET-A": {
-        "primary": "#2F6B9A",
-        "contrast": "#E07A5F",
-        "auxiliary": "#3D9970",
-        "neutral": "#6B7280",
-        "accent": "#C44E52",
-        "basis": "蓝—橙—绿的色相间距较大，重点红与主蓝具有明显明度差。",
+        "primary": "#204968",
+        "contrast": "#E48971",
+        "auxiliary": "#8AD0B1",
+        "neutral": "#7A8190",
+        "accent": "#BF2228",
+        "basis": "深海蓝—暖珊瑚—薄荷绿与强调红；CIELAB L*≈29.6–78.3，相邻最小 ΔL*=12.07。",
     },
     "SET-B": {
-        "primary": "#6F8FAF",
-        "contrast": "#C49A7A",
-        "auxiliary": "#8FA68E",
-        "neutral": "#8B8D8F",
-        "accent": "#B77B82",
-        "basis": "低饱和冷暖分离，并以线型和标记补足相近灰度层级。",
+        "primary": "#33485C",
+        "contrast": "#C39978",
+        "auxiliary": "#B7C6B7",
+        "neutral": "#7F8184",
+        "accent": "#A2444F",
+        "basis": "低饱和蓝灰—陶土棕—鼠尾草绿与灰豆沙红；CIELAB L*≈29.7–78.4，相邻最小 ΔL*=12.07。",
     },
     "SET-C": {
-        "primary": "#4C78A8",
-        "contrast": "#F2A65A",
-        "auxiliary": "#72A98F",
-        "neutral": "#7A7F87",
-        "accent": "#B56576",
-        "basis": "主蓝、赭橙和重点玫红具有较大的色相与明度跨度。",
+        "primary": "#2D4864",
+        "contrast": "#EE8721",
+        "auxiliary": "#A7CAB9",
+        "neutral": "#7D8189",
+        "accent": "#C50D34",
+        "basis": "清晰蓝—赭橙—柔绿与饱和玫红；CIELAB L*≈29.7–78.4，相邻最小 ΔL*=12.03。",
     },
     "SET-D": {
-        "primary": "#5B6C8F",
-        "contrast": "#C08A65",
-        "auxiliary": "#789A9F",
-        "neutral": "#77757A",
-        "accent": "#A46F91",
-        "basis": "蓝灰、陶棕和灰紫分处不同色相区，重点色与中性灰明度可分。",
+        "primary": "#3B465C",
+        "contrast": "#C79776",
+        "auxiliary": "#B2C6C8",
+        "neutral": "#838086",
+        "accent": "#A03E7D",
+        "basis": "蓝紫灰—陶棕—青灰与梅紫；CIELAB L*≈29.6–78.5，相邻最小 ΔL*=12.17。",
     },
 }
 
@@ -69,7 +69,14 @@ def get_palette_set(palette_set: str) -> dict[str, object]:
     palette = [colors[role] for role in _SERIES_ROLES]
     sequential = LinearSegmentedColormap.from_list(
         f"cumcm_{normalized.lower()}_sequential",
-        [_CHROME_COLORS["light"], colors["auxiliary"], colors["primary"], colors["neutral"]],
+        [
+            _CHROME_COLORS["light"],
+            colors["auxiliary"],
+            colors["contrast"],
+            colors["neutral"],
+            colors["accent"],
+            colors["primary"],
+        ],
         N=256,
     )
     diverging = LinearSegmentedColormap.from_list(
