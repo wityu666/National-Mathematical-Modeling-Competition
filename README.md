@@ -88,3 +88,9 @@ problem_contract -> pattern_matches -> model_contract
 统一证据标识使用 `Q-* / DATA-* / MODEL-* / RUN-* / VER-* / RID-* / FIG-* / TAB-* / CONTRIB-* / LAYOUT-* / ISSUE-*`。亮点记录使用 `CANDIDATE / PROVEN / DROPPED`；套件产物仍使用 `DRAFT / FROZEN / STALE / BLOCKED / PASS`。
 
 详细调用顺序见 [SUITE.md](SUITE.md)。
+
+## 许可
+
+本仓库以 MIT License 发布，详见 [LICENSE](LICENSE)。
+
+该许可证仅覆盖本仓库自身的原创内容，包括模式卡、规则、配方、脚本、模板和测试。它不覆盖、也不授予任何关于当届赛题、官方文件、参赛者自有数据与论文的权利；这些内容仍归各自权利人所有。
