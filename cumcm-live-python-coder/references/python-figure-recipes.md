@@ -45,7 +45,7 @@ fig, ax = plt.subplots(figsize=(7.1, 4.2), constrained_layout=True)
 style_axes(ax)
 ```
 
-不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-D` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。各组色值和可辨依据见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外必须使用线型、标记、纹理或直接标签。
+不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-D` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。四组均按 CIELAB L* 单调阶梯设计，相邻系列实测 ΔL* 不低于 12；具体色值和色相性格见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外仍必须使用线型、标记、纹理或直接标签作为冗余编码。
 
 记录实际选中的中文字体。若最终 PDF 出现方框或替换字体，修复字体后重跑，不用图片编辑器补字。
 
