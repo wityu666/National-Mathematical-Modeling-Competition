@@ -405,8 +405,8 @@ def resolve_main_page_range(
         and min_main_pages == DEFAULT_MIN_MAIN_PAGES
         and not min_was_explicit
     ):
-        # 当届官方上限低于 24 页时，默认内部下限自动失效并收缩到官方上限。
-        min_main_pages = max_main_pages
+        # 当届官方上限低于 24 页时，默认内部下限自动失效，只保留正页数底线。
+        min_main_pages = 1
 
     if min_main_pages < 1:
         raise ValueError("错误：--min-main-pages 必须大于等于 1。")
