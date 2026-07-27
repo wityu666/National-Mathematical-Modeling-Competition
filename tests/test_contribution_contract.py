@@ -169,29 +169,66 @@ def test_symbol_table_is_required_in_main_body_and_audited() -> None:
     assert "符号说明表位于正文且与公式定义一致" in audit_report
 
 
-def test_main_body_has_30_page_hard_limit_while_appendix_is_unlimited() -> None:
+def test_main_body_page_range_24_to_30_with_unlimited_appendix() -> None:
     readme = read("README.md")
     suite = read("SUITE.md")
     paper_skill = read("cumcm-live-paper-writer/SKILL.md")
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_report = read("cumcm-live-layout-verifier/assets/layout-report.md")
     layout_protocol = read(
         "cumcm-live-layout-verifier/references/layout-verification-protocol.md"
     )
     auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    audit_report = read(
+        "cumcm-live-final-auditor/assets/audit-report-template.md"
+    )
     audit_protocol = read(
         "cumcm-live-final-auditor/references/submission-audit-protocol.md"
     )
 
-    for content in (readme, suite, paper_skill, skeleton, layout_skill, auditor_skill):
-        assert "30 页" in content
+    for content in (
+        readme,
+        suite,
+        paper_skill,
+        skeleton,
+        layout_skill,
+        layout_report,
+        auditor_skill,
+        audit_report,
+    ):
+        assert "24" in content
+        assert "30" in content
         assert "附录" in content and (
             "不限" in content or "不设上限" in content or "不设页数上限" in content
         )
-    assert "main_body_pages <= 30" in layout_protocol
-    assert "main_body_pages <= 30" in audit_protocol
+    assert "24 <= main_body_pages <= 30" in layout_protocol
+    assert "24 <= main_body_pages <= 30" in audit_protocol
+    assert "用户已确认的内部质量门" in paper_skill
+    assert "用户已确认的内部质量门" in auditor_skill
+    assert "官方上限低于 24 页" in layout_skill
+    assert "官方上限低于 24 页" in audit_protocol
     assert "核心结果、关键验证、符号说明或复现入口" in paper_skill
-    assert "规避 30 页限制" in paper_skill
+    assert "规避 30 页上限" in paper_skill
+
+
+def test_page_floor_has_anti_padding_guards() -> None:
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    required_guards = (
+        "放大图片",
+        "增大字号行距",
+        "完整代码",
+        "复述题面",
+        "装饰性图表",
+        "候选算法",
+    )
+
+    for content in (paper_skill, auditor_skill):
+        for guard in required_guards:
+            assert guard in content
+        assert "P0" in content
+    assert "页数不足通常是漏答的症状，不是排版问题" in paper_skill
 
 
 def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() -> None:
