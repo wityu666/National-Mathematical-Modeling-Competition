@@ -50,6 +50,9 @@ def test_safe_pdf_and_source_only_precheck_pass(tmp_path: Path) -> None:
     assert result.returncode == 0
     assert report["status"] == "PRECHECK_PASS"
     assert report["visual_qa_required"] is True
+    assert report["page_limit"]["min_main_pages"] == 24
+    assert report["page_limit"]["max_main_pages"] == 30
+    assert any("24–30" in warning for warning in report["warnings"])
 
 
 def test_invalid_pdf_header_is_blocked(tmp_path: Path) -> None:
@@ -138,6 +141,52 @@ def test_pdffonts_fixed_width_parser_detects_unembedded_font() -> None:
     assert "SimSun" in unembedded[0]
 
 
+def test_24_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=41,
+        main_start_page=1,
+        appendix_start_page=25,
+        min_main_pages=24,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert result["status"] == "PASS"
+    assert result["min_main_pages"] == 24
+    assert result["max_main_pages"] == 30
+    assert result["main_body_pages"] == 24
+    assert result["appendix_pages"] == 17
+    assert issues == []
+
+
+def test_23_body_pages_is_blocked_by_page_floor(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=40,
+        main_start_page=1,
+        appendix_start_page=24,
+        min_main_pages=24,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert result["status"] == "BLOCKED"
+    assert result["main_body_pages"] == 23
+    assert any(item["code"] == "main-body-under-page-floor" for item in issues)
+    assert any(item["severity"] == "P0" for item in issues)
+
+
 def test_30_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
     module = load_preflight_module()
     issues = []
@@ -147,6 +196,7 @@ def test_30_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
         total_pages=47,
         main_start_page=1,
         appendix_start_page=31,
+        min_main_pages=24,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
@@ -168,6 +218,7 @@ def test_31_body_pages_is_blocked_even_with_appendix(tmp_path: Path) -> None:
         total_pages=47,
         main_start_page=1,
         appendix_start_page=32,
+        min_main_pages=24,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
@@ -188,6 +239,7 @@ def test_no_appendix_counts_body_through_last_page(tmp_path: Path) -> None:
         total_pages=31,
         main_start_page=1,
         appendix_start_page=None,
+        min_main_pages=24,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
@@ -207,3 +259,105 @@ def test_cli_cannot_relax_30_page_hard_limit(tmp_path: Path) -> None:
 
     assert result.returncode == 2
     assert "不能放宽 30 页硬门" in result.stderr
+
+
+def test_cli_rejects_minimum_above_maximum(tmp_path: Path) -> None:
+    pdf = tmp_path / "paper.pdf"
+    write_minimal_pdf(pdf)
+
+    result = run_preflight(
+        pdf,
+        "--min-main-pages",
+        "30",
+        "--max-main-pages",
+        "29",
+    )
+
+    assert result.returncode == 2
+    assert "--min-main-pages 不能高于 --max-main-pages" in result.stderr
+
+
+def test_cli_cannot_lower_floor_without_official_cap_below_24(
+    tmp_path: Path,
+) -> None:
+    pdf = tmp_path / "paper.pdf"
+    write_minimal_pdf(pdf)
+
+    result = run_preflight(
+        pdf,
+        "--min-main-pages",
+        "23",
+        "--max-main-pages",
+        "30",
+    )
+
+    assert result.returncode == 2
+    assert "仅当 --max-main-pages 同时低于 24" in result.stderr
+
+
+def test_human_output_displays_allowed_page_range(tmp_path: Path) -> None:
+    pdf = tmp_path / "paper.pdf"
+    write_minimal_pdf(pdf)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            str(pdf),
+            "--skip-external-tools",
+        ],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+
+    assert result.returncode == 0
+    assert "main_body_pages=None allowed_range=24–30" in result.stdout
+
+
+def test_official_20_page_cap_allows_matching_20_page_floor(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    args = module.parse_args(
+        [
+            str(tmp_path / "paper.pdf"),
+            "--max-main-pages",
+            "20",
+            "--min-main-pages",
+            "20",
+        ]
+    )
+    min_pages, max_pages = module.resolve_main_page_range(
+        args.min_main_pages,
+        args.max_main_pages,
+        min_was_explicit=True,
+    )
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=35,
+        main_start_page=1,
+        appendix_start_page=21,
+        min_main_pages=min_pages,
+        max_main_pages=max_pages,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    assert (min_pages, max_pages) == (20, 20)
+    assert result["main_body_pages"] == 20
+    assert result["status"] == "PASS"
+    assert issues == []
+
+
+def test_official_cap_below_24_auto_disables_default_floor(tmp_path: Path) -> None:
+    module = load_preflight_module()
+
+    min_pages, max_pages = module.resolve_main_page_range(
+        24,
+        20,
+        min_was_explicit=False,
+    )
+
+    assert (min_pages, max_pages) == (20, 20)
