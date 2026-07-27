@@ -360,4 +360,4 @@ def test_official_cap_below_24_auto_disables_default_floor(tmp_path: Path) -> No
         min_was_explicit=False,
     )
 
-    assert (min_pages, max_pages) == (20, 20)
+    assert (min_pages, max_pages) == (1, 20)
