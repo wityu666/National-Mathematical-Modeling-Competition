@@ -37,7 +37,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 ```
 
-没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。默认执行用户已确认的内部质量门 `24 <= main_body_pages <= 30`；附录页数不设上限。24 页下限不是官方要求：当届官方上限低于 24 页时，该下限自动失效，`min_main_pages` 收缩到官方上限；当届上限为 24 页或以上时不得调低内部下限。只有官方规则明确排除封面等前置页时，`main_start_pdf_page` 才能大于 1，并必须记录规则证据。
+没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。默认执行用户已确认的内部质量门 `24 <= main_body_pages <= 30`；附录页数不设上限。24 页下限不是官方要求：当届官方上限低于 24 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。当届上限为 24 页或以上时不得调低内部下限。只有官方规则明确排除封面等前置页时，`main_start_pdf_page` 才能大于 1，并必须记录规则证据。
 
 ## 4. 视觉检查抽样
 
