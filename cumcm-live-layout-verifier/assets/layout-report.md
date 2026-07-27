@@ -14,7 +14,7 @@
 | PDF 字节数/页数 | `【】` |
 | 正文起始 PDF 物理页 | `【main_start_pdf_page】` |
 | 附录起始 PDF 物理页 | `【appendix_start_pdf_page；无附录则 N/A】` |
-| 正文实测页数 | `【main_body_pages；必须 ≤30】` |
+| 正文实测页数 | `【main_body_pages；默认必须为 24–30】` |
 | 附录页数 | `【不限页】` |
 | 生成命令 | `【】` |
 | 当届规则证据 | `【文件/链接与位置】` |
@@ -24,7 +24,7 @@
 | 项目 | 状态 | 证据 |
 |---|---|---|
 | PDF 结构与可读性 | `【PRECHECK_PASS/BLOCKED】` | `【JSON/日志】` |
-| 正文 30 页上限 | `【PASS/BLOCKED/UNVERIFIED】` | `【正文起始页/附录起始页/总页数/计算式】` |
+| 正文 24–30 页区间 | `【PASS/BLOCKED/UNVERIFIED】` | `【min/max、正文起始页/附录起始页/总页数/计算式；官方例外证据】` |
 | Word 批注、修订、宏 | `【PASS/BLOCKED/N/A】` | `【】` |
 | LaTeX 错误、引用、overfull | `【PASS/BLOCKED/N/A】` | `【】` |
 | 占位符与模板提示 | `【PASS/BLOCKED】` | `【】` |
@@ -60,7 +60,8 @@
 | 条件 | 状态 | 证据 |
 |---|---|---|
 | 当前 PDF SHA 与报告一致 | `【PASS/BLOCKED】` | `【】` |
-| 正文实测不超过 30 页 | `【PASS/BLOCKED】` | `【main_body_pages；附录页数不限】` |
+| 正文实测处于有效区间 | `【PASS/BLOCKED】` | `【默认 24–30；main_body_pages；官方上限低于 24 页时的 min/max；附录页数不限】` |
+| 正文无版式或内容注水 | `【PASS/BLOCKED】` | `【字号/行距/页边距/图表尺寸/重复内容/正文材料用途】` |
 | 正文/附录物理页边界已核验 | `【PASS/BLOCKED】` | `【页码/截图/规则证据】` |
 | 当届版式与匿名规则已核验 | `【PASS/BLOCKED】` | `【】` |
 | Round A 为 PRECHECK_PASS | `【PASS/BLOCKED】` | `【】` |
