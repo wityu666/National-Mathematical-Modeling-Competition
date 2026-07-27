@@ -33,6 +33,8 @@ LATEX_HARD_PATTERNS = {
     "overfull-box": re.compile(r"Overfull \\[hv]box", re.I),
 }
 TEXT_EXTENSIONS = {".tex", ".log", ".md", ".txt", ".bib", ".sty", ".cls"}
+DEFAULT_MIN_MAIN_PAGES = 24
+MAX_MAIN_PAGES_HARD_CEILING = 30
 
 
 def issue(code: str, path: Path, detail: str, severity: str = "P1") -> dict[str, str]:
@@ -149,6 +151,7 @@ def evaluate_page_limit(
     total_pages: int | None,
     main_start_page: int,
     appendix_start_page: int | None,
+    min_main_pages: int,
     max_main_pages: int,
     pdf: Path,
     issues: list[dict[str, str]],
@@ -157,6 +160,7 @@ def evaluate_page_limit(
     """Evaluate the physical-PDF-page boundary between body and appendix."""
     result: dict[str, Any] = {
         "status": "UNVERIFIED",
+        "min_main_pages": min_main_pages,
         "max_main_pages": max_main_pages,
         "main_start_pdf_page": main_start_page,
         "appendix_start_pdf_page": appendix_start_page,
@@ -165,7 +169,10 @@ def evaluate_page_limit(
         "appendix_pages": None,
     }
     if total_pages is None:
-        warnings.append("无法自动取得 PDF 总页数；Round B 必须人工核验正文不超过 30 页。")
+        warnings.append(
+            "无法自动取得 PDF 总页数；"
+            f"Round B 必须人工核验正文页数在 {min_main_pages}–{max_main_pages} 页之间。"
+        )
         return result
 
     appendix_start = appendix_start_page or total_pages + 1
@@ -186,7 +193,18 @@ def evaluate_page_limit(
     appendix_pages = total_pages - appendix_start + 1 if appendix_start <= total_pages else 0
     result["main_body_pages"] = main_pages
     result["appendix_pages"] = appendix_pages
-    if main_pages > max_main_pages:
+    if main_pages < min_main_pages:
+        issues.append(
+            issue(
+                "main-body-under-page-floor",
+                pdf,
+                f"正文 {main_pages} 页，低于 {min_main_pages} 页下限；"
+                "正文深度可能不足或存在小问未实质作答。",
+                "P0",
+            )
+        )
+        result["status"] = "BLOCKED"
+    elif main_pages > max_main_pages:
         issues.append(
             issue(
                 "main-body-over-page-limit",
@@ -261,6 +279,7 @@ def build_report(
     max_pdf_mb: float | None,
     main_start_page: int,
     appendix_start_page: int | None,
+    min_main_pages: int,
     max_main_pages: int,
     skip_external_tools: bool,
 ) -> dict[str, Any]:
@@ -303,6 +322,7 @@ def build_report(
         total_pages,
         main_start_page,
         appendix_start_page,
+        min_main_pages,
         max_main_pages,
         pdf,
         issues,
@@ -341,9 +361,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help="附录在最终 PDF 中的起始物理页；无附录时省略。",
     )
     parser.add_argument(
+        "--min-main-pages",
+        type=int,
+        default=DEFAULT_MIN_MAIN_PAGES,
+        help=(
+            "正文页数下限，默认 24；仅当当届官方规则的上限低于 24 时"
+            "才允许调低。"
+        ),
+    )
+    parser.add_argument(
         "--max-main-pages",
         type=int,
-        default=30,
+        default=MAX_MAIN_PAGES_HARD_CEILING,
         help="正文页数上限，默认且最高为 30；只允许按更严格规则调低，附录不计入。",
     )
     parser.add_argument("--json", action="store_true")
@@ -355,8 +384,50 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def option_was_supplied(argv: list[str], option: str) -> bool:
+    return any(token == option or token.startswith(f"{option}=") for token in argv)
+
+
+def resolve_main_page_range(
+    min_main_pages: int,
+    max_main_pages: int,
+    *,
+    min_was_explicit: bool,
+) -> tuple[int, int]:
+    """Validate the internal page gate and apply an official stricter cap."""
+    if not 1 <= max_main_pages <= MAX_MAIN_PAGES_HARD_CEILING:
+        raise ValueError(
+            "错误：--max-main-pages 必须在 1–30 之间，不能放宽 30 页硬门。"
+        )
+
+    if (
+        max_main_pages < DEFAULT_MIN_MAIN_PAGES
+        and min_main_pages == DEFAULT_MIN_MAIN_PAGES
+        and not min_was_explicit
+    ):
+        # 当届官方上限低于 24 页时，默认内部下限自动失效并收缩到官方上限。
+        min_main_pages = max_main_pages
+
+    if min_main_pages < 1:
+        raise ValueError("错误：--min-main-pages 必须大于等于 1。")
+    if min_main_pages > max_main_pages:
+        raise ValueError(
+            "错误：--min-main-pages 不能高于 --max-main-pages；正文页数区间不能为空。"
+        )
+    if (
+        min_main_pages < DEFAULT_MIN_MAIN_PAGES
+        and max_main_pages >= DEFAULT_MIN_MAIN_PAGES
+    ):
+        raise ValueError(
+            "错误：24 页下限是用户已确认的内部质量门；"
+            "仅当 --max-main-pages 同时低于 24（当届官方上限更严）时才允许调低。"
+        )
+    return min_main_pages, max_main_pages
+
+
 def main(argv: list[str] | None = None) -> int:
-    args = parse_args(argv or sys.argv[1:])
+    raw_argv = list(argv) if argv is not None else sys.argv[1:]
+    args = parse_args(raw_argv)
     if not args.pdf.is_file():
         print(f"错误：PDF 路径不存在或不是文件：{args.pdf}", file=sys.stderr)
         return 2
@@ -372,8 +443,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.appendix_start_page is not None and args.appendix_start_page <= 0:
         print("错误：--appendix-start-page 必须大于 0。", file=sys.stderr)
         return 2
-    if not 1 <= args.max_main_pages <= 30:
-        print("错误：--max-main-pages 必须在 1–30 之间，不能放宽 30 页硬门。", file=sys.stderr)
+    try:
+        min_main_pages, max_main_pages = resolve_main_page_range(
+            args.min_main_pages,
+            args.max_main_pages,
+            min_was_explicit=option_was_supplied(raw_argv, "--min-main-pages"),
+        )
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
         return 2
 
     report = build_report(
@@ -382,7 +459,8 @@ def main(argv: list[str] | None = None) -> int:
         args.max_pdf_mb,
         args.main_start_page,
         args.appendix_start_page,
-        args.max_main_pages,
+        min_main_pages,
+        max_main_pages,
         args.skip_external_tools,
     )
     if args.json:
@@ -392,7 +470,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"visual_qa_required={str(report['visual_qa_required']).lower()}")
         print(f"pdf_sha256={report['pdf_sha256']}")
         print(f"page_limit_status={report['page_limit']['status']}")
-        print(f"main_body_pages={report['page_limit']['main_body_pages']}")
+        print(
+            f"main_body_pages={report['page_limit']['main_body_pages']} "
+            f"allowed_range={report['page_limit']['min_main_pages']}"
+            f"–{report['page_limit']['max_main_pages']}"
+        )
         for found in report["issues"]:
             print(f"{found['severity']} {found['code']}: {found['path']} - {found['detail']}")
         for warning in report["warnings"]:
