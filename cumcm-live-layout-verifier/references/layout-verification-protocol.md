@@ -23,7 +23,7 @@
 
 | 对象 | 硬检查 |
 |---|---|
-| PDF | 存在、文件头/尾、正文最多 30 页、附录不限页、可选大小限制、可选元数据/文本工具结果 |
+| PDF | 存在、文件头/尾、正文默认 24–30 页、附录不限页、可选大小限制、可选元数据/文本工具结果 |
 | LaTeX | 致命错误、未定义引用/引文、明显 overfull、占位符 |
 | Word | 宏文档、批注、修订、占位符、损坏的 OOXML |
 | 通用源 | `TODO/TBD/待补/待复核/待冻结` 等残留 |
@@ -37,7 +37,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 ```
 
-没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。正文必须 `<= 30`；附录页数不设上限。只有官方规则明确排除封面等前置页时，`main_start_pdf_page` 才能大于 1，并必须记录规则证据。
+没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。默认执行用户已确认的内部质量门 `24 <= main_body_pages <= 30`；附录页数不设上限。24 页下限不是官方要求：当届官方上限低于 24 页时，该下限自动失效，`min_main_pages` 收缩到官方上限；当届上限为 24 页或以上时不得调低内部下限。只有官方规则明确排除封面等前置页时，`main_start_pdf_page` 才能大于 1，并必须记录规则证据。
 
 ## 4. 视觉检查抽样
 
@@ -51,7 +51,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 抽样范围必须写入报告；“快速翻过”不算检查。
 
-必须实际查看正文结束页、附录起始页及其前后页，确认附录分界是真实章节边界。核心模型、结果、验证、符号表或复现入口被移入附录以规避 30 页限制时，按 `P0` 处理。
+必须实际查看正文结束页、附录起始页及其前后页，确认附录分界是真实章节边界。核心模型、结果、验证、符号表或复现入口被移入附录以规避 30 页上限时，按 `P0` 处理；放大图文、扩大字号行距或页边距、重复叙述、反复出现同一图表、添加装饰图表，或把完整代码、批量中间表、原始数据及未使用算法搬入正文凑足 24 页，同样按 `P0` 处理。
 
 ## 5. Word 路线
 
@@ -98,7 +98,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 rules_verified
 and pdf_sha_matches
 and precheck_pass
-and main_body_pages <= 30
+and min_main_pages <= main_body_pages <= max_main_pages
 and page_boundary_verified
 and visual_scope_complete
 and no_open_P0_or_P1
