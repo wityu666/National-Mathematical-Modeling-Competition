@@ -18,6 +18,7 @@ def test_content_gates_remain_after_sentence_template_removal() -> None:
         for keyword in ("数据", "处理", "模型", "求解", "结果", "验证"):
             assert keyword in content
     assert "第一屏至少放一条 CONTRIB-PROVEN" in skeleton
+    assert "24" in skeleton
     assert "30 页" in skeleton
 
 
