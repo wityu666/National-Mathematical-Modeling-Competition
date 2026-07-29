@@ -18,6 +18,16 @@ NO_CROSS_TEAM_TEMPLATE_GUARDS = (
     "不得形成跨队伍统一的固定子结构",
     "不得照搬其他队伍的固定子结构",
 )
+SUBHEADING_REQUIRED_GUARDS = (
+    "本章必须设置能概括实际推导、求解或验证任务的描述性小标题",
+    "本章必须用描述性小标题呈现问题二的建模与证据推进",
+    "本章必须设置描述性小标题",
+)
+NO_GATE_AS_SUBHEADING_GUARDS = (
+    "不得把内容门名称直接复制为小标题",
+    "不得将内容门名称直接作为小标题",
+    "内容门名称不得直接作为小标题",
+)
 
 
 def read(relative_path: str) -> str:
@@ -133,6 +143,22 @@ def test_defingerprint_rule_remains_in_each_question_section() -> None:
         ), question
 
 
+def test_each_question_requires_descriptive_subheadings_without_fixed_titles() -> None:
+    sections = body_sections()
+
+    for question, section in sections.items():
+        # 锁：每个主体问题章节都必须用描述性小标题组织论证层次。
+        assert any(
+            marker in section for marker in SUBHEADING_REQUIRED_GUARDS
+        ), question
+        # 锁：内容门只能约束覆盖范围，不能被直接复制成跨问统一标题。
+        assert any(
+            marker in section for marker in NO_GATE_AS_SUBHEADING_GUARDS
+        ), question
+        # 锁：每问都必须明确禁止整章写成无层次长段。
+        assert "无层次" in section and "长段" in section, question
+
+
 def test_skeleton_has_one_shared_gate_but_variable_structure_principle() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
 
@@ -186,3 +212,24 @@ def test_final_auditor_grades_missing_question_gates() -> None:
     ):
         # 锁：审计报告必须为每项核心内容门提供定位列。
         assert gate in report
+
+
+def test_subheading_gate_reaches_writer_layout_and_final_audit() -> None:
+    writer = read("cumcm-live-paper-writer/SKILL.md")
+    layout = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_report = read("cumcm-live-layout-verifier/assets/layout-report.md")
+    auditor = read("cumcm-live-final-auditor/SKILL.md")
+    audit_report = read("cumcm-live-final-auditor/assets/audit-report-template.md")
+
+    # 锁：写作阶段必须要求主体三问每章使用描述性小标题。
+    assert "主体三问的每一章必须使用描述性小标题组织正文" in writer
+    # 锁：写作一致性检查必须防止七项内容门被复制成统一标题。
+    assert "没有把七项内容门复制成三问统一标题" in writer
+    # 锁：排版复核必须逐问检查小标题的可见性和层级。
+    assert "主体三问各章的描述性小标题及其层级、编号、分页" in layout
+    # 锁：排版报告必须留存逐问小标题的页码与截图证据。
+    assert "主体三问均有描述性小标题且层级、分页正确" in layout_report
+    # 锁：终审必须把整章无小标题或无层次长段列为 P1。
+    assert "任一问整章没有小标题" in auditor and "按 `P1` 处理" in auditor
+    # 锁：终审报告必须提供逐问小标题审计表。
+    assert "## 主体小标题核对" in audit_report
