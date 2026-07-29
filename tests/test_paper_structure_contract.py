@@ -36,8 +36,8 @@ def test_target_top_level_sections_exist_in_order() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     target_sections = (
         "## 摘要",
-        "## 目录",
         "## 关键词",
+        "## 目录",
         "## 一、问题重述",
         "## 二、问题分析",
         "## 三、模型假设",
@@ -64,7 +64,7 @@ def test_target_top_level_sections_exist_in_order() -> None:
     ) < skeleton.index("## 附录")
 
 
-def test_table_of_contents_follows_abstract_and_stays_synchronized() -> None:
+def test_keywords_follow_abstract_before_synchronized_table_of_contents() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     paper_skill = read("cumcm-live-paper-writer/SKILL.md")
     layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
@@ -72,9 +72,9 @@ def test_table_of_contents_follows_abstract_and_stays_synchronized() -> None:
     auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
     audit_report = read("cumcm-live-final-auditor/assets/audit-report-template.md")
 
-    # 锁：正式结构必须按摘要、目录、关键词顺序排列。
-    assert skeleton.index("## 摘要") < skeleton.index("## 目录") < skeleton.index(
-        "## 关键词"
+    # 锁：正式结构必须按摘要、关键词、目录顺序排列。
+    assert skeleton.index("## 摘要") < skeleton.index("## 关键词") < skeleton.index(
+        "## 目录"
     )
     # 锁：目录必须由 Word 或 LaTeX 排版工具自动生成。
     assert "Word 自动目录" in skeleton and r"\tableofcontents" in skeleton
@@ -88,10 +88,10 @@ def test_table_of_contents_follows_abstract_and_stays_synchronized() -> None:
     assert "目录位置、自动生成状态、标题层级和页码一致性已检查" in layout_skill
     # 锁：排版报告必须记录目录核对证据。
     assert "目录位置与标题、层级、页码一致" in layout_report
-    # 锁：终审必须独立核对目录与最终正文一致。
-    assert "目录紧接摘要、关键词位于目录之后" in auditor_skill
+    # 锁：终审必须独立核对摘要关键词与目录顺序。
+    assert "关键词紧随摘要，目录位于关键词之后、正文之前" in auditor_skill
     # 锁：终审报告必须有独立目录硬门。
-    assert "目录紧接摘要且与正文标题、层级、页码一致" in audit_report
+    assert "摘要后含关键词，目录位于关键词之后" in audit_report
 
 
 def test_required_subsection_titles_exist() -> None:
