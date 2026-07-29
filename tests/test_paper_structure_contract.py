@@ -36,6 +36,7 @@ def test_target_top_level_sections_exist_in_order() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     target_sections = (
         "## 摘要",
+        "## 目录",
         "## 关键词",
         "## 一、问题重述",
         "## 二、问题分析",
@@ -51,7 +52,7 @@ def test_target_top_level_sections_exist_in_order() -> None:
     )
 
     positions = [skeleton.index(title) for title in target_sections]
-    # 锁：十三个正式顶层节必须严格按目标结构排序。
+    # 锁：十四个正式顶层节必须严格按目标结构排序。
     assert positions == sorted(positions)
     for title in target_sections:
         # 锁：每个正式顶层节必须唯一，不能遗漏或重复。
@@ -61,6 +62,36 @@ def test_target_top_level_sections_exist_in_order() -> None:
     assert skeleton.index("## 参考文献") < skeleton.index(
         "## AI 使用记录"
     ) < skeleton.index("## 附录")
+
+
+def test_table_of_contents_follows_abstract_and_stays_synchronized() -> None:
+    skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
+    paper_skill = read("cumcm-live-paper-writer/SKILL.md")
+    layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
+    layout_report = read("cumcm-live-layout-verifier/assets/layout-report.md")
+    auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
+    audit_report = read("cumcm-live-final-auditor/assets/audit-report-template.md")
+
+    # 锁：正式结构必须按摘要、目录、关键词顺序排列。
+    assert skeleton.index("## 摘要") < skeleton.index("## 目录") < skeleton.index(
+        "## 关键词"
+    )
+    # 锁：目录必须由 Word 或 LaTeX 排版工具自动生成。
+    assert "Word 自动目录" in skeleton and r"\tableofcontents" in skeleton
+    # 锁：目录页码不得由参赛队手工维护。
+    assert "不得手工输入或维护目录页码" in skeleton
+    # 锁：paper-writer 必须在分页冻结后更新目录。
+    assert "内容与分页冻结后生成目录" in paper_skill
+    # 锁：排版复核不得再把目录视为可选项。
+    assert "目录（如有）" not in layout_skill
+    # 锁：排版复核必须核对目录位置及标题、层级、页码。
+    assert "目录位置、自动生成状态、标题层级和页码一致性已检查" in layout_skill
+    # 锁：排版报告必须记录目录核对证据。
+    assert "目录位置与标题、层级、页码一致" in layout_report
+    # 锁：终审必须独立核对目录与最终正文一致。
+    assert "目录紧接摘要、关键词位于目录之后" in auditor_skill
+    # 锁：终审报告必须有独立目录硬门。
+    assert "目录紧接摘要且与正文标题、层级、页码一致" in audit_report
 
 
 def test_required_subsection_titles_exist() -> None:
