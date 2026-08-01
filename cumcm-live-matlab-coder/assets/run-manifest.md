@@ -68,7 +68,7 @@
 | primary_metric |  |
 | timeout_or_stop_condition |  |
 | fallback_deadline |  |
-| palette_set | `SET-A / SET-B / SET-C / SET-D；出图前显式选择` |
+| palette_set | `SET-A / SET-B / SET-C / SET-D / SET-E / SET-F；出图前显式选择` |
 
 ### 精确批处理命令
 

@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
 先读 [references/python-figure-recipes.md](references/python-figure-recipes.md)，并可复制 [assets/cumcm_plot_style.py](assets/cumcm_plot_style.py) 到本次源码目录。每张图先声明唯一结论，再选择图型；丰富性来自机理、结果、验证和敏感性等互补证据，不来自装饰。
 
-- 开始出图前从样式资产的 `SET-A` 至 `SET-D` 中显式选择一组，调用 `apply_cumcm_style(palette_set)`，并在运行清单记录 `palette_set`；不得退回 Matplotlib 默认高饱和循环色。
+- 开始出图前从样式资产的 `SET-A` 至 `SET-F` 中显式选择一组，调用 `apply_cumcm_style(palette_set)`，并在运行清单记录 `palette_set`；不得退回 Matplotlib 默认高饱和循环色。
 - 同一对象跨图保持颜色、线型和标记一致。
 - 全文只使用已选组，不得逐图换组；颜色不能作为唯一编码，比较组必须同时使用线型、标记、填充纹理或直接标签。
 - 拟合图同时显示原始点；预测图分开训练/验证/测试；随机结果显示分布或区间。

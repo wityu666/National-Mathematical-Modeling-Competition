@@ -338,8 +338,8 @@ def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() ->
     layout_skill = read("cumcm-live-layout-verifier/SKILL.md")
     auditor_skill = read("cumcm-live-final-auditor/SKILL.md")
 
-    palette_sets = ("SET-A", "SET-B", "SET-C", "SET-D")
-    set_a_hex = {"#2B495D", "#B3A14B", "#D0BADC", "#818181", "#B6303B"}
+    palette_sets = ("SET-A", "SET-B", "SET-C", "SET-D", "SET-E", "SET-F")
+    set_a_hex = {"#3B3B90", "#A5A54A", "#D9B7D9", "#818181", "#B82E2E"}
     for palette_set in palette_sets:
         # 锁：Python 样式必须提供每个已批准配色组。
         assert palette_set in python_style
@@ -364,9 +364,9 @@ def test_palette_sets_are_explicit_and_consistent_across_plotting_and_audit() ->
         # 锁：出图、写作、排版和终审全链路必须传递 palette_set。
         assert "palette_set" in content
     # 锁：MATLAB SET-A 的主色 RGB 必须与十六进制定义一致。
-    assert "43 73 93" in matlab_style
+    assert "59 59 144" in matlab_style
     # 锁：MATLAB SET-A 的重点色 RGB 必须与十六进制定义一致。
-    assert "182 48 59" in matlab_style
+    assert "184 46 46" in matlab_style
     # 锁：MATLAB 样式必须保留顺序色带。
     assert "style.sequential" in matlab_style
     # 锁：MATLAB 样式必须保留双向色带。

@@ -34,7 +34,7 @@ from cumcm_plot_style import (
     style_axes,
 )
 
-palette_set = cfg["palette_set"]  # 必须预先显式选择 SET-A/B/C/D
+palette_set = cfg["palette_set"]  # 必须预先显式选择 SET-A/B/C/D/E/F
 palette_spec = get_palette_set(palette_set)
 colors = palette_spec["colors"]
 palette = palette_spec["palette"]
@@ -45,7 +45,7 @@ fig, ax = plt.subplots(figsize=(7.1, 4.2), constrained_layout=True)
 style_axes(ax)
 ```
 
-不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-D` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。四组均按统一的 CIELAB L* 单调阶梯与逐组色相旋转设计，相邻系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外仍必须使用线型、标记、纹理或直接标签作为冗余编码。
+不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-F` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。六组均按统一的 CIELAB L* 单调阶梯与逐组 60° 色相旋转设计，相邻系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外仍必须使用线型、标记、纹理或直接标签作为冗余编码。
 
 记录实际选中的中文字体。若最终 PDF 出现方框或替换字体，修复字体后重跑，不用图片编辑器补字。
 

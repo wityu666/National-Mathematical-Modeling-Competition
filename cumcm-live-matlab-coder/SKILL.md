@@ -114,7 +114,7 @@ end
 
 先读 [references/matlab-figure-recipes.md](references/matlab-figure-recipes.md)，并可复制 [assets/cumcm_plot_style.m](assets/cumcm_plot_style.m) 到本次最小源码目录。每张图先声明唯一结论，再按机理、结果、验证或敏感性选择图型。
 
-- 开始出图前从样式资产的 `SET-A` 至 `SET-D` 中显式选择一组，调用 `cumcm_plot_style(..., palette_set)`，并在运行清单记录 `palette_set`；不得退回 MATLAB 默认 `ColorOrder`。
+- 开始出图前从样式资产的 `SET-A` 至 `SET-F` 中显式选择一组，调用 `cumcm_plot_style(..., palette_set)`，并在运行清单记录 `palette_set`；不得退回 MATLAB 默认 `ColorOrder`。
 - 同一对象跨图保持颜色、线型和标记一致。
 - 全文只使用已选组，不得逐图换组；颜色不能作为唯一编码，比较组同时使用线型、标记、填充纹理或直接标签。
 - 拟合图必须保留观测点；预测图区分训练/验证/测试；随机结果显示区间或分布。

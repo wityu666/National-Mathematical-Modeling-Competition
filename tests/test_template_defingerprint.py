@@ -93,12 +93,12 @@ def test_plot_styles_offer_explicit_multiple_palette_sets() -> None:
         "cumcm-live-paper-writer/references/abc-figure-design-playbook.md"
     )
 
-    for palette_set in ("SET-A", "SET-B", "SET-C", "SET-D"):
-        # 锁：Python 样式必须提供全部四组候选配色。
+    for palette_set in ("SET-A", "SET-B", "SET-C", "SET-D", "SET-E", "SET-F"):
+        # 锁：Python 样式必须提供全部六组候选配色。
         assert palette_set in python_style
-        # 锁：MATLAB 样式必须提供相同四组候选配色。
+        # 锁：MATLAB 样式必须提供相同六组候选配色。
         assert palette_set in matlab_style
-        # 锁：图表手册必须展示相同四组候选配色。
+        # 锁：图表手册必须展示相同六组候选配色。
         assert palette_set in playbook
     for content in (python_style, matlab_style):
         # 锁：两种出图资产都必须要求显式选择配色组。

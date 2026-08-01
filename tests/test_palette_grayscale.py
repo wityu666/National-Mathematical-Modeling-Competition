@@ -18,8 +18,9 @@ TARGET_LSTAR = {
     "auxiliary": 78.3,
 }
 LSTAR_TOLERANCE = 0.5
-# 四组是当前去指纹设计的最低组数，少于四组会显著降低跨队伍差异。
-MIN_PALETTE_SET_COUNT = 4
+# 六组对应六个等距色相旋转位置，少于六组会缩减可选视觉性格。
+EXPECTED_PALETTE_SETS = {"SET-A", "SET-B", "SET-C", "SET-D", "SET-E", "SET-F"}
+MIN_PALETTE_SET_COUNT = len(EXPECTED_PALETTE_SETS)
 # 10 是灰度可辨的硬底线；实际设计目标为相邻约 12。
 MIN_LSTAR_DISTANCE = 10.0
 # 白底学术图的系列色保持在此明度窗口内。
@@ -138,12 +139,14 @@ def parsed_palettes() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, st
     return python_palettes, matlab_palettes
 
 
-def test_four_or_more_complete_palette_sets_match_across_languages() -> None:
+def test_six_complete_palette_sets_match_across_languages() -> None:
     python_palettes, matlab_palettes = parsed_palettes()
 
-    # 锁：Python 至少保留四组可选配色。
+    # 锁：Python 必须保留六组可选配色。
     assert len(python_palettes) >= MIN_PALETTE_SET_COUNT
-    # 锁：MATLAB 至少保留同等数量的配色组。
+    # 锁：Python 六个约定组名不得缺失或被悄然替换。
+    assert set(python_palettes) == EXPECTED_PALETTE_SETS
+    # 锁：MATLAB 必须保留同等数量的配色组。
     assert len(matlab_palettes) >= MIN_PALETTE_SET_COUNT
     # 锁：两种语言必须暴露完全相同的配色组名。
     assert python_palettes.keys() == matlab_palettes.keys()
