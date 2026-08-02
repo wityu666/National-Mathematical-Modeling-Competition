@@ -17,6 +17,10 @@ PALETTE_SETS = {
         "auxiliary": "#D9B7D9",
         "neutral": "#818181",
         "accent": "#B82E2E",
+        "primary_mid": "#6868AE",
+        "contrast_mid": "#8F8F50",
+        "accent_soft": "#D19F9F",
+        "surface_tint": "#EAEAF1",
         "basis": "深蓝主色—红色重点—金黄对比—淡紫辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.24，相邻最小 ΔL*=12.09。",
     },
     "SET-B": {
@@ -25,6 +29,10 @@ PALETTE_SETS = {
         "auxiliary": "#DABABA",
         "neutral": "#818181",
         "accent": "#666619",
+        "primary_mid": "#9D559D",
+        "contrast_mid": "#579A57",
+        "accent_soft": "#AFAF5A",
+        "surface_tint": "#F0E9F0",
         "basis": "深茄紫主色—橄榄重点—绿色对比—淡红辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.21，相邻最小 ΔL*=12.08。",
     },
     "SET-C": {
@@ -33,6 +41,10 @@ PALETTE_SETS = {
         "auxiliary": "#C5C592",
         "neutral": "#818181",
         "accent": "#1C721C",
+        "primary_mid": "#A65959",
+        "contrast_mid": "#549696",
+        "accent_soft": "#73BC73",
+        "surface_tint": "#F0E9E9",
         "basis": "深红棕主色—绿色重点—青色对比—淡黄辅助；六组同角色色相距均≥60°，CIELAB L*≈29.51–78.39，相邻最小 ΔL*=12.10。",
     },
     "SET-D": {
@@ -41,6 +53,10 @@ PALETTE_SETS = {
         "auxiliary": "#A1CDA1",
         "neutral": "#818181",
         "accent": "#1B6D6D",
+        "primary_mid": "#72723E",
+        "contrast_mid": "#8787BB",
+        "accent_soft": "#6BB8B8",
+        "surface_tint": "#EBEBE3",
         "basis": "深橄榄主色—青色重点—蓝色对比—淡绿辅助；六组同角色色相距均≥60°，CIELAB L*≈29.25–78.35，相邻最小 ΔL*=12.18。",
     },
     "SET-E": {
@@ -49,6 +65,10 @@ PALETTE_SETS = {
         "auxiliary": "#9DCACA",
         "neutral": "#818181",
         "accent": "#5151D4",
+        "primary_mid": "#437C43",
+        "contrast_mid": "#B377B3",
+        "accent_soft": "#A7A7D5",
+        "surface_tint": "#E5EDE5",
         "basis": "深森林绿主色—蓝色重点—品红对比—淡青辅助；六组同角色色相距均≥60°，CIELAB L*≈29.42–78.27，相邻最小 ΔL*=12.14。",
     },
     "SET-F": {
@@ -57,11 +77,16 @@ PALETTE_SETS = {
         "auxiliary": "#BFBFDD",
         "neutral": "#818181",
         "accent": "#A629A6",
+        "primary_mid": "#417878",
+        "contrast_mid": "#B67D7D",
+        "accent_soft": "#CE9ACE",
+        "surface_tint": "#E4EDED",
         "basis": "深青主色—品红重点—红色对比—淡蓝辅助；六组同角色色相距均≥60°，CIELAB L*≈29.75–78.20，相邻最小 ΔL*=12.06。",
     },
 }
 
 _SERIES_ROLES = ("primary", "contrast", "auxiliary", "neutral", "accent")
+_TONE_ROLES = ("primary_mid", "contrast_mid", "accent_soft", "surface_tint")
 _CHROME_COLORS = {
     "light": "#F5F5F2",
     "text": "#4F555A",
@@ -82,7 +107,13 @@ def get_palette_set(palette_set: str) -> dict[str, object]:
 
     definition = PALETTE_SETS[normalized]
     colors = {role: definition[role] for role in _SERIES_ROLES}
+    tones = {role: definition[role] for role in _TONE_ROLES}
     palette = [colors[role] for role in _SERIES_ROLES]
+    extended_palette = palette + [
+        tones["primary_mid"],
+        tones["contrast_mid"],
+        tones["accent_soft"],
+    ]
     sequential = LinearSegmentedColormap.from_list(
         f"cumcm_{normalized.lower()}_sequential",
         [
@@ -103,7 +134,9 @@ def get_palette_set(palette_set: str) -> dict[str, object]:
     return {
         "palette_set": normalized,
         "colors": colors,
+        "tones": tones,
         "palette": palette,
+        "extended_palette": extended_palette,
         "sequential": sequential,
         "diverging": diverging,
         "basis": definition["basis"],

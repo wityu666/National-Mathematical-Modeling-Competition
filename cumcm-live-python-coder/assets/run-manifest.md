@@ -63,6 +63,7 @@
 | timeout_or_stop_condition |  |
 | fallback_deadline |  |
 | palette_set | `SET-A / SET-B / SET-C / SET-D / SET-E / SET-F；出图前显式选择` |
+| object_color_map | `【对象/变量 → 核心或扩展颜色角色 → 线型/标记；首次出图前冻结，全文复用】` |
 
 ### 精确复现命令
 

@@ -37,7 +37,9 @@ from cumcm_plot_style import (
 palette_set = cfg["palette_set"]  # 必须预先显式选择 SET-A/B/C/D/E/F
 palette_spec = get_palette_set(palette_set)
 colors = palette_spec["colors"]
+tones = palette_spec["tones"]
 palette = palette_spec["palette"]
+extended_palette = palette_spec["extended_palette"]
 sequential_cmap = palette_spec["sequential"]
 diverging_cmap = palette_spec["diverging"]
 font = apply_cumcm_style(palette_set)
@@ -45,7 +47,9 @@ fig, ax = plt.subplots(figsize=(7.1, 4.2), constrained_layout=True)
 style_axes(ax)
 ```
 
-不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-F` 中选定一组，把选择记录为 `palette_set`，并让全文所有图保持该组及对象映射一致；不得逐图换组。六组均按统一的 CIELAB L* 单调阶梯与逐组 60° 色相旋转设计，相邻系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外仍必须使用线型、标记、纹理或直接标签作为冗余编码。
+不提供默认配色。团队须从 `PALETTE_SETS` 的 `SET-A` 至 `SET-F` 中选定一组，把选择记录为 `palette_set`，并冻结 `object_color_map`，让全文所有图、流程图和表格保持该组及对象映射一致；不得逐图换组。每组除五个核心系列色外还提供 `primary_mid/contrast_mid/accent_soft/surface_tint` 四个同系扩展色，用于次级曲线、区间填充、流程节点与浅底纹；它们不是另一套配色。确需 6–8 个类别时可显式使用 `extended_palette`，超过 8 类优先分面，不临时造色。六组均按统一的 CIELAB L* 单调阶梯与逐组 60° 色相旋转设计，相邻核心系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得改用 Matplotlib 默认高饱和循环色，颜色之外仍必须使用线型、标记、纹理或直接标签作为冗余编码。
+
+例如，置信区间使用 `tones["accent_soft"]`，分面或表格浅底使用 `tones["surface_tint"]`；不要把背景浅阶当作数据线颜色。`apply_cumcm_style` 默认仍启用五个灰度安全的核心系列色，扩展色只有在图的语义确实需要时才显式调用。
 
 记录实际选中的中文字体。若最终 PDF 出现方框或替换字体，修复字体后重跑，不用图片编辑器补字。
 
@@ -150,7 +154,7 @@ PNG 只用于栅格内容或兼容路线；线图、流程图和示意图优先�
 - 中文与数学符号字体正确；
 - 单栏/双栏实际尺寸下文字可读；
 - 颜色、线型、标记在灰度下可区分；
-- 图表登记使用同一个 `palette_set`，没有逐图换组或混入默认高饱和色；
+- 图表登记使用同一个 `palette_set` 和冻结的 `object_color_map`，没有逐图换组、同一对象变色或混入默认高饱和色；
 - 图例不挡数据，轴标签与色条有单位；
 - 没有多余边框、软件界面或个人路径；
 - 没有截断柱轴、彩虹色带、3D 饼图；

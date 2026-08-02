@@ -28,6 +28,12 @@ switch paletteSet
             129 129 129; ... % neutral #818181
             184 46 46     ... % accent #B82E2E
             ] / 255;
+        style.tones = [ ...
+            104 104 174; ... % primary_mid #6868AE
+            143 143 80;  ... % contrast_mid #8F8F50
+            209 159 159; ... % accent_soft #D19F9F
+            234 234 241   ... % surface_tint #EAEAF1
+            ] / 255;
         style.paletteBasis = "深蓝主色—红色重点—金黄对比—淡紫辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.24，相邻最小 ΔL*=12.09";
     case "SET-B"
         style.colors = [ ...
@@ -36,6 +42,12 @@ switch paletteSet
             218 186 186; ... % auxiliary #DABABA
             129 129 129; ... % neutral #818181
             102 102 25    ... % accent #666619
+            ] / 255;
+        style.tones = [ ...
+            157 85 157;  ... % primary_mid #9D559D
+            87 154 87;   ... % contrast_mid #579A57
+            175 175 90;  ... % accent_soft #AFAF5A
+            240 233 240   ... % surface_tint #F0E9F0
             ] / 255;
         style.paletteBasis = "深茄紫主色—橄榄重点—绿色对比—淡红辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.21，相邻最小 ΔL*=12.08";
     case "SET-C"
@@ -46,6 +58,12 @@ switch paletteSet
             129 129 129; ... % neutral #818181
             28 114 28     ... % accent #1C721C
             ] / 255;
+        style.tones = [ ...
+            166 89 89;   ... % primary_mid #A65959
+            84 150 150;  ... % contrast_mid #549696
+            115 188 115; ... % accent_soft #73BC73
+            240 233 233   ... % surface_tint #F0E9E9
+            ] / 255;
         style.paletteBasis = "深红棕主色—绿色重点—青色对比—淡黄辅助；六组同角色色相距均≥60°，CIELAB L*≈29.51–78.39，相邻最小 ΔL*=12.10";
     case "SET-D"
         style.colors = [ ...
@@ -54,6 +72,12 @@ switch paletteSet
             161 205 161; ... % auxiliary #A1CDA1
             129 129 129; ... % neutral #818181
             27 109 109    ... % accent #1B6D6D
+            ] / 255;
+        style.tones = [ ...
+            114 114 62;  ... % primary_mid #72723E
+            135 135 187; ... % contrast_mid #8787BB
+            107 184 184; ... % accent_soft #6BB8B8
+            235 235 227   ... % surface_tint #EBEBE3
             ] / 255;
         style.paletteBasis = "深橄榄主色—青色重点—蓝色对比—淡绿辅助；六组同角色色相距均≥60°，CIELAB L*≈29.25–78.35，相邻最小 ΔL*=12.18";
     case "SET-E"
@@ -64,6 +88,12 @@ switch paletteSet
             129 129 129; ... % neutral #818181
             81 81 212     ... % accent #5151D4
             ] / 255;
+        style.tones = [ ...
+            67 124 67;   ... % primary_mid #437C43
+            179 119 179; ... % contrast_mid #B377B3
+            167 167 213; ... % accent_soft #A7A7D5
+            229 237 229   ... % surface_tint #E5EDE5
+            ] / 255;
         style.paletteBasis = "深森林绿主色—蓝色重点—品红对比—淡青辅助；六组同角色色相距均≥60°，CIELAB L*≈29.42–78.27，相邻最小 ΔL*=12.14";
     case "SET-F"
         style.colors = [ ...
@@ -73,6 +103,12 @@ switch paletteSet
             129 129 129; ... % neutral #818181
             166 41 166    ... % accent #A629A6
             ] / 255;
+        style.tones = [ ...
+            65 120 120;  ... % primary_mid #417878
+            182 125 125; ... % contrast_mid #B67D7D
+            206 154 206; ... % accent_soft #CE9ACE
+            228 237 237   ... % surface_tint #E4EDED
+            ] / 255;
         style.paletteBasis = "深青主色—品红重点—红色对比—淡蓝辅助；六组同角色色相距均≥60°，CIELAB L*≈29.75–78.20，相邻最小 ΔL*=12.06";
     otherwise
         error("cumcm_plot_style:UnknownPalette", ...
@@ -80,6 +116,9 @@ switch paletteSet
 end
 
 style.paletteSet = paletteSet;
+style.toneRoles = ["primary_mid", "contrast_mid", "accent_soft", "surface_tint"];
+style.extendedColors = [style.colors; style.tones(1:3,:)];
+style.surfaceTint = style.tones(4,:);
 style.light = [245 245 242] / 255;
 style.sequential = interp1( ...
     linspace(0, 1, 6), ...

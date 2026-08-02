@@ -33,7 +33,9 @@ style = cumcm_plot_style(fig, [ax1 ax2], ...
     cfg.figure_font, cfg.palette_set);
 ```
 
-`cfg.palette_set` 必须由团队在开始出图前显式选为 `SET-A` 至 `SET-F` 之一，并记录到运行清单。全文只使用该组且保持对象映射一致，不提供自动默认，也不得逐图换组。六组均按统一的 CIELAB L* 单调阶梯与逐组 60° 色相旋转设计，相邻系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得退回 MATLAB 默认高饱和 `ColorOrder`；颜色之外仍同时使用线型、标记、纹理或直接标签作为冗余编码。
+`cfg.palette_set` 必须由团队在开始出图前显式选为 `SET-A` 至 `SET-F` 之一，并记录到运行清单；同时冻结 `object_color_map`。全文的图、流程图和表格只使用该组且保持对象映射一致，不提供自动默认，也不得逐图换组。每组除五个核心系列色外还提供 `style.tones` 中的 `primary_mid/contrast_mid/accent_soft/surface_tint` 四个同系扩展色；可用 `style.extendedColors` 显式处理确有必要的 6–8 类比较，超过 8 类优先分面，不临时造色。六组均按统一的 CIELAB L* 单调阶梯与逐组 60° 色相旋转设计，相邻核心系列实测 ΔL* 不低于 12，同一彩色角色跨组色相距不低于 60°；具体色值和色相性格见写作 Skill 的图表手册。不得退回 MATLAB 默认高饱和 `ColorOrder`；颜色之外仍同时使用线型、标记、纹理或直接标签作为冗余编码。
+
+`style.tones(3,:)` 适合置信区间或重点区域填充，`style.surfaceTint` 只用于分面、表格或示意图浅底，不作为数据线。`colororder` 默认仍使用五个灰度安全的核心系列色；扩展色只有在图的语义确实需要时才显式调用。
 
 `cfg.figure_font` 必须是在当前机器上验证过的中文字体。记录字体名和 MATLAB 版本；导出 PDF 后检查是否发生替换。
 
@@ -115,7 +117,7 @@ exportgraphics(fig, "figures/fig_q2_sensitivity.png", ...
 - 中文、公式和负号字体正确；
 - 最终尺寸下字号约不低于 8 pt；
 - 线型、标记和颜色在灰度下可分；
-- 图表登记使用同一个 `palette_set`，没有逐图换组或混入默认高饱和色；
+- 图表登记使用同一个 `palette_set` 和冻结的 `object_color_map`，没有逐图换组、同一对象变色或混入默认高饱和色；
 - 图例不遮挡数据，单位和色条完整；
 - 柱轴、对数尺度、平滑和归一化已说明；
 - 没有软件界面、个人路径、水印或低清截图；
