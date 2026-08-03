@@ -7,10 +7,15 @@
 | layout_id | `LAYOUT-###` |
 | 状态 | `DRAFT / FROZEN / STALE / BLOCKED / PASS` |
 | 复核时间 | `【含时区】` |
+| paper_freeze_id | `【PAPER-###；Word/PDF 共用】` |
 | 主排版路线 | `【Word / LaTeX】` |
 | 论文源版本 | `【路径、版本/哈希】` |
+| Word | `【.docx 路径】` |
+| docx_sha256 | `【】` |
+| Word 生成工具/时间 | `【】` |
 | PDF | `【路径】` |
-| PDF SHA-256 | `【】` |
+| pdf_sha256 | `【】` |
+| pdf_generation_source | `【冻结 Word / 冻结 LaTeX；源哈希与命令】` |
 | PDF 字节数/页数 | `【】` |
 | 摘要起止 PDF 物理页 | `【abstract_start_pdf_page / abstract_end_pdf_page】` |
 | 编号正文第一章起始 PDF 物理页 | `【main_start_pdf_page；不得填摘要页】` |
@@ -30,6 +35,19 @@
 | LaTeX 错误、引用、overfull | `【PASS/BLOCKED/N/A】` | `【】` |
 | 占位符与模板提示 | `【PASS/BLOCKED】` | `【】` |
 | 当届大小限制 | `【PASS/BLOCKED/N/A】` | `【规则与实测】` |
+
+## Word 交付版与双版本一致性
+
+| 项目 | 状态 | 证据 |
+|---|---|---|
+| `.docx` 真实可打开且无修复提示 | `【PASS/BLOCKED】` | `【工具/版本/截图】` |
+| 正文、表格、公式和附录代码可编辑 | `【PASS/BLOCKED】` | `【选择/编辑抽查位置】` |
+| 无修订、批注、隐藏文本、宏和个人元数据 | `【PASS/BLOCKED】` | `【】` |
+| 题目、摘要、关键词和目录层级一致 | `【PASS/BLOCKED】` | `【位置】` |
+| 章标题、小标题、关键数值与结论一致 | `【PASS/BLOCKED】` | `【逐项抽查】` |
+| RID/FIG/TAB/CODE/CONTRIB 与编号一致 | `【PASS/BLOCKED】` | `【清单/差异报告】` |
+| 附录关键代码一致 | `【PASS/BLOCKED】` | `【CODE-* / 页码】` |
+| 官方提交包只含当届允许格式 | `【PASS/BLOCKED】` | `【规则证据/实际文件清单】` |
 
 > `PRECHECK_PASS` 不是最终 `PASS`，Round B 不得省略。
 
@@ -64,6 +82,8 @@
 | 条件 | 状态 | 证据 |
 |---|---|---|
 | 当前 PDF SHA 与报告一致 | `【PASS/BLOCKED】` | `【】` |
+| Word/PDF 共用 paper_freeze_id 且双哈希匹配 | `【PASS/BLOCKED】` | `【paper_freeze_id / docx_sha256 / pdf_sha256】` |
+| Word 可编辑且双版本关键内容一致 | `【PASS/BLOCKED】` | `【一致性表与差异报告】` |
 | 编号正文实测处于有效区间 | `【PASS/BLOCKED】` | `【默认 26–30；摘要不计；main_body_pages；官方上限低于 26 页时的 min/max；附录页数不限】` |
 | 正文无版式或内容注水 | `【PASS/BLOCKED】` | `【字号/行距/页边距/图表尺寸/重复内容/正文材料用途】` |
 | 摘要排除边界与正文/附录物理页边界已核验 | `【PASS/BLOCKED】` | `【摘要起止页/编号正文第一章起始页/附录起始页/截图】` |
@@ -80,8 +100,12 @@
 
 ## 交接
 
-- 最终 PDF：`【路径与 SHA-256】`
+- Word 交付版：`【.docx 路径与 docx_sha256】`
+- PDF 冻结版：`【.pdf 路径与 pdf_sha256】`
+- 双版本冻结标识：`【paper_freeze_id】`
+- PDF 生成链：`【pdf_generation_source / 工具 / 版本 / 时间 / 命令】`
 - 源文件：`【路径与版本】`
+- 官方提交包清单：`【只列当届规则允许的文件；若仅允许 PDF，明确不含 Word】`
 - 截图目录：`【】`
 - 预检 JSON/日志：`【】`
 - 交给 `cumcm-live-final-auditor` 的未解决 P2：`【无 / 列表】`

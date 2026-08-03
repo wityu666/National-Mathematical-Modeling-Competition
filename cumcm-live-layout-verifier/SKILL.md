@@ -1,13 +1,13 @@
 ---
 name: cumcm-live-layout-verifier
-description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C 题论文初次成稿后的重复排版复核。适用于检查 Word/LaTeX 源、编译日志和真实渲染 PDF 的字体、裁切、重叠、分页、图表公式可读性、匿名信息、批注修订与占位符，并驱动“发现—修复—重新生成—重查”闭环；应在 paper-writer 之后、final-auditor 之前使用。
+description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C 题论文初次成稿后的重复排版复核。适用于检查同一冻结内容的可编辑 Word（.docx）与 PDF 两版、Word/LaTeX 主排版源、编译导出日志以及真实渲染效果，核对双版本一致性、字体、裁切、重叠、分页、图表公式可读性、匿名信息、批注修订与占位符，并驱动“发现—修复—重新生成—重查”闭环；应在 paper-writer 之后、final-auditor 之前使用。
 ---
 
 # CUMCM 论文排版复核
 
 ## 定位
 
-本技能只验证论文的版式与渲染质量，不重新判断数学结论。先由 `cumcm-live-paper-writer` 生成提交候选 PDF，再用本技能重复检查；只有当前 PDF 的 `LAYOUT-*` 报告为 `PASS`，才能交给 `cumcm-live-final-auditor`。
+本技能只验证论文的双版本一致性、版式与渲染质量，不重新判断数学结论。先由 `cumcm-live-paper-writer` 生成同一 `paper_freeze_id` 的可编辑 `.docx` 与冻结 `.pdf`，再用本技能重复检查；只有报告同时绑定当前 `docx_sha256` 与 `pdf_sha256` 且为 `PASS`，才能交给 `cumcm-live-final-auditor`。
 
 静态脚本通过仅表示 `PRECHECK_PASS`，不能代替真实 PDF 逐页查看。不得把“编译成功”“可以打开”或文本抽取正常当成排版通过。
 
@@ -21,13 +21,14 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 记录：
 
 1. `layout_id`，格式 `LAYOUT-###`；
-2. 主排版路线、源文件路径与源版本；
-3. 最终 PDF 路径、SHA-256、生成命令和生成时间；
-4. 当届官方版式、匿名、首页、页数和文件大小规则的证据位置；
-5. 上游论文版本、`VER-* PASS` 与 `CONTRIB-*` 账本版本。
-6. 摘要起止 PDF 物理页、编号正文第一章起始 PDF 物理页、附录起始 PDF 物理页，以及用户已确认的 26–30 页内部质量门；没有附录时标记为 `N/A`。摘要、关键词和目录等正文前置部分不计入编号正文；若当届官方上限低于 26 页，记录规则证据并使 26 页下限失效。
+2. `paper_freeze_id`、主排版路线、源文件路径与源版本；
+3. Word 交付版路径、`docx_sha256`、生成工具与时间；
+4. 最终 PDF 路径、`pdf_sha256`、`pdf_generation_source`、生成命令和生成时间；
+5. 当届官方版式、匿名、首页、页数、文件大小与允许提交格式的证据位置；
+6. 上游论文版本、`VER-* PASS` 与 `CONTRIB-*` 账本版本；
+7. 摘要起止 PDF 物理页、编号正文第一章起始 PDF 物理页、附录起始 PDF 物理页，以及用户已确认的 26–30 页内部质量门；没有附录时标记为 `N/A`。摘要、关键词和目录等正文前置部分不计入编号正文；若当届官方上限低于 26 页，记录规则证据并使 26 页下限失效。
 
-任一源文件、图表、字体、编译配置或 PDF 字节变化，旧 `LAYOUT-* PASS` 立即变为 `STALE`。
+任一源文件、Word、图表、字体、编译配置或 PDF 字节变化，旧 `LAYOUT-* PASS` 立即变为 `STALE`。禁止只更新一个版本并沿用另一版本的旧 PASS。
 
 ## 2. Round A：自动预检
 
@@ -35,7 +36,7 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 
 ```bash
 python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
-  --source /absolute/path/to/paper-source \
+  --source /absolute/path/to/final.docx \
   --abstract-end-page 2 \
   --main-start-page 5 \
   --appendix-start-page 31 \
@@ -63,7 +64,13 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 找不到外部 PDF 工具时记录能力缺口，不得据此直接判定阻塞或假装已检查。
 如果自动工具无法取得总页数，必须在 Round B 用 PDF 查看器人工记录总页数和正文/附录边界；页数状态为 `UNVERIFIED` 时不得给最终 `PASS`。
 
+若 LaTeX 是主排版源，除上述 `.docx` 预检外还要对冻结 `.tex` 与编译日志执行一次源文件预检。`layout_preflight.py` 不负责判断 Word/PDF 正文语义是否一致；该项必须在 Round B 逐项核对。
+
 ## 3. Round B：真实渲染复核
+
+先在禁用宏的 Word/WPS/LibreOffice 环境中打开 `.docx`，确认无修复提示，正文、表格、公式与附录代码可选择和编辑，不是整页截图或改扩展名文件；检查修订、批注、隐藏文本、个人元数据和字段更新状态。Word 在不同设备上的分页可有合理差异，但不能缺页、缺段、缺图、缺公式或丢失附录代码。
+
+再核对 Word/PDF 双版本内容：题目、摘要、关键词、目录层级、章标题与小标题、关键数值和结论、`RID/FIG/TAB/CODE/CONTRIB`、图表/公式/参考文献编号及附录关键代码必须一致。Word 主路线时确认 PDF 直接来自当前哈希的冻结 Word；LaTeX 主路线时确认 Word 伴随版与 LaTeX 生成的 PDF 来自同一冻结内容。分页、换页点和少量字体替代差异可以记录，但不得把内容差异解释为排版差异。
 
 将当前 PDF 每页渲染为图片并查看。页数较少时检查全部页面；时间极紧也至少覆盖：
 
@@ -97,8 +104,8 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 
 ```text
 Round A 预检 -> Round B 逐页查看 -> 登记问题
--> paper-writer 修复源文件 -> 完整重新生成 PDF
--> 更新 SHA-256 -> 原报告 STALE -> 从 Round A 重新检查
+-> paper-writer 修复唯一主稿源文件 -> 同步重新生成 Word/PDF
+-> 更新双 SHA-256 -> 原报告 STALE -> 从 Round A 重新检查
 ```
 
 严重级别：
@@ -114,6 +121,8 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 只有同时满足以下条件才能写 `PASS`：
 
 - 当前 PDF SHA-256 与报告完全一致；
+- 当前 `.docx` 与 PDF 共享同一 `paper_freeze_id`，`docx_sha256`、`pdf_sha256` 和 `pdf_generation_source` 均与报告一致；
+- Word 能正常打开并保持正文、表格、公式和附录代码可编辑，双版本关键内容逐项一致；
 - 已记录摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages` 和 `main_body_pages`；`main_start_pdf_page` 确为第一章起始页，摘要未计入，且默认满足 `26 <= main_body_pages <= 30`；若当届官方上限低于 26 页，则报告已记录规则证据和调整后的 `min_main_pages/max_main_pages`；
 - Round A 为 `PRECHECK_PASS`；
 - Round B 已检查规定范围并保存页码/截图证据；
@@ -127,15 +136,16 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 - 修复后的 PDF 已从 Round A 重新复核，而非只看局部截图；
 - 报告状态为 `FROZEN`。
 
-正文低于有效下限、超过有效上限、通过版式或内容注水凑足下限、页数或正文/附录边界未核验、未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。
+缺少 Word 或 PDF 任一版本、Word 不可编辑、双版本内容或冻结标识不一致、正文低于有效下限、超过有效上限、通过版式或内容注水凑足下限、页数或正文/附录边界未核验、未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。
 
 ## 6. 交接
 
-把 `layout-report.md`、最终 PDF、源版本和截图目录交给 `cumcm-live-final-auditor`。终审仍要独立抽查排版，不能直接继承本技能结论。
+把 `layout-report.md`、同一冻结稿的 Word/PDF 两版、主排版源版本和截图目录交给 `cumcm-live-final-auditor`。另附当届规则允许进入官方提交包的实际文件清单；若只允许 PDF，不得把 Word 放入该提交包。终审仍要独立抽查排版，不能直接继承本技能结论。
 
 ## 完成条件
 
-- 已生成一份绑定当前 PDF SHA-256 的 `LAYOUT-*` 报告；
+- 已生成一份绑定当前 `paper_freeze_id`、`docx_sha256` 与 `pdf_sha256` 的 `LAYOUT-*` 报告；
+- Word 可编辑性和 Word/PDF 双版本内容一致性已逐项记录；
 - 自动预检、逐页视觉复核和至少一次修复后重查（若发现问题）均有记录；
-- `PASS` 只属于当前冻结 PDF，文件变化会自动失效；
+- `PASS` 只属于当前冻结 Word/PDF 文件对，任一文件变化都会失效；
 - 最终审计输入中已包含本报告。

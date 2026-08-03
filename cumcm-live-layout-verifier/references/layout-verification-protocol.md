@@ -2,20 +2,21 @@
 
 ## 1. 为什么单独复核
 
-源文件正确不代表导出的 PDF 正确。字体缺失、域未更新、浮动体重排、公式截断、图像裁切和跨页表错误只会在真实渲染后暴露。因此排版复核独立于内容写作，并位于终审之前。
+源文件正确不代表导出的 PDF 正确，可打开的 Word 也不代表它与 PDF 内容一致。字体缺失、域未更新、浮动体重排、公式截断、图像裁切、跨页表错误和双版本漂移只会在真实打开与渲染后暴露。因此排版复核独立于内容写作，并位于终审之前。
 
 ## 2. 冻结与失效
 
 一次有效复核必须绑定：
 
 - `layout_id`；
-- 论文源版本与主排版路线；
-- PDF SHA-256、字节数、页数和生成命令；
+- `paper_freeze_id`、论文源版本与主排版路线；
+- Word 路径、`docx_sha256`、可编辑性检查与生成工具；
+- PDF 路径、`pdf_sha256`、字节数、页数、`pdf_generation_source` 和生成命令；
 - 摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages`、`main_body_pages`；
 - 检查时间、工具版本和当届规则快照；
 - 截图或页码证据。
 
-源文件、字体、图表、参考文献、编译器、导出设置或 PDF 任一变化，旧报告即 `STALE`。复制旧文件名不能继承 `PASS`。
+源文件、Word、字体、图表、参考文献、编译器、导出设置或 PDF 任一变化，旧报告即 `STALE`。复制旧文件名不能继承 `PASS`，也不能只更新一个版本后沿用另一版本的旧检查结果。
 
 ## 3. 自动预检边界
 
@@ -61,6 +62,8 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 - 确认嵌入字体或替代字体不会改变分页；
 - 不启用宏，不执行嵌入对象。
 
+所有主排版路线都必须交付 `.docx`。在禁用宏的环境中实际打开它，确认无修复提示，正文、表格、公式和附录代码可选择、可编辑，不是整页截图或伪装扩展名。Word 主路线的 PDF 必须直接来自当前哈希的冻结 Word；LaTeX 主路线的 Word 是从同一冻结内容生成的可编辑伴随版。
+
 ## 6. LaTeX 路线
 
 - 保存最终编译命令与完整日志；
@@ -80,9 +83,15 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 附录关键建模代码必须以可复制的等宽文本呈现，不使用代码截图。检查代码字号、缩进、长行换行、跨页连续性、行号或 `CODE-*` 标识及页边界；不得为了容纳代码把字号缩到不可读，也不得让分页切断关键语句而无法理解。
 
-## 8. 闭环与回退
+## 8. Word/PDF 双版本一致性
 
-问题修复必须发生在主稿源文件。禁止直接在 PDF 上遮盖、手工改数字或只修截图。每次修复后完整重新生成 PDF、更新哈希并从自动预检开始复查。
+逐项比较题目、摘要、关键词、目录层级、章标题与小标题、关键数值和结论、`RID/FIG/TAB/CODE/CONTRIB`、图表/公式/参考文献编号及附录关键代码。两版必须共享同一 `paper_freeze_id`，并分别记录 `docx_sha256` 与 `pdf_sha256`。Word 与 PDF 的分页、换页点可因渲染环境不同而不完全一致；内容缺失、编号错位、数值差异或证据标识差异不得归为排版差异。
+
+若 Word 是主稿，记录 PDF 由当前 Word 导出的工具、版本、时间与命令；若 LaTeX 是主稿，记录 PDF 的 LaTeX 生成链和 Word 伴随版的生成链。任何一侧修改后，都要同步再生两版、更新双哈希并重新执行预检、一致性核对和 PDF 视觉复核。
+
+## 9. 闭环与回退
+
+问题修复必须发生在唯一主稿源文件。禁止直接在 PDF 上遮盖、手工改数字、分别编辑两版或只修截图。每次修复后同步重新生成 Word/PDF、更新双哈希并从自动预检开始复查。
 
 连续两轮同类错误说明局部修补无效，应检查：
 
@@ -94,11 +103,15 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 无法在截止前安全修复时，回退到最近一次冻结且可提交的版式，并在报告中记录舍弃的改动。
 
-## 9. PASS 判定
+## 10. PASS 判定
 
 ```text
 rules_verified
+and paper_freeze_id_matches
+and docx_sha_matches
 and pdf_sha_matches
+and docx_editable
+and word_pdf_content_consistent
 and precheck_pass
 and min_main_pages <= main_body_pages <= max_main_pages
 and page_boundary_verified

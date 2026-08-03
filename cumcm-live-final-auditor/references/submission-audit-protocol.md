@@ -8,7 +8,8 @@
 
 - 候选目录绝对路径；
 - 冻结时间、版本和 SHA-256 清单；
-- 主稿来源与最终 PDF；
+- `paper_freeze_id`、主稿来源、Word/PDF 两版路径、`docx_sha256`、`pdf_sha256` 与 `pdf_generation_source`；
+- 本地交付包与官方提交候选目录的独立文件清单；
 - 题号、预期文件名和附件结构；
 - 当届官方规则快照及证据位置；
 - AI 使用记录位置；
@@ -63,7 +64,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 model_contract -> contribution_ledger -> CONTRIB-PROVEN
               -> dedicated RID/FIG/TAB -> paper contribution claim
 
-paper source -> rendered PDF -> LAYOUT-PASS -> final audit
+paper source -> frozen Word/PDF pair -> dual-version check -> LAYOUT-PASS -> final audit
 ```
 
 反向检查：
@@ -176,7 +177,9 @@ template_fingerprint_checked: PASS / P1 / P0 / UNVERIFIED
 - 输出文件与运行清单一一对应；
 - 本机绝对路径、密钥和临时状态没有成为依赖。
 
-## 9. 提交包审计
+## 9. 本地交付包与官方提交包审计
+
+先区分两个范围：本地交付包必须含同一冻结内容的 `.docx` 与 `.pdf`；官方提交包只含当届规则明确允许的文件。官方只允许 PDF 时，Word 不得被上传或压入官方提交包，但仍须在本地交付包完成可编辑性和双版本一致性审计。
 
 检查：
 
@@ -194,7 +197,16 @@ template_fingerprint_checked: PASS / P1 / P0 / UNVERIFIED
 
 静态扫描脚本通过只表示目录硬检查通过，不代表内容、规则和视觉已经通过。
 
-## 10. Word/LaTeX 源与 PDF 对应
+## 10. Word/PDF 两版与主排版源对应
+
+共同硬门：
+
+- `.docx` 与 `.pdf` 同时存在、可正常打开并共享同一 `paper_freeze_id`；
+- 记录 `docx_sha256`、`pdf_sha256`、生成工具/版本/时间及 `pdf_generation_source`；
+- Word 正文、表格、公式和附录代码可选择与编辑，不是整页截图、宏文档或伪装扩展名；
+- 题目、摘要、关键词、目录层级、章标题/小标题、关键数值与结论、`RID/FIG/TAB/CODE/CONTRIB`、图表/公式/参考文献编号及附录关键代码逐项一致；
+- 两版分页可因渲染环境不同而不同，但任何内容、数值、编号或证据标识差异都是 `P0`；
+- 禁止分别编辑两版。任一版本变化后，必须从唯一主稿同步再生、更新双哈希，并使旧 `LAYOUT-* PASS` 失效。
 
 ### Word
 
@@ -210,9 +222,9 @@ template_fingerprint_checked: PASS / P1 / P0 / UNVERIFIED
 - 字体替换与 overfull/underfull 风险已检查；
 - PDF 与冻结 `.tex`、类文件、图片和参考文献对应。
 
-同时存在两种源时，明确唯一主稿，避免误交另一份。
+同时存在两种源时，明确唯一主稿。LaTeX 主路线的 PDF 来自冻结 `.tex`，Word 是同一冻结内容的可编辑伴随版；Word 主路线的 PDF 必须直接来自当前哈希的冻结 `.docx`。
 
-在检查源与 PDF 对应关系前，先验证 `layout-report.md` 状态为 `PASS/FROZEN`、绑定当前源版本和当前 PDF SHA-256，并同时包含自动预检、真实页面查看、修复后重查证据。只有 `PRECHECK_PASS`、报告已 `STALE` 或哈希不一致均为 `P0`。
+在检查源与 PDF 对应关系前，先验证 `layout-report.md` 状态为 `PASS/FROZEN`、绑定当前 `paper_freeze_id`、`docx_sha256`、`pdf_sha256` 和主稿源版本，并同时包含自动预检、Word 可编辑性、双版本一致性、真实页面查看和修复后重查证据。只有 `PRECHECK_PASS`、报告已 `STALE`、未检查 Word 或任一哈希不一致均为 `P0`。
 
 ## 11. PDF 逐页视觉 QA
 
@@ -250,6 +262,8 @@ template_fingerprint_checked: PASS / P1 / P0 / UNVERIFIED
 rules_verified
 and files_valid
 and no_P0
+and word_pdf_pair_complete
+and word_pdf_content_consistent
 and content_traceable
 and repeated_verification_pass
 and same_hash_layout_pass
