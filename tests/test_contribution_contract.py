@@ -244,7 +244,7 @@ def test_symbol_table_is_required_in_main_body_and_audited() -> None:
     assert "符号说明表位于正文且与公式定义一致" in audit_report
 
 
-def test_main_body_page_range_24_to_30_with_unlimited_appendix() -> None:
+def test_main_body_page_range_26_to_30_excludes_abstract_and_has_unlimited_appendix() -> None:
     readme = read("README.md")
     suite = read("SUITE.md")
     paper_skill = read("cumcm-live-paper-writer/SKILL.md")
@@ -272,26 +272,29 @@ def test_main_body_page_range_24_to_30_with_unlimited_appendix() -> None:
         auditor_skill,
         audit_report,
     ):
-        # 锁：所有相关角色与总览都必须保留正文 24 页下限。
-        assert "24" in content
+        # 锁：所有相关角色与总览都必须保留编号正文 26 页下限。
+        assert "26" in content
         # 锁：所有相关角色与总览都必须保留正文 30 页上限。
         assert "30" in content
         # 锁：所有相关角色与总览都必须声明附录页数不限。
         assert "附录" in content and (
             "不限" in content or "不设上限" in content or "不设页数上限" in content
         )
-    # 锁：排版协议必须使用可计算的 24–30 页闭区间。
-    assert "24 <= main_body_pages <= 30" in layout_protocol
+    # 锁：排版协议必须使用可计算的 26–30 页闭区间。
+    assert "26 <= main_body_pages <= 30" in layout_protocol
     # 锁：终审协议必须独立使用同一个页数闭区间。
-    assert "24 <= main_body_pages <= 30" in audit_protocol
+    assert "26 <= main_body_pages <= 30" in audit_protocol
+    # 锁：写作、排版与终审必须共同排除摘要页。
+    for content in (paper_skill, skeleton, layout_skill, layout_protocol, auditor_skill, audit_protocol):
+        assert "摘要" in content and ("不计入" in content or "摘要不计" in content or "未计入" in content)
     # 锁：paper-writer 必须说明页数区间是用户内部质量门。
     assert "用户已确认的内部质量门" in paper_skill
     # 锁：final-auditor 必须说明页数区间是用户内部质量门。
     assert "用户已确认的内部质量门" in auditor_skill
     # 锁：排版角色必须允许更严格官方上限覆盖内部下限。
-    assert "官方上限低于 24 页" in layout_skill
+    assert "官方上限低于 26 页" in layout_skill
     # 锁：终审协议必须执行官方低上限例外。
-    assert "官方上限低于 24 页" in audit_protocol
+    assert "官方上限低于 26 页" in audit_protocol
     # 锁：正文上限不能通过搬走核心交付物规避。
     assert "核心结果、关键验证、符号说明或复现入口" in paper_skill
     # 锁：paper-writer 必须明确禁止用附录规避 30 页上限。

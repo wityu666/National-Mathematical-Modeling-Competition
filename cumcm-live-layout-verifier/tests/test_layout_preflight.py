@@ -11,9 +11,9 @@ SCRIPT = SKILL_ROOT / "scripts" / "layout_preflight.py"
 EXIT_OK = 0
 EXIT_BLOCKED = 1
 EXIT_USAGE = 2
-DEFAULT_MIN_MAIN_PAGES = 24
+DEFAULT_MIN_MAIN_PAGES = 26
 DEFAULT_MAX_MAIN_PAGES = 30
-UNDER_FLOOR_BODY_PAGES = 23
+UNDER_FLOOR_BODY_PAGES = 25
 OVER_LIMIT_BODY_PAGES = 31
 EXPECTED_APPENDIX_PAGES = 17
 NO_APPENDIX_PAGES = 0
@@ -70,8 +70,10 @@ def test_safe_pdf_and_source_only_precheck_pass(tmp_path: Path) -> None:
     assert report["page_limit"]["min_main_pages"] == DEFAULT_MIN_MAIN_PAGES
     # 锁：预检报告必须保留默认正文页数上限。
     assert report["page_limit"]["max_main_pages"] == DEFAULT_MAX_MAIN_PAGES
-    # 锁：未知页边界时必须警告用户后续核验 24–30 页。
-    assert any("24–30" in warning for warning in report["warnings"])
+    # 锁：工具不得默认从 PDF 第 1 页计数而把摘要误算进正文。
+    assert report["page_limit"]["main_start_pdf_page"] is None
+    # 锁：未知页边界时必须警告用户后续核验 26–30 页。
+    assert any("26–30" in warning for warning in report["warnings"])
 
 
 def test_invalid_pdf_header_is_blocked(tmp_path: Path) -> None:
@@ -173,20 +175,23 @@ def test_pdffonts_fixed_width_parser_detects_unembedded_font() -> None:
     assert "SimSun" in unembedded[0]
 
 
-def test_24_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
+def test_26_body_pages_excluding_front_matter_with_unlimited_appendix_passes(
+    tmp_path: Path,
+) -> None:
     module = load_preflight_module()
     issues = []
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=41,
-        main_start_page=1,
-        appendix_start_page=25,
-        min_main_pages=24,
+        total_pages=47,
+        main_start_page=5,
+        appendix_start_page=31,
+        min_main_pages=26,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=2,
     )
 
     # 锁：正文恰达下限且附录较长时仍须通过。
@@ -195,33 +200,40 @@ def test_24_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
     assert result["min_main_pages"] == DEFAULT_MIN_MAIN_PAGES
     # 锁：页数结果必须回显默认上限。
     assert result["max_main_pages"] == DEFAULT_MAX_MAIN_PAGES
-    # 锁：正文物理页边界必须正确计算到 24 页。
+    # 锁：摘要、关键词和目录等前置页不得计入 26 页编号正文。
     assert result["main_body_pages"] == DEFAULT_MIN_MAIN_PAGES
+    # 锁：页数报告必须明确摘要页不计入编号正文。
+    assert result["abstract_pages_counted"] is False
+    # 锁：页数报告必须明确使用第一章到附录前一页的计算口径。
+    assert result["count_basis"] == "first_numbered_body_page_to_before_appendix"
+    # 锁：附录页数必须保持无硬上限。
+    assert result["appendix_page_limit"] is None
     # 锁：附录页数不限但必须正确计算。
     assert result["appendix_pages"] == EXPECTED_APPENDIX_PAGES
     # 锁：合法下限案例不得生成页数问题。
     assert issues == []
 
 
-def test_23_body_pages_is_blocked_by_page_floor(tmp_path: Path) -> None:
+def test_25_body_pages_is_blocked_by_page_floor(tmp_path: Path) -> None:
     module = load_preflight_module()
     issues = []
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=40,
-        main_start_page=1,
-        appendix_start_page=24,
-        min_main_pages=24,
+        total_pages=46,
+        main_start_page=5,
+        appendix_start_page=30,
+        min_main_pages=26,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=2,
     )
 
     # 锁：正文低于下限一页必须阻断。
     assert result["status"] == "BLOCKED"
-    # 锁：下限案例必须准确计算为 23 页。
+    # 锁：下限案例必须准确计算为 25 页。
     assert result["main_body_pages"] == UNDER_FLOOR_BODY_PAGES
     # 锁：低于下限必须产生稳定问题码。
     assert any(item["code"] == "main-body-under-page-floor" for item in issues)
@@ -235,14 +247,15 @@ def test_30_body_pages_with_unlimited_appendix_passes(tmp_path: Path) -> None:
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=47,
-        main_start_page=1,
-        appendix_start_page=31,
-        min_main_pages=24,
+        total_pages=51,
+        main_start_page=5,
+        appendix_start_page=35,
+        min_main_pages=26,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=2,
     )
 
     # 锁：正文恰达 30 页上限时必须通过。
@@ -261,14 +274,15 @@ def test_31_body_pages_is_blocked_even_with_appendix(tmp_path: Path) -> None:
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=47,
-        main_start_page=1,
-        appendix_start_page=32,
-        min_main_pages=24,
+        total_pages=52,
+        main_start_page=5,
+        appendix_start_page=36,
+        min_main_pages=26,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=2,
     )
 
     # 锁：正文超过上限一页必须阻断。
@@ -285,14 +299,15 @@ def test_no_appendix_counts_body_through_last_page(tmp_path: Path) -> None:
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=31,
-        main_start_page=1,
+        total_pages=35,
+        main_start_page=5,
         appendix_start_page=None,
-        min_main_pages=24,
+        min_main_pages=26,
         max_main_pages=30,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=2,
     )
 
     # 锁：没有附录时附录页数必须归零。
@@ -315,6 +330,53 @@ def test_cli_cannot_relax_30_page_hard_limit(tmp_path: Path) -> None:
     assert "不能放宽 30 页硬门" in result.stderr
 
 
+def test_missing_abstract_boundary_keeps_page_count_unverified(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=47,
+        main_start_page=5,
+        appendix_start_page=31,
+        min_main_pages=26,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+    )
+
+    # 锁：未记录摘要结束页时不能宣称摘要排除已核验。
+    assert result["status"] == "UNVERIFIED"
+    # 锁：摘要排除证据缺失时不得计算可通过的正文页数。
+    assert result["main_body_pages"] is None
+    # 锁：摘要边界缺失必须给出可定位的警告。
+    assert any("摘要结束物理页" in warning for warning in warnings)
+
+
+def test_abstract_end_page_must_precede_first_body_page(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+    warnings = []
+
+    result = module.evaluate_page_limit(
+        total_pages=47,
+        main_start_page=5,
+        appendix_start_page=31,
+        min_main_pages=26,
+        max_main_pages=30,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+        warnings=warnings,
+        abstract_end_page=5,
+    )
+
+    # 锁：摘要结束页不得与编号正文第一章起始页重叠。
+    assert result["status"] == "BLOCKED"
+    # 锁：错误摘要边界必须产生稳定问题码。
+    assert any(item["code"] == "invalid-abstract-body-boundary" for item in issues)
+
+
 def test_cli_rejects_minimum_above_maximum(tmp_path: Path) -> None:
     pdf = tmp_path / "paper.pdf"
     write_minimal_pdf(pdf)
@@ -333,7 +395,7 @@ def test_cli_rejects_minimum_above_maximum(tmp_path: Path) -> None:
     assert "--min-main-pages 不能高于 --max-main-pages" in result.stderr
 
 
-def test_cli_cannot_lower_floor_without_official_cap_below_24(
+def test_cli_cannot_lower_floor_without_official_cap_below_26(
     tmp_path: Path,
 ) -> None:
     pdf = tmp_path / "paper.pdf"
@@ -342,15 +404,15 @@ def test_cli_cannot_lower_floor_without_official_cap_below_24(
     result = run_preflight(
         pdf,
         "--min-main-pages",
-        "23",
+        "25",
         "--max-main-pages",
         "30",
     )
 
-    # 锁：官方上限未低于 24 页时不得降低默认下限。
+    # 锁：官方上限未低于 26 页时不得降低默认下限。
     assert result.returncode == EXIT_USAGE
     # 锁：错误信息必须说明降低下限所需的官方低上限条件。
-    assert "仅当 --max-main-pages 同时低于 24" in result.stderr
+    assert "仅当 --max-main-pages 同时低于 26" in result.stderr
 
 
 def test_human_output_displays_allowed_page_range(tmp_path: Path) -> None:
@@ -372,7 +434,7 @@ def test_human_output_displays_allowed_page_range(tmp_path: Path) -> None:
     # 锁：合法人类可读预检必须正常退出。
     assert result.returncode == EXIT_OK
     # 锁：人类输出必须显示正文页数允许区间。
-    assert "main_body_pages=None allowed_range=24–30" in result.stdout
+    assert "main_body_pages=None allowed_range=26–30" in result.stdout
 
 
 def test_official_20_page_cap_allows_matching_20_page_floor(tmp_path: Path) -> None:
@@ -395,14 +457,15 @@ def test_official_20_page_cap_allows_matching_20_page_floor(tmp_path: Path) -> N
     warnings = []
 
     result = module.evaluate_page_limit(
-        total_pages=35,
-        main_start_page=1,
-        appendix_start_page=21,
+        total_pages=36,
+        main_start_page=2,
+        appendix_start_page=22,
         min_main_pages=min_pages,
         max_main_pages=max_pages,
         pdf=tmp_path / "paper.pdf",
         issues=issues,
         warnings=warnings,
+        abstract_end_page=1,
     )
 
     # 锁：官方 20 页上限可将内部区间收敛为 20–20。
@@ -415,14 +478,14 @@ def test_official_20_page_cap_allows_matching_20_page_floor(tmp_path: Path) -> N
     assert issues == []
 
 
-def test_official_cap_below_24_auto_disables_default_floor(tmp_path: Path) -> None:
+def test_official_cap_below_26_auto_disables_default_floor(tmp_path: Path) -> None:
     module = load_preflight_module()
 
     min_pages, max_pages = module.resolve_main_page_range(
-        24,
+        26,
         20,
         min_was_explicit=False,
     )
 
-    # 锁：官方上限低于 24 页时默认内部下限必须自动失效。
+    # 锁：官方上限低于 26 页时默认内部下限必须自动失效。
     assert (min_pages, max_pages) == (OFFICIAL_AUTO_FLOOR, OFFICIAL_CAP_PAGES)

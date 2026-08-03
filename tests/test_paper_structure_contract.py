@@ -230,7 +230,9 @@ def test_existing_content_and_page_gates_are_preserved() -> None:
     assert body.count("| 直接答案与最终交付 |") == EXPECTED_SINGLE_SECTION
     # 锁：统一内容门不能导致三问机械复用子结构。
     assert any(marker in skeleton for marker in DEPRINT_STRUCTURE_GUARDS)
-    # 锁：24–30 页内部质量区间必须保留。
-    assert "24–30 页" in skeleton
+    # 锁：26–30 页内部质量区间必须保留。
+    assert "26–30 页" in skeleton
+    # 锁：摘要不得计入编号正文页数。
+    assert "摘要" in skeleton and "不计入" in skeleton
     # 锁：论文骨架必须继续只接受已证明亮点。
     assert "CONTRIB-PROVEN" in skeleton

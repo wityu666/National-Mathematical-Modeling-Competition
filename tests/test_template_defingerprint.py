@@ -33,8 +33,8 @@ def test_content_gates_remain_after_sentence_template_removal() -> None:
     assert all(
         marker in skeleton for marker in ("第一屏", "CONTRIB-PROVEN", "量化")
     )
-    # 锁：去指纹改动不能删除正文 24 页下限。
-    assert "24" in skeleton
+    # 锁：去指纹改动不能删除编号正文 26 页下限。
+    assert "26" in skeleton
     # 锁：去指纹改动不能删除正文 30 页上限。
     assert "30 页" in skeleton
 

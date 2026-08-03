@@ -33,7 +33,7 @@ LATEX_HARD_PATTERNS = {
     "overfull-box": re.compile(r"Overfull \\[hv]box", re.I),
 }
 TEXT_EXTENSIONS = {".tex", ".log", ".md", ".txt", ".bib", ".sty", ".cls"}
-DEFAULT_MIN_MAIN_PAGES = 24
+DEFAULT_MIN_MAIN_PAGES = 26
 MAX_MAIN_PAGES_HARD_CEILING = 30
 
 
@@ -149,13 +149,14 @@ def find_unembedded_fonts(output: str) -> list[str]:
 
 def evaluate_page_limit(
     total_pages: int | None,
-    main_start_page: int,
+    main_start_page: int | None,
     appendix_start_page: int | None,
     min_main_pages: int,
     max_main_pages: int,
     pdf: Path,
     issues: list[dict[str, str]],
     warnings: list[str],
+    abstract_end_page: int | None = None,
 ) -> dict[str, Any]:
     """Evaluate the physical-PDF-page boundary between body and appendix."""
     result: dict[str, Any] = {
@@ -167,6 +168,11 @@ def evaluate_page_limit(
         "total_pdf_pages": total_pages,
         "main_body_pages": None,
         "appendix_pages": None,
+        "abstract_end_pdf_page": abstract_end_page,
+        "count_basis": "first_numbered_body_page_to_before_appendix",
+        "abstract_pages_counted": False,
+        "abstract_exclusion_verified": False,
+        "appendix_page_limit": None,
     }
     if total_pages is None:
         warnings.append(
@@ -175,6 +181,32 @@ def evaluate_page_limit(
         )
         return result
 
+    if main_start_page is None:
+        warnings.append(
+            "未提供编号正文第一章的起始物理页；摘要、关键词和目录不得计入正文，"
+            "页数状态保持 UNVERIFIED。"
+        )
+        return result
+
+    if abstract_end_page is None:
+        warnings.append(
+            "未提供摘要结束物理页；无法证明摘要已排除，页数状态保持 UNVERIFIED。"
+        )
+        return result
+
+    if not 1 <= abstract_end_page < main_start_page:
+        issues.append(
+            issue(
+                "invalid-abstract-body-boundary",
+                pdf,
+                "摘要结束页必须早于编号正文第一章起始页。",
+                "P0",
+            )
+        )
+        result["status"] = "BLOCKED"
+        return result
+    result["abstract_exclusion_verified"] = True
+
     appendix_start = appendix_start_page or total_pages + 1
     result["appendix_start_pdf_page"] = appendix_start
     if not (1 <= main_start_page < appendix_start <= total_pages + 1):
@@ -182,7 +214,7 @@ def evaluate_page_limit(
             issue(
                 "invalid-body-appendix-boundary",
                 pdf,
-                "正文起始页、附录起始页与 PDF 总页数的关系无效。",
+                "编号正文起始页、附录起始页与 PDF 总页数的关系无效。",
                 "P0",
             )
         )
@@ -277,11 +309,12 @@ def build_report(
     pdf: Path,
     source: Path | None,
     max_pdf_mb: float | None,
-    main_start_page: int,
+    main_start_page: int | None,
     appendix_start_page: int | None,
     min_main_pages: int,
     max_main_pages: int,
     skip_external_tools: bool,
+    abstract_end_page: int | None,
 ) -> dict[str, Any]:
     issues: list[dict[str, str]] = []
     warnings: list[str] = []
@@ -327,6 +360,7 @@ def build_report(
         pdf,
         issues,
         warnings,
+        abstract_end_page,
     )
 
     return {
@@ -352,8 +386,15 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--main-start-page",
         type=int,
-        default=1,
-        help="正文在最终 PDF 中的起始物理页，默认 1。",
+        help=(
+            "编号正文第一章在最终 PDF 中的起始物理页；摘要、关键词、目录等"
+            "正文前置部分不计入 main_body_pages。"
+        ),
+    )
+    parser.add_argument(
+        "--abstract-end-page",
+        type=int,
+        help="摘要在最终 PDF 中的结束物理页；必须早于编号正文第一章起始页。",
     )
     parser.add_argument(
         "--appendix-start-page",
@@ -365,7 +406,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         type=int,
         default=DEFAULT_MIN_MAIN_PAGES,
         help=(
-            "正文页数下限，默认 24；仅当当届官方规则的上限低于 24 时"
+            "编号正文页数下限，默认 26；仅当当届官方规则的上限低于 26 时"
             "才允许调低。"
         ),
     )
@@ -405,7 +446,7 @@ def resolve_main_page_range(
         and min_main_pages == DEFAULT_MIN_MAIN_PAGES
         and not min_was_explicit
     ):
-        # 当届官方上限低于 24 页时，默认内部下限自动失效，只保留正页数底线。
+        # 当届官方上限低于 26 页时，默认内部下限自动失效，只保留正页数底线。
         min_main_pages = 1
 
     if min_main_pages < 1:
@@ -419,8 +460,8 @@ def resolve_main_page_range(
         and max_main_pages >= DEFAULT_MIN_MAIN_PAGES
     ):
         raise ValueError(
-            "错误：24 页下限是用户已确认的内部质量门；"
-            "仅当 --max-main-pages 同时低于 24（当届官方上限更严）时才允许调低。"
+            "错误：26 页下限是用户已确认的内部质量门；"
+            "仅当 --max-main-pages 同时低于 26（当届官方上限更严）时才允许调低。"
         )
     return min_main_pages, max_main_pages
 
@@ -437,8 +478,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_pdf_mb is not None and args.max_pdf_mb <= 0:
         print("错误：--max-pdf-mb 必须大于 0。", file=sys.stderr)
         return 2
-    if args.main_start_page <= 0:
+    if args.main_start_page is not None and args.main_start_page <= 0:
         print("错误：--main-start-page 必须大于 0。", file=sys.stderr)
+        return 2
+    if args.abstract_end_page is not None and args.abstract_end_page <= 0:
+        print("错误：--abstract-end-page 必须大于 0。", file=sys.stderr)
         return 2
     if args.appendix_start_page is not None and args.appendix_start_page <= 0:
         print("错误：--appendix-start-page 必须大于 0。", file=sys.stderr)
@@ -462,6 +506,7 @@ def main(argv: list[str] | None = None) -> int:
         min_main_pages,
         max_main_pages,
         args.skip_external_tools,
+        args.abstract_end_page,
     )
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
