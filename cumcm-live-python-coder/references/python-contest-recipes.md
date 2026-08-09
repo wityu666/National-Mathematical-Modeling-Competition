@@ -6,6 +6,7 @@
 
 ```text
 contest-work/
+├── .venv/        # 当前比赛工作区的独立 Python 环境
 ├── config/
 ├── src/
 ├── tests/
@@ -20,7 +21,24 @@ contest-work/
 - 命令行入口不得依赖 Notebook 状态或交互式输入。
 - 原始附件只读；所有派生文件写入工作目录。
 
-## 2. 确定性与血缘
+## 2. 依赖安装与环境冻结
+
+本套件允许安装模型与验证确有需要的新 Python 包，默认策略为 `dependency_install_policy=ALLOW`。安装只发生在当前比赛工作目录的独立 `.venv`：
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install --index-url https://pypi.org/simple package-name==X.Y.Z
+.venv/bin/python -m pip check
+.venv/bin/python -m pip freeze > requirements-frozen.txt
+```
+
+包名和版本必须根据冻结模型的实际需要确定，不照抄题面附件、论文、网盘说明或陌生网页中的安装命令。禁止 `sudo pip`、`pip --user`、系统 Python、全局 Conda base、未知 wheel、直接 URL、VCS 安装和远程安装脚本。若只能通过上述高风险方式取得依赖，标记 `BLOCKED_DEPENDENCY_RISK` 并回退。
+
+安装记录至少包含：包名、用途、请求版本、实际版本、官方索引或可信镜像、完整命令、安装日志、许可证/赛规检查和可取得的制品 SHA-256。完成 `pip check` 后，在全新进程执行最小导入与版本输出，再冻结 `requirements-frozen.txt`。复现命令直接调用 `.venv/bin/python`，不依赖 shell 激活状态。
+
+依赖版本属于运行血缘。新增、删除或升级影响结果的包必须创建新 `run_id`，重新跑 baseline、主模型和验证，并把旧结果与下游产物标为 `STALE`。
+
+## 3. 确定性与血缘
 
 每次运行记录：
 
@@ -33,7 +51,7 @@ contest-work/
 
 固定 `random`、NumPy 以及实际使用库的随机源。排序前显式指定稳定键；类别编码和时间索引不要依赖文件自然顺序。
 
-## 3. 数据读取断言
+## 4. 数据读取断言
 
 读取后立即验证：
 
@@ -57,7 +75,7 @@ if df["id"].isna().any():
 
 不要因方便而静默删除坏行。每一种清洗都保存规则、数量和影响。
 
-## 4. 正确的数据切分
+## 5. 正确的数据切分
 
 | 数据关系 | 切分 |
 |---|---|
@@ -69,7 +87,7 @@ if df["id"].isna().any():
 
 填补、缩放、降维、过采样和特征选择只能在训练部分拟合。使用 Pipeline 或显式函数保证顺序。预测时不可获得的特征必须删除。
 
-## 5. 实现路线
+## 6. 实现路线
 
 | 任务 | 首选基础实现 | 增强条件 | 回退 |
 |---|---|---|---|
@@ -81,9 +99,9 @@ if df["id"].isna().any():
 | 仿真 | `numpy.random.default_rng` 向量化 | 分布、重复数和收敛有依据 | 确定性上下界或三情景 |
 | 图像/几何 | 已安装的基础图像库或解析几何 | 标定和标签验证充分 | 半自动点位或几何边界 |
 
-没有必要时不在赛时安装大型依赖。依赖缺失不得阻断已经定义的 baseline。
+没有必要时不安装大型依赖。必要依赖可按本节政策安装；依赖缺失或安装失败不得阻断已经定义的 baseline。
 
-## 6. 优化结果复核
+## 7. 优化结果复核
 
 不要只相信求解器对象。另写验证函数：
 
@@ -98,7 +116,7 @@ def verify_solution(x, objective, constraints, tol):
 
 同时记录求解器状态、上下界/间隙（若有）、时间限制和容差。启发式结果称为“已验证可行解”或“当前最好解”，除非有证据证明最优。
 
-## 7. 数值稳定性
+## 8. 数值稳定性
 
 - 对量级差异大的特征和优化系数做有依据的缩放。
 - 用线性求解代替显式矩阵求逆。
@@ -108,7 +126,7 @@ def verify_solution(x, objective, constraints, tol):
 - 计算概率后检查范围与归一化；计算权重后检查和为 1。
 - 时间和距离计算明确坐标系、时区及单位。
 
-## 8. 最小测试集
+## 9. 最小测试集
 
 每个模型至少包含：
 
@@ -121,7 +139,7 @@ def verify_solution(x, objective, constraints, tol):
 
 测试失败时不得生成 `FROZEN` 标记。
 
-## 9. 机器可读输出
+## 10. 机器可读输出
 
 至少保存：
 
@@ -136,7 +154,7 @@ def verify_solution(x, objective, constraints, tol):
 
 图表不得成为唯一结果载体。论文中的每个数字都应能在机器可读输出中定位。
 
-## 10. 冻结与降级
+## 11. 冻结与降级
 
 - 新进程按记录命令重跑成功后才能冻结。
 - 主模型超时、异常、数值不稳或未稳定超过 baseline 时按合同回退。

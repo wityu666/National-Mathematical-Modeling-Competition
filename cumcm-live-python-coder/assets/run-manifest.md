@@ -29,15 +29,30 @@
 | python_executable |  |
 | python_version |  |
 | virtual_environment |  |
+| dependency_install_policy | `ALLOW` |
+| package_index_or_mirror | `https://pypi.org/simple / 已登记可信镜像` |
+| dependency_install_log |  |
+| dependency_lockfile | `requirements-frozen.txt / 等价 lockfile` |
 | package_snapshot_path |  |
 | available_solvers |  |
 | working_directory |  |
 
-### 关键依赖
+### 依赖安装记录
 
-| 包 | 请求版本 | 实际版本 | 用途 | 状态 |
-|---|---|---|---|---|
-|  |  |  |  | OK / MISSING / FALLBACK |
+| 包 | 用途 | 请求版本 | 实际版本 | 来源/索引 | 安装命令 | 制品 SHA-256 | 状态 |
+|---|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  | INSTALLED / PREINSTALLED / MISSING / FALLBACK / BLOCKED_RISK |
+
+### 依赖环境门禁
+
+| 检查 | 状态 | 证据 |
+|---|---|---|
+| 使用当前比赛工作目录的独立 `.venv` | PASS / FAIL | `【python_executable / virtual_environment】` |
+| 未使用 sudo、--user、系统 Python 或全局 Conda base | PASS / FAIL | `【安装命令】` |
+| 包名、用途、版本、来源和许可证/赛规风险已核对 | PASS / FAIL | `【登记表/来源】` |
+| `python -m pip check` 通过 | PASS / FAIL | `【日志】` |
+| 全新进程导入与版本冒烟测试通过 | PASS / FAIL | `【命令/日志】` |
+| 精确依赖快照已冻结 | PASS / FAIL | `【requirements-frozen.txt / lockfile SHA-256】` |
 
 ## 2. 输入冻结
 
