@@ -42,6 +42,7 @@
 | 附录含关键建模代码且与冻结源代码和正文结果一致 | `【PASS/BLOCKED】` | `【CODE/MODEL/RUN/RID/FIG/TAB；页码/源文件/函数/版本】` |
 | 符号说明表位于正文且与公式定义一致，并采用三线表 | `【PASS/BLOCKED】` | `【正文节号/页码/公式编号；顶线/表头下横线/底线；无竖线/逐行横线；Word-PDF 截图】` |
 | 图表采用已登记的同一个 `palette_set` 且灰度可辨 | `【PASS/BLOCKED】` | `【图号/截图/例外说明】` |
+| 实际图型匹配分析任务且未强制凑齐候选类型 | `【PASS/BLOCKED】` | `【图型审计表；未使用类型 NOT_APPLICABLE】` |
 | 同版本 `VER-*` 重复复核报告为 PASS | `【PASS/BLOCKED】` | `【Round A / Round B / 硬门】` |
 | 同冻结标识、双哈希 `LAYOUT-*` 排版复核报告为 PASS | `【PASS/BLOCKED】` | `【paper_freeze_id / docx_sha256 / pdf_sha256 / 自动预检 / 双版本一致性 / 逐页查看】` |
 | 亮点账本已冻结且论文亮点均为 `CONTRIB-PROVEN` | `【PASS/BLOCKED】` | `【】` |
@@ -51,6 +52,18 @@
 | 匿名与身份信息符合当届规则 | `【PASS/BLOCKED】` | `【】` |
 | PDF 逐页视觉 QA 完成 | `【PASS/BLOCKED】` | `【】` |
 | 代码与支撑材料可复核 | `【PASS/BLOCKED】` | `【】` |
+
+## 图型选择审计
+
+| 候选图型 | 实际图号 | 分析任务与选择理由 | 关键适配检查 | palette_set/object_color_map | 结果 |
+|---|---|---|---|---|---|
+| 扇形图/饼图 | `【FIG-* / 未使用】` | `【部分—整体 / 理由】` | `【类别数、非负、总量含义、直接标签、二维】` | `【PASS/BLOCKED/N/A】` | `【PASS/P1/P0/NOT_APPLICABLE】` |
+| 水平条形图 | `【FIG-* / 未使用】` | `【排序/长标签 / 理由】` | `【有意义排序、零基线、标签可读】` | `【PASS/BLOCKED/N/A】` | `【PASS/P1/P0/NOT_APPLICABLE】` |
+| 折线图 | `【FIG-* / 未使用】` | `【时间/迭代/有序横轴 / 理由】` | `【横轴真实有序、标记/区间、无虚假连线】` | `【PASS/BLOCKED/N/A】` | `【PASS/P1/P0/NOT_APPLICABLE】` |
+| 竖向柱形图 | `【FIG-* / 未使用】` | `【少量离散类别 / 理由】` | `【零基线、误差棒/标签、类别不过密】` | `【PASS/BLOCKED/N/A】` | `【PASS/P1/P0/NOT_APPLICABLE】` |
+| 其他实际图型 | `【FIG-* / 未使用】` | `【任务 / 理由】` | `【适配性与误导风险】` | `【PASS/BLOCKED/N/A】` | `【PASS/P1/P0/NOT_APPLICABLE】` |
+
+> 上表是对实际选择的审计，不是覆盖率清单。允许若干候选图型为 `NOT_APPLICABLE`；不得因为某种图未出现判错，也不得为凑齐种类或正文页数补图。
 
 ## 逐问七项内容门覆盖核对
 

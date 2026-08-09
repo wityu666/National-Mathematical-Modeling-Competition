@@ -17,8 +17,12 @@
 | 敏感性 | parameter-response、tornado、scenario heatmap |
 | 路径/网络 | 坐标路径、network layout、edge weight |
 | 排程 | broken-bar/Gantt |
+| 少量类别的部分—整体构成 | `pie`（二维、直接标签） |
+| 排序、长标签或较多类别比较 | `barh`（排序水平条形图） |
+| 时间、迭代或其他有序趋势 | `plot`（折线 + marker） |
+| 少量离散类别比较 | `bar`（竖向柱形图，零基线） |
 
-复杂图型只有在它直接回答题面时使用。雷达图、桑基图和 3D 曲面不是默认选项。
+上表是候选图型库，不是覆盖清单。扇形图、水平条形图、折线图、竖向柱形图允许有几种或全部不出现；只有能直接回答题面、模型或验证任务时才生成。复杂图型同样只有在它直接回答题面时使用。雷达图、桑基图和 3D 曲面不是默认选项，不得为了图型丰富度或正文页数自动补图。
 
 ## 2. 使用统一样式
 
@@ -86,6 +90,38 @@ for i, (name, values) in enumerate(series.items()):
 - 类别均值比较：排序点图或带误差棒的柱图。
 
 柱图默认从零开始。需要放大非零差异时优先使用点图/区间图；若使用轴断裂必须明确标识。
+
+### 基础候选图型配方
+
+以下代码仅展示选型与绘制接口；实际标签、数据顺序、颜色角色和 `FIG-*` 必须来自本题冻结配置。同一对象继续使用冻结的 `object_color_map`，不得按图型另选配色。
+
+```python
+# 二维扇形图：仅限少量类别、非负且总量有明确意义的部分—整体构成。
+ax.pie(
+    shares,
+    labels=labels,
+    colors=[object_colors[name] for name in labels],
+    startangle=90,
+    counterclock=False,
+    autopct="%1.1f%%",
+    wedgeprops={"edgecolor": "white", "linewidth": 0.8},
+)
+
+# 水平条形图：用于排序、长标签或较多类别。
+order = np.argsort(values)
+ax.barh(np.asarray(labels)[order], np.asarray(values)[order],
+        color=[object_colors[labels[i]] for i in order])
+
+# 折线图：横轴必须具有真实顺序。
+ax.plot(x_ordered, y, color=colors["primary"], marker="o",
+        linewidth=1.5, label=series_name)
+
+# 竖向柱形图：用于少量离散类别，数值轴原则上从零起。
+ax.bar(labels, values, color=[object_colors[name] for name in labels])
+ax.set_ylim(bottom=0)
+```
+
+扇形图原则上不超过 5–6 类，直接标注类别和占比，禁止 3D、爆炸效果；占比接近、类别更多或需要精确比较时改用排序水平条形图或 100% 堆积条。水平条形图按数值或题面逻辑排序，折线图不得连接无序类别，竖向柱形图不得用截断轴夸大差异。未使用的候选图型标记为 `NOT_APPLICABLE` 即可，不生成空图或替代图。
 
 ## 6. 空间、几何与机理图
 
@@ -158,5 +194,6 @@ PNG 只用于栅格内容或兼容路线；线图、流程图和示意图优先�
 - 图例不挡数据，轴标签与色条有单位；
 - 没有多余边框、软件界面或个人路径；
 - 没有截断柱轴、彩虹色带、3D 饼图；
+- 扇形图、水平条形图、折线图和竖向柱形图均按分析任务选用；未出现的候选图型不视为缺陷，也没有为凑齐种类生成装饰图；
 - 图中数字与机器可读结果一致；
 - 每张图都被正文引用并给出定量结论。
