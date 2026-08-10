@@ -13,21 +13,23 @@ def test_skeleton_requires_key_modeling_code_in_appendix() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     appendix = skeleton.split("## 附录", 1)[1].split("## 提交前同步表", 1)[0]
 
-    # 锁：附录必须有独立的关键建模代码与运行说明小节。
-    assert "### B. 关键建模代码与运行说明" in appendix
+    # 锁：附录必须有独立的关键建模代码小节。
+    assert "### A. 关键建模代码" in appendix
     # 锁：关键代码必须来自最终模型、求解结果或关键验证。
     assert "实际生成最终模型、求解结果或关键验证的建模代码" in appendix
-    # 锁：三个问题都必须有可定位的关键代码登记项。
-    assert appendix.count("`CODE-Q") >= EXPECTED_QUESTION_COUNT
+    # 锁：三个问题都必须有可定位的关键代码展示位置。
+    assert appendix.count("关键代码") >= EXPECTED_QUESTION_COUNT
     for question in ("问题一", "问题二", "问题三"):
         # 锁：每个问题都必须有独立的关键代码展示位置。
         assert f"{question}关键代码" in appendix
-    # 锁：附录代码必须映射回冻结运行和正文证据。
-    assert "MODEL/RUN/RID/FIG/TAB" in appendix and "冻结版本" in appendix
+    # 锁：内部证据映射继续保留，但不能作为论文可见索引表。
+    assert "MODEL/RUN/RID/FIG/TAB" in appendix and "内部同步表" in appendix
     # 锁：代码必须以文本提供，不能用截图代替。
     assert "可复制文本" in appendix and "不使用代码截图" in appendix
-    # 锁：完整工程仍须在支撑材料中提供并记录哈希。
-    assert "完整源代码在支撑材料中的相对路径与 SHA-256" in appendix
+    # 锁：完整工程仍随允许的支撑材料提交，但论文不显示路径与哈希索引。
+    assert "完整工程另随当届规则允许的支撑材料提交" in appendix
+    assert "### A. 支撑材料清单" not in appendix
+    assert "运行与完整工程说明" not in appendix
 
 
 def test_appendix_code_gate_reaches_writer_layout_and_auditor() -> None:
