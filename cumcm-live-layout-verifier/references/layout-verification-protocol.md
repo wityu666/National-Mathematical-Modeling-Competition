@@ -12,7 +12,7 @@
 - `paper_freeze_id`、论文源版本与主排版路线；
 - Word 路径、`docx_sha256`、可编辑性检查与生成工具；
 - PDF 路径、`pdf_sha256`、字节数、页数、`pdf_generation_source` 和生成命令；
-- 摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages`、`main_body_pages`；
+- 摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`appendix_code_pdf_page`、`total_pdf_pages`、`main_body_pages`；
 - 检查时间、工具版本和当届规则快照；
 - 截图或页码证据。
 
@@ -24,7 +24,7 @@
 
 | 对象 | 硬检查 |
 |---|---|
-| PDF | 存在、文件头/尾、编号正文默认 26–30 页且摘要不计、附录不限页、可选大小限制、可选元数据/文本工具结果 |
+| PDF | 存在、文件头/尾、编号正文默认 26–30 页且摘要不计、附录不限页、附录主要建模代码页定位、可选大小限制、可选元数据/文本工具结果 |
 | LaTeX | 致命错误、未定义引用/引文、明显 overfull、占位符 |
 | Word | 宏文档、批注、修订、占位符、损坏的 OOXML |
 | 通用源 | `TODO/TBD/待补/待复核/待冻结` 等残留 |
@@ -38,7 +38,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 ```
 
-`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。没有附录时令 `appendix_start_pdf_page = total_pdf_pages + 1`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。当届上限为 26 页或以上时不得调低内部下限。未记录摘要起止页和编号正文第一章起始页时，摘要排除边界无法证明，页数状态必须为 `UNVERIFIED`。
+`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。本套件要求附录存在并收录主要建模代码，因此必须同时登记 `appendix_start_pdf_page` 与位于附录范围内的 `appendix_code_pdf_page`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。当届上限为 26 页或以上时不得调低内部下限。总页数或任一边界缺失时立即 `BLOCKED_PAGE_BOUNDARY/P0`，正文越界时 `BLOCKED_PAGE_RANGE/P0`，附录代码页缺失或不在附录范围时 `BLOCKED_APPENDIX_CODE/P0`；不再保留退出码 0 的 `UNVERIFIED` 路径。
 
 ## 4. 视觉检查抽样
 
@@ -86,7 +86,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 正文“符号说明”必须使用三线表：只保留顶线、表头下横线和底线，不出现竖线、左右边线、逐行横线或全边框网格。Word 检查实际边框设置和 PDF 导出效果；LaTeX 检查 `\toprule/\midrule/\bottomrule` 或模板等价命令，列格式不得含竖线，不得逐行使用 `\hline`。符号表跨页时重复表头，并保持续表列宽、线型和对齐一致。
 
-附录关键建模代码必须以可复制的等宽文本呈现，不使用代码截图。检查代码字号、缩进、长行换行、跨页连续性、行号或 `CODE-*` 标识及页边界；不得为了容纳代码把字号缩到不可读，也不得让分页切断关键语句而无法理解。
+附录关键建模代码必须以可复制的等宽文本呈现，不使用代码截图。检查 `appendix_code_pdf_page`、代码字号、缩进、长行换行、跨页连续性、行号或 `CODE-*` 标识及页边界；不得为了容纳代码把字号缩到不可读，也不得让分页切断关键语句而无法理解。静态预检只确认页码定位，Round B 必须继续确认该页确实包含变量/参数构造、目标与约束、核心求解/预测/仿真或验证逻辑，而不是导包、通用绘图和重复文件读写。
 
 ## 8. Word/PDF 双版本一致性
 
@@ -120,6 +120,8 @@ and word_pdf_content_consistent
 and precheck_pass
 and min_main_pages <= main_body_pages <= max_main_pages
 and page_boundary_verified
+and appendix_code_page_declared
+and appendix_key_model_code_visually_confirmed
 and visual_scope_complete
 and no_open_P0_or_P1
 and regenerated_after_fix

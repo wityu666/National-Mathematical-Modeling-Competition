@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 赛时终稿审计"
-  short_description: "终审国赛 Word/PDF 两版、证据、排版与提交包"
-  default_prompt: "请使用 $cumcm-live-final-auditor 终审同一冻结稿的 Word/PDF 两版及官方提交包。"
+  short_description: "终审国赛双版本、正文页数、附录代码与提交包"
+  default_prompt: "请使用 $cumcm-live-final-auditor 终审同一冻结稿的 Word/PDF 两版、正文 26–30 页、附录主要建模代码及官方提交包。"

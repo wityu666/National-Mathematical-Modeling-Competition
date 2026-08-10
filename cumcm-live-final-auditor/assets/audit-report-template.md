@@ -17,6 +17,8 @@
 | 当届规则来源 | `【官方链接或文件】` |
 | 审计人/工具 | `【】` |
 | 摘要/编号正文/附录页数 | `【摘要起止页 / 编号正文第一章起始页 / 附录起始页 / 编号正文页数（默认 26–30）/ 附录页数（不限）/ 官方例外】` |
+| 页数硬门状态码 | `【PASS/BLOCKED_PAGE_BOUNDARY/BLOCKED_PAGE_RANGE】` |
+| 附录主要建模代码页与状态码 | `【appendix_code_pdf_page / PASS/BLOCKED_APPENDIX_CODE】` |
 | template_fingerprint_checked | `【PASS / P1 / P0 / UNVERIFIED】` |
 
 > 只有当届官方规则、Word/PDF 双版本一致性、内容、文件、安全、可复现性和 PDF 视觉 QA 全部通过时，结论才能为 `PASS`。
@@ -40,6 +42,7 @@
 | 主体三问均有按本问逻辑组织的描述性小标题 | `【PASS/BLOCKED】` | `【逐问标题清单/页码/层级与内容对应】` |
 | 总体思路图覆盖各问且与冻结正文一致 | `【PASS/BLOCKED】` | `【FIG-OVERVIEW-001；位置/结构/每问链路/问间依赖/图源/冻结版本】` |
 | 附录含关键建模代码且与冻结源代码和正文结果一致 | `【PASS/BLOCKED】` | `【CODE/MODEL/RUN/RID/FIG/TAB；页码/源文件/函数/版本】` |
+| 附录代码不是占位符、截图或非核心辅助代码冒充 | `【PASS/BLOCKED_APPENDIX_CODE】` | `【代码页码/复制抽查/冻结映射】` |
 | 论文附录不含完整程序与支撑材料索引或内部工程文件列表 | `【PASS/BLOCKED】` | `【附录页码；内部交付/审计清单另存位置；命中时 P1/P0】` |
 | 符号说明表位于正文且与公式定义一致，并采用三线表 | `【PASS/BLOCKED】` | `【正文节号/页码/公式编号；顶线/表头下横线/底线；无竖线/逐行横线；Word-PDF 截图】` |
 | 图表采用已登记的同一个 `palette_set` 且灰度可辨 | `【PASS/BLOCKED】` | `【图号/截图/例外说明】` |
@@ -152,9 +155,9 @@
 |---|---|---|---|---|---|---|---|
 | `LAYOUT-###` | `【PASS/FROZEN】` | `【】` | `【】` | `【】` | `【】` | `【】` | `【PASS/BLOCKED】` |
 
-| abstract_start/end_pdf_page | main_start_pdf_page | appendix_start_pdf_page | total_pdf_pages | main_body_pages | appendix_pages | 边界截图 | 结果 |
-|---:|---:|---:|---:|---:|---:|---|---|
-| `【摘要起止页】` | `【第一章起始页】` | `【N/A 时用 total+1 计算】` | `【】` | `【默认必须为 26–30；摘要不计；记录官方例外】` | `【不限】` | `【】` | `【PASS/BLOCKED】` |
+| abstract_start/end_pdf_page | main_start_pdf_page | appendix_start_pdf_page | appendix_code_pdf_page | total_pdf_pages | main_body_pages | appendix_pages | 边界截图 | 结果/状态码 |
+|---:|---:|---:|---:|---:|---:|---:|---|---|
+| `【摘要起止页】` | `【第一章起始页】` | `【附录起始页】` | `【主要代码起始页】` | `【】` | `【默认必须为 26–30；摘要不计；记录官方例外】` | `【不限】` | `【】` | `【PASS/BLOCKED_PAGE_BOUNDARY/BLOCKED_PAGE_RANGE/BLOCKED_APPENDIX_CODE】` |
 
 | 页码 | 对象 | 检查项 | 状态 | 截图或说明 |
 |---|---|---|---|---|

@@ -175,23 +175,42 @@ def evaluate_page_limit(
         "appendix_page_limit": None,
     }
     if total_pages is None:
-        warnings.append(
-            "无法自动取得 PDF 总页数；"
-            f"Round B 必须人工核验正文页数在 {min_main_pages}–{max_main_pages} 页之间。"
+        issues.append(
+            issue(
+                "page-limit-unverified",
+                pdf,
+                "无法自动取得 PDF 总页数，正文页数硬门尚未核验；"
+                f"必须取得总页数并确认正文位于 {min_main_pages}–{max_main_pages} 页后重跑。",
+                "P0",
+            )
         )
+        result["status"] = "BLOCKED"
         return result
 
     if main_start_page is None:
-        warnings.append(
-            "未提供编号正文第一章的起始物理页；摘要、关键词和目录不得计入正文，"
-            "页数状态保持 UNVERIFIED。"
+        issues.append(
+            issue(
+                "page-boundary-unverified",
+                pdf,
+                "未提供编号正文第一章的起始物理页；摘要、关键词和目录不得计入正文，"
+                "必须补充 --main-start-page 后重跑。",
+                "P0",
+            )
         )
+        result["status"] = "BLOCKED"
         return result
 
     if abstract_end_page is None:
-        warnings.append(
-            "未提供摘要结束物理页；无法证明摘要已排除，页数状态保持 UNVERIFIED。"
+        issues.append(
+            issue(
+                "abstract-boundary-unverified",
+                pdf,
+                "未提供摘要结束物理页；无法证明摘要已从正文页数中排除，"
+                "必须补充 --abstract-end-page 后重跑。",
+                "P0",
+            )
         )
+        result["status"] = "BLOCKED"
         return result
 
     if not 1 <= abstract_end_page < main_start_page:
@@ -248,6 +267,66 @@ def evaluate_page_limit(
         result["status"] = "BLOCKED"
     else:
         result["status"] = "PASS"
+    return result
+
+
+def evaluate_appendix_code_locator(
+    total_pages: int | None,
+    appendix_start_page: int | None,
+    appendix_code_page: int | None,
+    pdf: Path,
+    issues: list[dict[str, str]],
+) -> dict[str, Any]:
+    """Require a physical-page locator for the appendix's key modeling code."""
+    result: dict[str, Any] = {
+        "status": "BLOCKED",
+        "appendix_start_pdf_page": appendix_start_page,
+        "appendix_code_pdf_page": appendix_code_page,
+        "visual_confirmation_required": True,
+    }
+    if appendix_start_page is None:
+        issues.append(
+            issue(
+                "appendix-key-model-code-missing",
+                pdf,
+                "未登记附录起始页；本套件要求附录收录主要建模代码，"
+                "必须补充 --appendix-start-page。",
+                "P0",
+            )
+        )
+        return result
+    if appendix_code_page is None:
+        issues.append(
+            issue(
+                "appendix-key-model-code-unverified",
+                pdf,
+                "未登记附录主要建模代码所在物理页；必须补充 --appendix-code-page，"
+                "并在 Round B 逐页确认代码为可复制文本且与冻结模型一致。",
+                "P0",
+            )
+        )
+        return result
+    if total_pages is None:
+        issues.append(
+            issue(
+                "appendix-key-model-code-unverified",
+                pdf,
+                "无法取得 PDF 总页数，不能验证主要建模代码页是否位于附录范围内。",
+                "P0",
+            )
+        )
+        return result
+    if not appendix_start_page <= appendix_code_page <= total_pages:
+        issues.append(
+            issue(
+                "invalid-appendix-code-page",
+                pdf,
+                "主要建模代码页必须位于附录起始页与 PDF 最后一页之间。",
+                "P0",
+            )
+        )
+        return result
+    result["status"] = "DECLARED"
     return result
 
 
@@ -315,6 +394,7 @@ def build_report(
     max_main_pages: int,
     skip_external_tools: bool,
     abstract_end_page: int | None,
+    appendix_code_page: int | None,
 ) -> dict[str, Any]:
     issues: list[dict[str, str]] = []
     warnings: list[str] = []
@@ -362,6 +442,13 @@ def build_report(
         warnings,
         abstract_end_page,
     )
+    appendix_code = evaluate_appendix_code_locator(
+        total_pages,
+        appendix_start_page,
+        appendix_code_page,
+        pdf,
+        issues,
+    )
 
     return {
         "status": "BLOCKED" if issues else "PRECHECK_PASS",
@@ -375,6 +462,7 @@ def build_report(
         "tools": tool_status,
         "metadata": metadata,
         "page_limit": page_limit,
+        "appendix_code": appendix_code,
     }
 
 
@@ -400,6 +488,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--appendix-start-page",
         type=int,
         help="附录在最终 PDF 中的起始物理页；无附录时省略。",
+    )
+    parser.add_argument(
+        "--appendix-code-page",
+        type=int,
+        help=(
+            "附录中主要建模代码首次出现的 PDF 物理页；本参数只登记定位证据，"
+            "代码内容、可复制性和冻结一致性仍须在 Round B 逐页确认。"
+        ),
     )
     parser.add_argument(
         "--min-main-pages",
@@ -487,6 +583,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.appendix_start_page is not None and args.appendix_start_page <= 0:
         print("错误：--appendix-start-page 必须大于 0。", file=sys.stderr)
         return 2
+    if args.appendix_code_page is not None and args.appendix_code_page <= 0:
+        print("错误：--appendix-code-page 必须大于 0。", file=sys.stderr)
+        return 2
     try:
         min_main_pages, max_main_pages = resolve_main_page_range(
             args.min_main_pages,
@@ -507,6 +606,7 @@ def main(argv: list[str] | None = None) -> int:
         max_main_pages,
         args.skip_external_tools,
         args.abstract_end_page,
+        args.appendix_code_page,
     )
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -519,6 +619,10 @@ def main(argv: list[str] | None = None) -> int:
             f"main_body_pages={report['page_limit']['main_body_pages']} "
             f"allowed_range={report['page_limit']['min_main_pages']}"
             f"–{report['page_limit']['max_main_pages']}"
+        )
+        print(
+            f"appendix_code_status={report['appendix_code']['status']} "
+            f"appendix_code_pdf_page={report['appendix_code']['appendix_code_pdf_page']}"
         )
         for found in report["issues"]:
             print(f"{found['severity']} {found['code']}: {found['path']} - {found['detail']}")

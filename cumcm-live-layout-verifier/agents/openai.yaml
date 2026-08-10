@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 排版复核"
-  short_description: "复核国赛 Word/PDF 两版一致性与真实排版质量"
-  default_prompt: "请使用 $cumcm-live-layout-verifier 对同一冻结稿的 Word 与 PDF 两版做一致性和重复排版复核。"
+  short_description: "复核国赛 Word/PDF、26–30 页与附录代码门"
+  default_prompt: "请使用 $cumcm-live-layout-verifier 对同一冻结稿的 Word 与 PDF 两版做一致性和重复排版复核，并硬核验正文页数与附录主要建模代码。"

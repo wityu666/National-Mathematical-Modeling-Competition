@@ -34,7 +34,7 @@
 | AI 披露 | 官方规则位置 | AI 记录 |  |
 | 截止与重传 | 提交系统说明 | 提交回执 |  |
 
-任何硬性规则为 `UNVERIFIED` 时，最终状态不得为 `PASS`。
+任何硬性规则为 `UNVERIFIED` 时，最终状态不得为 `PASS`；页数边界缺失直接记为 `BLOCKED_PAGE_BOUNDARY/P0`，不得仅作提醒。
 
 固定执行正文页数硬门：
 
@@ -43,7 +43,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 26 <= main_body_pages <= 30
 ```
 
-`main_start_pdf_page` 必须取第一章“问题重述”所在物理页；摘要、关键词和目录等正文前置部分不计入。没有附录时编号正文计到 PDF 最后一页。附录页数不设上限。26 页下限是用户已确认的内部质量门，不是官方要求；若当届官方上限低于 26 页，下限自动失效并以官方上限为准。摘要/编号正文/附录边界必须由最终 PDF 物理页和章节内容共同证明；核心模型、结果、验证、符号表或复现入口不得为规避上限被移入附录。
+`main_start_pdf_page` 必须取第一章“问题重述”所在物理页；摘要、关键词和目录等正文前置部分不计入。附录页数不设上限，但本套件要求附录存在并收录主要建模代码，必须登记 `appendix_start_pdf_page` 与 `appendix_code_pdf_page`。26 页下限是用户已确认的内部质量门，不是官方要求；若当届官方上限低于 26 页，下限自动失效并以官方上限为准。摘要/编号正文/附录边界必须由最终 PDF 物理页和章节内容共同证明；正文越界记为 `BLOCKED_PAGE_RANGE/P0`，附录主要代码缺失、未定位或以截图/辅助代码冒充记为 `BLOCKED_APPENDIX_CODE/P0`。核心模型、结果、验证、符号表或复现入口不得为规避上限被移入附录。
 
 ## 3. 严重级别
 
@@ -285,6 +285,8 @@ and repeated_verification_pass
 and same_hash_layout_pass
 and min_main_pages <= main_body_pages <= max_main_pages
 and page_boundary_verified
+and appendix_code_page_declared
+and appendix_key_model_code_verified
 and contributions_verified
 and template_fingerprint_checked == PASS
 and model_validated

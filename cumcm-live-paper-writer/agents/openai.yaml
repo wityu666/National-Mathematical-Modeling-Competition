@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 赛时论文写作"
-  short_description: "从冻结结果生成国赛 A/B/C 论文的 Word 与 PDF 两版"
-  default_prompt: "请使用 $cumcm-live-paper-writer 从冻结结果生成同一版本的可编辑 Word 与 PDF 论文。"
+  short_description: "生成国赛 A/B/C Word/PDF，落实页数与附录代码门"
+  default_prompt: "请使用 $cumcm-live-paper-writer 从冻结结果生成同一版本的可编辑 Word 与 PDF 论文，并落实正文 26–30 页与附录主要建模代码。"

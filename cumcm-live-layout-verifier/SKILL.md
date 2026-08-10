@@ -1,6 +1,6 @@
 ---
 name: cumcm-live-layout-verifier
-description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C 题论文初次成稿后的重复排版复核。适用于检查同一冻结内容的可编辑 Word（.docx）与 PDF 两版、Word/LaTeX 主排版源、编译导出日志以及真实渲染效果，核对双版本一致性、字体、裁切、重叠、分页、图表公式可读性、匿名信息、批注修订与占位符，并驱动“发现—修复—重新生成—重查”闭环；应在 paper-writer 之后、final-auditor 之前使用。
+description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C 题论文初次成稿后的重复排版复核。适用于检查同一冻结内容的可编辑 Word（.docx）与 PDF 两版、Word/LaTeX 主排版源、编译导出日志以及真实渲染效果，强制核验编号正文 26–30 页、摘要与目录不计页数、附录不限页和附录主要建模代码，并核对双版本一致性、字体、裁切、重叠、分页、图表公式可读性、匿名信息、批注修订与占位符；应在 paper-writer 之后、final-auditor 之前使用。
 ---
 
 # CUMCM 论文排版复核
@@ -40,12 +40,13 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
   --abstract-end-page 2 \
   --main-start-page 5 \
   --appendix-start-page 31 \
+  --appendix-code-page 31 \
   --min-main-pages 26 \
   --max-main-pages 30 \
   --json
 ```
 
-`--abstract-end-page`、`--main-start-page` 与 `--appendix-start-page` 都使用 PDF 查看器显示的物理页序号，不使用印刷页码。`--main-start-page` 必须填写第一章“问题重述”所在物理页，不得填写摘要页；摘要、关键词和目录等正文前置部分不计入 `main_body_pages`。示例表示摘要在第 2 页结束，第 1–4 页为不计入的前置部分，第 5–30 页为 26 页编号正文，第 31 页开始是附录。若没有附录，省略 `--appendix-start-page`，工具会把编号正文计算到 PDF 最后一页。缺少摘要结束页或编号正文起始页时，工具不得默认从第 1 页计数，页数状态保持 `UNVERIFIED`。
+`--abstract-end-page`、`--main-start-page`、`--appendix-start-page` 与 `--appendix-code-page` 都使用 PDF 查看器显示的物理页序号，不使用印刷页码。`--main-start-page` 必须填写第一章“问题重述”所在物理页，不得填写摘要页；摘要、关键词和目录等正文前置部分不计入 `main_body_pages`。示例表示摘要在第 2 页结束，第 1–4 页为不计入的前置部分，第 5–30 页为 26 页编号正文，第 31 页开始是附录，且主要建模代码从第 31 页开始出现。本套件要求附录包含主要建模代码，因此不得省略附录起始页或代码页定位；缺少 PDF 总页数、摘要结束页、编号正文起始页、附录起始页或主要代码页中的任一项，立即输出 `BLOCKED_PAGE_BOUNDARY` 或 `BLOCKED_APPENDIX_CODE`，脚本返回退出码 1，不再把 `UNVERIFIED` 当作可通过的预检结果。
 
 `--min-main-pages` 默认 26，`--max-main-pages` 默认 30。26 页下限是用户已确认的内部质量门，不是官方要求；当届官方上限低于 26 页时，若未显式传入下限，工具会把内部下限降为 1，使 26 页门真正失效并只服从官方上限；也可按已确认的提交目标显式传入不高于官方上限的值，例如 `--min-main-pages 20 --max-main-pages 20`。不得调高上限超过 30，也不得在官方上限仍为 26 页或以上时调低 26 页下限。
 
@@ -62,7 +63,7 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 - `2`：参数或路径错误。
 
 找不到外部 PDF 工具时记录能力缺口，不得据此直接判定阻塞或假装已检查。
-如果自动工具无法取得总页数，必须在 Round B 用 PDF 查看器人工记录总页数和正文/附录边界；页数状态为 `UNVERIFIED` 时不得给最终 `PASS`。
+如果自动工具无法取得总页数，当前 Round A 必须保持 `BLOCKED_PAGE_BOUNDARY`；先在 PDF 查看器人工记录总页数并补齐可核验边界，再在具备页数读取能力的环境重跑。正文低于有效下限或超过有效上限时输出 `BLOCKED_PAGE_RANGE`。不得以“后续再看”为由签发 `PRECHECK_PASS`。
 
 若 LaTeX 是主排版源，除上述 `.docx` 预检外还要对冻结 `.tex` 与编译日志执行一次源文件预检。`layout_preflight.py` 不负责判断 Word/PDF 正文语义是否一致；该项必须在 Round B 逐项核对。
 
@@ -94,6 +95,7 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
 - 总体思路图使用已登记的同一 `palette_set` 与 `object_color_map`，但颜色不是唯一分组编码；可编辑源、图号 `FIG-OVERVIEW-001`、生成入口和冻结版本可定位，图中模型名与输出名称和正文一致；
 - 不出现孤立标题、标题落在页末、正文孤行寡行或不合理整页留白；
 - 附录关键建模代码使用可复制的等宽文本而非截图，字号、缩进、换行、跨页和行号/代码标识清晰；长行不越过页边界，分页不截断到无法理解；
+- `--appendix-code-page` 指向的页面确实开始出现最终采用模型的主要代码，而不是导包、通用绘图、重复文件读写或未采用算法；只登记页码但页面没有主要代码时仍输出 `BLOCKED_APPENDIX_CODE`；
 - 提交论文附录只含关键建模代码和必要补充结果，不存在“完整程序与支撑材料索引”“支撑材料清单”或类似章节，也未把完整程序文件名、内部目录、冻结清单/哈希、验证报告、事实追踪表、图形注册表或 AI 交互文件索引写入 Word/PDF；命中时记为 `P1` 并退回删除，若同时泄露本机绝对路径、身份、密钥或其他敏感信息则记为 `P0`；
 - 图例、坐标、单位、题注、表头、续表和公式编号完整、清楚、对齐；公式编号位于版式要求的位置，按章显示为式(6-1)等“章号-序号”，长公式或公式跨页时编号不丢失、不与正文或页边界冲突，交叉引用显示正确；
 - 图表使用运行清单中显式登记的同一个 `palette_set`，同一对象跨图颜色一致，没有逐图换组或混入默认高饱和循环色；
@@ -131,6 +133,7 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 - 当前 `.docx` 与 PDF 共享同一 `paper_freeze_id`，`docx_sha256`、`pdf_sha256` 和 `pdf_generation_source` 均与报告一致；
 - Word 能正常打开并保持正文、表格、公式和附录代码可编辑，双版本关键内容逐项一致；
 - 已记录摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`total_pdf_pages` 和 `main_body_pages`；`main_start_pdf_page` 确为第一章起始页，摘要未计入，且默认满足 `26 <= main_body_pages <= 30`；若当届官方上限低于 26 页，则报告已记录规则证据和调整后的 `min_main_pages/max_main_pages`；
+- 已记录 `appendix_code_pdf_page`，静态定位状态为 `DECLARED`，并在 Round B 确认该页及后续代码确为与冻结模型一致的主要建模代码；
 - Round A 为 `PRECHECK_PASS`；
 - Round B 已检查规定范围并保存页码/截图证据；
 - 当届排版与匿名硬规则已核验；
@@ -146,7 +149,7 @@ Round A 预检 -> Round B 逐页查看 -> 登记问题
 - 修复后的 PDF 已从 Round A 重新复核，而非只看局部截图；
 - 报告状态为 `FROZEN`。
 
-缺少 Word 或 PDF 任一版本、Word 不可编辑、双版本内容或冻结标识不一致、正文低于有效下限、超过有效上限、通过版式或内容注水凑足下限、页数或正文/附录边界未核验、未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。
+缺少 Word 或 PDF 任一版本、Word 不可编辑、双版本内容或冻结标识不一致、正文低于有效下限、超过有效上限、通过版式或内容注水凑足下限、页数或正文/附录边界未核验、附录缺少主要建模代码或代码页未定位、未取得官方规则、无法渲染 PDF、未完成视觉检查或存在开放 `P0/P1` 时，输出 `BLOCKED`，不得使用“基本通过”。其中边界未核验使用 `BLOCKED_PAGE_BOUNDARY`，页数越界使用 `BLOCKED_PAGE_RANGE`，附录主要代码缺失或未核验使用 `BLOCKED_APPENDIX_CODE`。
 
 ## 6. 交接
 

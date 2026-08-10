@@ -51,7 +51,7 @@ def write_minimal_pdf(path: Path) -> None:
     path.write_bytes(b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF\n")
 
 
-def test_safe_pdf_and_source_only_precheck_pass(tmp_path: Path) -> None:
+def test_safe_pdf_without_page_or_appendix_evidence_is_blocked(tmp_path: Path) -> None:
     pdf = tmp_path / "paper.pdf"
     source = tmp_path / "paper.tex"
     write_minimal_pdf(pdf)
@@ -60,10 +60,10 @@ def test_safe_pdf_and_source_only_precheck_pass(tmp_path: Path) -> None:
     result = run_preflight(pdf, "--source", str(source))
     report = json.loads(result.stdout)
 
-    # 锁：安全 PDF 与干净源文件必须通过静态预检。
-    assert result.returncode == EXIT_OK
-    # 锁：静态预检成功状态必须稳定为 PRECHECK_PASS。
-    assert report["status"] == "PRECHECK_PASS"
+    # 锁：干净文件不能绕过正文页数与附录代码两项硬门。
+    assert result.returncode == EXIT_BLOCKED
+    # 锁：缺少硬门证据时总体状态必须为 BLOCKED。
+    assert report["status"] == "BLOCKED"
     # 锁：静态预检不能替代后续真实视觉 QA。
     assert report["visual_qa_required"] is True
     # 锁：预检报告必须保留默认正文页数下限。
@@ -72,8 +72,13 @@ def test_safe_pdf_and_source_only_precheck_pass(tmp_path: Path) -> None:
     assert report["page_limit"]["max_main_pages"] == DEFAULT_MAX_MAIN_PAGES
     # 锁：工具不得默认从 PDF 第 1 页计数而把摘要误算进正文。
     assert report["page_limit"]["main_start_pdf_page"] is None
-    # 锁：未知页边界时必须警告用户后续核验 26–30 页。
-    assert any("26–30" in warning for warning in report["warnings"])
+    # 锁：未知页边界必须产生 P0，而不是仅留下不阻断的警告。
+    assert any(item["code"] == "page-limit-unverified" for item in report["issues"])
+    # 锁：未登记附录关键代码页必须产生稳定 P0 问题码。
+    assert any(
+        item["code"] == "appendix-key-model-code-missing"
+        for item in report["issues"]
+    )
 
 
 def test_invalid_pdf_header_is_blocked(tmp_path: Path) -> None:
@@ -330,7 +335,7 @@ def test_cli_cannot_relax_30_page_hard_limit(tmp_path: Path) -> None:
     assert "不能放宽 30 页硬门" in result.stderr
 
 
-def test_missing_abstract_boundary_keeps_page_count_unverified(tmp_path: Path) -> None:
+def test_missing_abstract_boundary_blocks_page_gate(tmp_path: Path) -> None:
     module = load_preflight_module()
     issues = []
     warnings = []
@@ -346,12 +351,12 @@ def test_missing_abstract_boundary_keeps_page_count_unverified(tmp_path: Path) -
         warnings=warnings,
     )
 
-    # 锁：未记录摘要结束页时不能宣称摘要排除已核验。
-    assert result["status"] == "UNVERIFIED"
+    # 锁：未记录摘要结束页时必须阻断，不能把 UNVERIFIED 当作可继续状态。
+    assert result["status"] == "BLOCKED"
     # 锁：摘要排除证据缺失时不得计算可通过的正文页数。
     assert result["main_body_pages"] is None
-    # 锁：摘要边界缺失必须给出可定位的警告。
-    assert any("摘要结束物理页" in warning for warning in warnings)
+    # 锁：摘要边界缺失必须生成稳定 P0 问题码。
+    assert any(item["code"] == "abstract-boundary-unverified" for item in issues)
 
 
 def test_abstract_end_page_must_precede_first_body_page(tmp_path: Path) -> None:
@@ -431,10 +436,56 @@ def test_human_output_displays_allowed_page_range(tmp_path: Path) -> None:
         capture_output=True,
     )
 
-    # 锁：合法人类可读预检必须正常退出。
-    assert result.returncode == EXIT_OK
+    # 锁：未提供页数边界和附录代码定位时，人类可读模式也必须阻断。
+    assert result.returncode == EXIT_BLOCKED
     # 锁：人类输出必须显示正文页数允许区间。
     assert "main_body_pages=None allowed_range=26–30" in result.stdout
+    # 锁：人类可读输出必须显示附录关键代码尚未核验。
+    assert "appendix_code_status=BLOCKED" in result.stdout
+
+
+def test_appendix_key_model_code_page_inside_appendix_is_declared(
+    tmp_path: Path,
+) -> None:
+    module = load_preflight_module()
+    issues = []
+
+    result = module.evaluate_appendix_code_locator(
+        total_pages=47,
+        appendix_start_page=31,
+        appendix_code_page=32,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+    )
+
+    # 锁：主要建模代码页位于附录范围内时允许进入人工逐页确认。
+    assert result["status"] == "DECLARED"
+    # 锁：静态定位通过不能替代 Round B 对代码内容的视觉核验。
+    assert result["visual_confirmation_required"] is True
+    # 锁：合法附录代码定位不得生成问题。
+    assert issues == []
+
+
+def test_missing_appendix_key_model_code_page_is_p0(tmp_path: Path) -> None:
+    module = load_preflight_module()
+    issues = []
+
+    result = module.evaluate_appendix_code_locator(
+        total_pages=47,
+        appendix_start_page=31,
+        appendix_code_page=None,
+        pdf=tmp_path / "paper.pdf",
+        issues=issues,
+    )
+
+    # 锁：有附录但未登记主要建模代码页时必须阻断。
+    assert result["status"] == "BLOCKED"
+    # 锁：缺少附录代码定位必须使用稳定问题码并按 P0 处理。
+    assert any(
+        item["code"] == "appendix-key-model-code-unverified"
+        and item["severity"] == "P0"
+        for item in issues
+    )
 
 
 def test_official_20_page_cap_allows_matching_20_page_floor(tmp_path: Path) -> None:
