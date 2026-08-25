@@ -10,6 +10,7 @@
 
 - `layout_id`；
 - `paper_freeze_id`、论文源版本与主排版路线；
+- 附录 `code_theme`、实际等宽字体，以及官方黑白例外证据；代码主题与图表 `palette_set` 分开记录；
 - Word 路径、`docx_sha256`、可编辑性检查与生成工具；
 - PDF 路径、`pdf_sha256`、字节数、页数、`pdf_generation_source` 和生成命令；
 - 摘要起止物理页、`main_start_pdf_page`、`appendix_start_pdf_page`、`appendix_code_pdf_page`、`total_pdf_pages`、`main_body_pages`；
@@ -65,6 +66,8 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 所有主排版路线都必须交付 `.docx`。在禁用宏的环境中实际打开它，确认无修复提示，正文、表格、公式和附录代码可选择、可编辑，不是整页截图或伪装扩展名。Word 主路线的 PDF 必须直接来自当前哈希的冻结 Word；LaTeX 主路线的 Word 是从同一冻结内容生成的可编辑伴随版。
 
+附录代码须用真实文本的 token 级字体格式实现 `VS-CODE-LIGHT-MUTED`，不得用编辑器截图。清除深色背景、编辑器界面、选择高亮和网页链接；抽查关键字、字符串、注释等不同颜色的代码，复制到纯文本后字符、空格、缩进和换行必须与冻结源代码一致。
+
 ## 6. LaTeX 路线
 
 - 保存最终编译命令与完整日志；
@@ -72,6 +75,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 - 对 overfull box 定位到实际页面；underfull 作为风险项人工判断；
 - 检查中文字体、数学字体、浮动体、长表、算法和参考文献；
 - 使用唯一标签和自动交叉引用，不手工维护编号。
+- 附录代码优先使用 `listings` 与 `xcolor` 的冻结样式，不依赖 `minted`、shell escape 或外部运行时高亮服务；语义识别不可靠时宁可保留普通文本色，不得误染或改写代码。
 
 ## 7. 图表与公式
 
@@ -87,6 +91,8 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 正文“符号说明”必须使用三线表：只保留顶线、表头下横线和底线，不出现竖线、左右边线、逐行横线或全边框网格。Word 检查实际边框设置和 PDF 导出效果；LaTeX 检查 `\toprule/\midrule/\bottomrule` 或模板等价命令，列格式不得含竖线，不得逐行使用 `\hline`。符号表跨页时重复表头，并保持续表列宽、线型和对齐一致。
 
 附录关键建模代码必须以可复制的等宽文本呈现，不使用代码截图。检查 `appendix_code_pdf_page`、代码字号、缩进、长行换行、跨页连续性、行号或 `CODE-*` 标识及页边界；不得为了容纳代码把字号缩到不可读，也不得让分页切断关键语句而无法理解。静态预检只确认页码定位，Round B 必须继续确认该页确实包含变量/参数构造、目标与约束、核心求解/预测/仿真或验证逻辑，而不是导包、通用绘图和重复文件读写。
+
+当届允许彩色时，全部附录代码还必须使用同一个 `code_theme=VS-CODE-LIGHT-MUTED`：白底，普通文本、关键字、函数、类、字符串、注释、数值和行号按语义角色固定映射，关键字加粗、注释斜体。代码片段没有某类 token 时无需凑色；不得逐块换主题、随机配色、使用深色编辑器背景或把代码主题与图表 `palette_set/object_color_map` 混为一体。检查 Word/PDF 映射一致、彩色与灰度均可读，并跨不同颜色抽查纯文本复制与冻结源代码一致。若官方要求黑白，必须登记 `MONOCHROME_OFFICIAL_OVERRIDE` 与规则证据。
 
 ## 8. Word/PDF 双版本一致性
 
@@ -122,6 +128,7 @@ and min_main_pages <= main_body_pages <= max_main_pages
 and page_boundary_verified
 and appendix_code_page_declared
 and appendix_key_model_code_visually_confirmed
+and appendix_code_theme_verified
 and visual_scope_complete
 and no_open_P0_or_P1
 and regenerated_after_fix

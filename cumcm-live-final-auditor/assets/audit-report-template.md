@@ -19,6 +19,7 @@
 | 摘要/编号正文/附录页数 | `【摘要起止页 / 编号正文第一章起始页 / 附录起始页 / 编号正文页数（默认 26–30）/ 附录页数（不限）/ 官方例外】` |
 | 页数硬门状态码 | `【PASS/BLOCKED_PAGE_BOUNDARY/BLOCKED_PAGE_RANGE】` |
 | 附录主要建模代码页与状态码 | `【appendix_code_pdf_page / PASS/BLOCKED_APPENDIX_CODE】` |
+| 附录代码主题与字体 | `【code_theme=VS-CODE-LIGHT-MUTED / MONOCHROME_OFFICIAL_OVERRIDE；实际等宽字体；官方例外证据】` |
 | template_fingerprint_checked | `【PASS / P1 / P0 / UNVERIFIED】` |
 
 > 只有当届官方规则、Word/PDF 双版本一致性、内容、文件、安全、可复现性和 PDF 视觉 QA 全部通过时，结论才能为 `PASS`。
@@ -43,6 +44,7 @@
 | 总体思路图覆盖各问且与冻结正文一致 | `【PASS/BLOCKED】` | `【FIG-OVERVIEW-001；位置/结构/每问链路/问间依赖/图源/冻结版本】` |
 | 附录含关键建模代码且与冻结源代码和正文结果一致 | `【PASS/BLOCKED】` | `【CODE/MODEL/RUN/RID/FIG/TAB；页码/源文件/函数/版本】` |
 | 附录代码不是占位符、截图或非核心辅助代码冒充 | `【PASS/BLOCKED_APPENDIX_CODE】` | `【代码页码/复制抽查/冻结映射】` |
+| 附录代码多色主题统一且双版本一致 | `【PASS/BLOCKED】` | `【code_theme；语义色/关键字加粗/注释斜体/白底；灰度/复制抽查；Word-PDF；与 palette_set 分开】` |
 | 论文附录不含完整程序与支撑材料索引或内部工程文件列表 | `【PASS/BLOCKED】` | `【附录页码；内部交付/审计清单另存位置；命中时 P1/P0】` |
 | 符号说明表位于正文且与公式定义一致，并采用三线表 | `【PASS/BLOCKED】` | `【正文节号/页码/公式编号；顶线/表头下横线/底线；无竖线/逐行横线；Word-PDF 截图】` |
 | 图表采用已登记的同一个 `palette_set` 且灰度可辨 | `【PASS/BLOCKED】` | `【图号/截图/例外说明】` |
@@ -103,9 +105,9 @@
 
 ## 附录关键建模代码核对
 
-| CODE-ID | 小问 | 附录页码 | 源文件与函数/脚本段 | 冻结版本 | 对应 MODEL/RUN/RID/FIG/TAB | 与完整源代码一致 | 可复制且清晰可读 | 结果 |
+| CODE-ID | 小问 | 附录页码 | 源文件与函数/脚本段 | 冻结版本 | 对应 MODEL/RUN/RID/FIG/TAB | 与完整源代码一致 | code_theme/Word-PDF/灰度/复制 | 结果 |
 |---|---|---:|---|---|---|---|---|---|
-| `CODE-Q?-###` | `【】` | `【】` | `【相对路径；函数/类/行号】` | `【freeze_id/commit】` | `【】` | `【PASS/BLOCKED】` | `【PASS/BLOCKED】` | `【PASS/P1/P0】` |
+| `CODE-Q?-###` | `【】` | `【】` | `【相对路径；函数/类/行号】` | `【freeze_id/commit】` | `【】` | `【PASS/BLOCKED】` | `【VS-CODE-LIGHT-MUTED/官方例外；PASS/BLOCKED】` | `【PASS/P1/P0】` |
 
 ## 论文附录内部索引排除核对
 
@@ -206,6 +208,7 @@
 - [ ] `FIG-OVERVIEW-001` 已覆盖所有实际小问和真实问间依赖，与冻结正文、可编辑图源及 Word/PDF 两版一致。
 - [ ] 正文符号说明采用三线表，仅有顶线、表头下横线和底线，无竖线或逐行横线，并与 Word/PDF 两版及公式定义一致。
 - [ ] 附录关键建模代码已逐项对照冻结源代码与正文结果，且可复制、清晰可读。
+- [ ] 附录代码使用统一 `code_theme`，语义多色、字形冗余、白底、灰度、纯文本复制和 Word/PDF 一致性均已核对；官方黑白例外证据完整。
 - [ ] 所有 P1 已关闭或有明确用户决定。
 - [ ] 修复后重新冻结并重新审计。
 - [ ] 提交包哈希与本报告一致。
