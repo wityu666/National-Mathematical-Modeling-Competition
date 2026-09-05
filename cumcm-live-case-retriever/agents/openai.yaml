@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 赛时方法模式匹配"
   short_description: "用内置原创模式卡匹配题型、baseline、候选模型与验证路线"
-  default_prompt: "Use $cumcm-live-case-retriever to match the current CUMCM problem signature to its built-in method patterns without accessing an external case library."
+  default_prompt: "请使用 $cumcm-live-case-retriever 按 GPT-6 Astra 执行约定核对问题合同，匹配内置原创模式卡，不访问外部案例库。"

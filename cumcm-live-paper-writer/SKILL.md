@@ -5,6 +5,12 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 
 # CUMCM 赛时论文成稿
 
+## GPT-6 Astra 执行约定
+
+首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+
+按当前冻结事实与 VER PASS 生成本队表达；可并行起草互不依赖的小问，但由一个主稿负责人合并符号、编号、证据与结论。交付必须是实际生成的 Word/PDF 两版及有效 QA，不以聊天正文、导出脚本或“稍后生成”替代文件。
+
 ## 总原则
 
 - 仅在比赛进行中使用本技能推进赛时成稿；不把它变成长期学习计划。

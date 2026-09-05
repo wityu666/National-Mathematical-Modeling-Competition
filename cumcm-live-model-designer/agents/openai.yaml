@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 赛时模型设计"
   short_description: "赛时完成候选模型比较、公式合同、基线、验证与降级方案"
-  default_prompt: "Use $cumcm-live-model-designer to turn each CUMCM subproblem into a validated model contract with baselines and failure checks."
+  default_prompt: "请使用 $cumcm-live-model-designer 按 GPT-6 Astra 执行约定比较 baseline 与候选路线，形成带验证、亮点候选和降级方案的冻结模型合同。"

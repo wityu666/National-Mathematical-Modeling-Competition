@@ -5,6 +5,12 @@ description: 面向中国大学生数学建模竞赛 A、B、C 题进行中的�
 
 # CUMCM 首次结果重复复核
 
+## GPT-6 Astra 执行约定
+
+首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+
+生产者与复核者可以分代理，但身份不同不等于方法独立；Round B 仍从题面和冻结合同构造第二方法，不复用主求解函数。恢复时先核对 VER 报告绑定的 run_id 和哈希，只有当前有效证据才可承接，不能为赶进度减少复核轮次。
+
 ## 定位
 
 本 Skill 位于首次编码完成与论文写作之间：

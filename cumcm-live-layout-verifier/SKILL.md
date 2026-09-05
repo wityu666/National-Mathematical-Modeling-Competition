@@ -5,6 +5,12 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 
 # CUMCM 论文排版复核
 
+## GPT-6 Astra 执行约定
+
+首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+
+可将同一冻结 PDF 的不重叠页组分派检查，但主负责人须汇总完整覆盖、跨页问题及 Word/PDF 一致性。模型读懂文本不等于看过渲染页；PDF 重导出后按既有规则重新验证，不继承旧哈希上的视觉 PASS。
+
 ## 定位
 
 本技能只验证论文的双版本一致性、版式与渲染质量，不重新判断数学结论。先由 `cumcm-live-paper-writer` 生成同一 `paper_freeze_id` 的可编辑 `.docx` 与冻结 `.pdf`，再用本技能重复检查；只有报告同时绑定当前 `docx_sha256` 与 `pdf_sha256` 且为 `PASS`，才能交给 `cumcm-live-final-auditor`。

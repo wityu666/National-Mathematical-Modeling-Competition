@@ -1,4 +1,4 @@
 interface:
   display_name: "CUMCM 赛时拆题分析"
   short_description: "赛时拆解国赛 A/B/C 题目、附件、依赖关系、风险与首轮交付物"
-  default_prompt: "Use $cumcm-live-problem-analyst to parse the released CUMCM problem and attachments into a contest-ready problem contract."
+  default_prompt: "请使用 $cumcm-live-problem-analyst 按 GPT-6 Astra 执行约定核对当届 A/B/C 题与附件，建立问题合同；已有任务先检查冻结状态再续做。"

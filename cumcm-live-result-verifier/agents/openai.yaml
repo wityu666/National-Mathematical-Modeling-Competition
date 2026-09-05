@@ -1,5 +1,4 @@
 interface:
   display_name: "CUMCM 首次结果重复复核"
   short_description: "首次求解后执行复跑、独立重算与差异闭环"
-  default_prompt: "Use $cumcm-live-result-verifier after the first frozen CUMCM run to repeat, independently cross-check, and gate all critical results before paper writing."
-
+  default_prompt: "请使用 $cumcm-live-result-verifier 按 GPT-6 Astra 执行约定核对冻结运行，完成 Round A 复跑、Round B 独立重算和差异闭环后再交接写作。"

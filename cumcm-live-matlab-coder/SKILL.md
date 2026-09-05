@@ -5,6 +5,12 @@ description: 面向中国大学生数学建模竞赛 A、B、C 题正在进行�
 
 # CUMCM 赛时 MATLAB 编码
 
+## GPT-6 Astra 执行约定
+
+首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+
+先验证本机 MATLAB 与许可证/工具箱能力；独立小问可使用不同工程和输出目录并行，不能共享可变工作区。保存批处理退出状态和完整日志，等待运行结束后再冻结，不把静态读码当作实际求解。
+
 ## 开始条件
 
 - 先读取问题合同和冻结的模型合同。缺少合同版本、`freeze_id`、输出字段或验收指标时停止编码并回传。

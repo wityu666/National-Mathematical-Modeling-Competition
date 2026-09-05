@@ -40,6 +40,21 @@ cp -R cumcm-live-* "${CODEX_HOME:-$HOME/.codex}/skills/"
 python3 -m pytest -q
 ```
 
+## GPT-6 Astra 适配与续做
+
+九个技能均已加入 GPT-6 Astra（`gpt-6-astra`）执行约定与分角色要求，重点覆盖长任务恢复、并行分工、运行结果收回和独立验证。请在 Codex 模型选择器中选择 GPT-6 Astra；安装技能不会自动切换模型，不修改全局配置，`agents/openai.yaml` 只保存受支持的 UI 元数据。推理强度沿用当前可用设置，不要求一律最高。
+
+全新比赛任务从 `cumcm-live-problem-analyst` 开始；续做先核对当前冻结文件、哈希与报告，再从首个未通过门禁的阶段继续。用户要求完整交付时，可在已有授权内接续下游；只要求某个角色或指定检查点暂停时，仍按该范围执行。子代理身份不等于数学独立性，后台作业未结束也不等于已冻结。
+
+共享说明位于 [GPT-6 Astra 赛时执行约定](cumcm-live-problem-analyst/references/astra-execution-contract.md)，九个入口均有直达链接。按上面的安装命令保留九个技能的同级目录，不要只复制单个 `SKILL.md`；它们仍是本仓库内完整提供的套件，不依赖额外总控。
+
+```text
+请使用 $cumcm-live-problem-analyst，按 GPT-6 Astra 执行约定处理当前 A/B/C 题。
+如果已有冻结产物，请先核对版本并从未完成阶段继续；保持我已确认的选择与暂停点。
+```
+
+适配依据为 [OpenAI GPT-6 Astra 官方指南](https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md)。这是工作流与提示指令适配，不是权重训练，也不代表已完成整届赛题的效果评测；原有数值、诚信、范围和论文交付门禁不变。
+
 ## 自包含知识库
 
 - `problem-analyst` 内置拆题、附件契约和依赖分析规则。
