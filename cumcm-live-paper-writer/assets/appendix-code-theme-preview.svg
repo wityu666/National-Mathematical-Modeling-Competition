@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="690" viewBox="0 0 1120 690" role="img" aria-labelledby="title description">
+  <title id="title">Appendix code — VS Code Light+ palette</title>
+  <desc id="description">Purple control keywords, blue literals and constants, teal modules, brown functions, red strings, green comments and numbers, on a very light gray background. Illustrative code only.</desc>
+  <rect width="1120" height="690" fill="#FFFFFF"/>
+  <text x="36" y="42" font-family="sans-serif" font-size="22" fill="#1F2328">Appendix code · Light+</text>
+  <rect x="24" y="62" width="1072" height="604" rx="8" fill="#F8F8F8" stroke="#D1D5DB"/>
+  <g font-family="Consolas, Liberation Mono, Menlo, monospace" font-size="24">
+    <text x="46" y="104" xml:space="preserve"><tspan fill="#AF00DB" font-weight="bold">import </tspan><tspan fill="#267F99">numpy</tspan><tspan fill="#AF00DB" font-weight="bold"> as </tspan><tspan fill="#267F99">np</tspan></text>
+    <text x="46" y="143" xml:space="preserve"><tspan fill="#AF00DB" font-weight="bold">from </tspan><tspan fill="#267F99">pathlib</tspan><tspan fill="#AF00DB" font-weight="bold"> import </tspan><tspan fill="#267F99">Path</tspan></text>
+    <text x="46" y="182" xml:space="preserve"></text>
+    <text x="46" y="221" xml:space="preserve"><tspan fill="#0070C1">OUTPUT</tspan><tspan fill="#000000"> = </tspan><tspan fill="#267F99">Path</tspan><tspan fill="#0000FF">(</tspan><tspan fill="#A31515">&quot;results&quot;</tspan><tspan fill="#0000FF">)</tspan></text>
+    <text x="46" y="260" xml:space="preserve"><tspan fill="#0070C1">OPTIONS</tspan><tspan fill="#000000"> = </tspan><tspan fill="#319331">{</tspan><tspan fill="#A31515">&quot;overwrite&quot;</tspan><tspan fill="#000000">: </tspan><tspan fill="#0000FF">False</tspan><tspan fill="#000000">, </tspan><tspan fill="#A31515">&quot;samples&quot;</tspan><tspan fill="#000000">: </tspan><tspan fill="#098658">160</tspan><tspan fill="#319331">}</tspan></text>
+    <text x="46" y="299" xml:space="preserve"></text>
+    <text x="46" y="338" xml:space="preserve"><tspan fill="#008000" font-style="italic"># Keep the frozen modeling code editable.</tspan></text>
+    <text x="46" y="377" xml:space="preserve"><tspan fill="#0000FF" font-weight="bold">def </tspan><tspan fill="#795E26">predict</tspan><tspan fill="#0000FF">(</tspan><tspan fill="#001080">x</tspan><tspan fill="#0000FF">)</tspan><tspan fill="#000000">:</tspan></text>
+    <text x="46" y="416" xml:space="preserve"><tspan fill="#000000">    </tspan><tspan fill="#AF00DB" font-weight="bold">return </tspan><tspan fill="#098658">2.0</tspan><tspan fill="#000000"> * </tspan><tspan fill="#001080">x</tspan><tspan fill="#000000"> + </tspan><tspan fill="#098658">1.0</tspan></text>
+    <text x="46" y="455" xml:space="preserve"></text>
+    <text x="46" y="494" xml:space="preserve"><tspan fill="#001080">values</tspan><tspan fill="#000000"> = </tspan><tspan fill="#267F99">np</tspan><tspan fill="#000000">.</tspan><tspan fill="#795E26">array</tspan><tspan fill="#0000FF">([</tspan><tspan fill="#098658">1.0</tspan><tspan fill="#000000">, </tspan><tspan fill="#098658">2.0</tspan><tspan fill="#000000">, </tspan><tspan fill="#098658">3.0</tspan><tspan fill="#0000FF">])</tspan></text>
+    <text x="46" y="533" xml:space="preserve"><tspan fill="#AF00DB" font-weight="bold">if </tspan><tspan fill="#0070C1">OUTPUT</tspan><tspan fill="#000000">.</tspan><tspan fill="#795E26">exists</tspan><tspan fill="#0000FF">()</tspan><tspan fill="#000000">:</tspan></text>
+    <text x="46" y="572" xml:space="preserve"><tspan fill="#000000">    </tspan><tspan fill="#001080">result</tspan><tspan fill="#000000"> = </tspan><tspan fill="#795E26">predict</tspan><tspan fill="#0000FF">(</tspan><tspan fill="#001080">values</tspan><tspan fill="#0000FF">)</tspan></text>
+    <text x="46" y="611" xml:space="preserve"><tspan fill="#000000">    </tspan><tspan fill="#795E26">print</tspan><tspan fill="#0000FF">(</tspan><tspan fill="#A31515">&quot;prediction:&quot;</tspan><tspan fill="#000000">, </tspan><tspan fill="#001080">result</tspan><tspan fill="#0000FF">)</tspan></text>
+  </g>
+</svg>

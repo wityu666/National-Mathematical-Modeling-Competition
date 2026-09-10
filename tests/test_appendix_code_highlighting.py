@@ -2,24 +2,32 @@ from pathlib import Path
 
 
 SUITE_ROOT = Path(__file__).resolve().parents[1]
-THEME_NAME = "VS-CODE-LIGHT-MUTED"
+THEME_NAME = "VS-CODE-LIGHT-PLUS"
 SEMANTIC_ROLES = (
-    "关键字、控制语句与内置类型",
+    "关键字与控制语句",
+    "声明关键字、布尔与空值",
+    "模块、命名空间与类名",
     "函数与方法名",
-    "类名与装饰器",
+    "变量、参数与属性",
+    "命名常量",
     "字符串与路径字面量",
     "注释",
-    "数值与常量",
+    "数值字面量",
 )
 THEME_COLORS = {
-    "#1F2328",
-    "#264F78",
+    "#000000",
+    "#AF00DB",
+    "#0000FF",
+    "#267F99",
     "#795E26",
-    "#7A3E9D",
+    "#001080",
+    "#0070C1",
     "#A31515",
-    "#2E7D32",
+    "#008000",
     "#098658",
+    "#319331",
     "#6B7280",
+    "#F8F8F8",
     "#FFFFFF",
     "#D1D5DB",
 }
