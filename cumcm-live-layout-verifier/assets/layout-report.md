@@ -1,5 +1,8 @@
 # CUMCM 论文排版复核报告
 
+团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](../references/team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
+
+
 ## 复核结论
 
 | 字段 | 内容 |
@@ -121,3 +124,14 @@
 - 截图目录：`【】`
 - 预检 JSON/日志：`【】`
 - 交给 `cumcm-live-final-auditor` 的未解决 P2：`【无 / 列表】`
+
+## 内部页数配置记录（不进入提交论文）
+
+| 字段 | 本次值 |
+|---|---|
+| policy_id / selection | |
+| source / sha256 | |
+| effective_min_main_pages / effective_max_main_pages | |
+| official_max_main_pages / official_page_rule | |
+
+核对配置与当前预检报告的 `page_policy` 一致；配置变更后旧页数、LAYOUT 与终审结论失效。

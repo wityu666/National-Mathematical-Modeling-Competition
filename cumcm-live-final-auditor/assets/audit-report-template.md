@@ -1,5 +1,8 @@
 # CUMCM 提交前终稿审计报告
 
+团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](../../cumcm-live-layout-verifier/references/team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
+
+
 ## 审计结论
 
 | 字段 | 内容 |
@@ -213,3 +216,14 @@
 - [ ] 修复后重新冻结并重新审计。
 - [ ] 提交包哈希与本报告一致。
 - [ ] 已核实提交系统显示成功。
+
+## 内部页数配置记录（不进入提交论文）
+
+| 字段 | 本次值 |
+|---|---|
+| policy_id / selection | |
+| source / sha256 | |
+| effective_min_main_pages / effective_max_main_pages | |
+| official_max_main_pages / official_page_rule | |
+
+核对配置与当前预检报告的 `page_policy` 一致；配置变更后旧页数、LAYOUT 与终审结论失效。

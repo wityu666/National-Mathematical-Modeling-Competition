@@ -1,5 +1,8 @@
 # CUMCM 重复排版复核协议
 
+团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
+
+
 ## 1. 为什么单独复核
 
 源文件正确不代表导出的 PDF 正确，可打开的 Word 也不代表它与 PDF 内容一致。字体缺失、域未更新、浮动体重排、公式截断、图像裁切、跨页表错误和双版本漂移只会在真实打开与渲染后暴露。因此排版复核独立于内容写作，并位于终审之前。
@@ -39,7 +42,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 ```
 
-`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。本套件要求附录存在并收录主要建模代码，因此必须同时登记 `appendix_start_pdf_page` 与位于附录范围内的 `appendix_code_pdf_page`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。当届上限为 26 页或以上时不得调低内部下限。总页数或任一边界缺失时立即 `BLOCKED_PAGE_BOUNDARY/P0`，正文越界时 `BLOCKED_PAGE_RANGE/P0`，附录代码页缺失或不在附录范围时 `BLOCKED_APPENDIX_CODE/P0`；不再保留退出码 0 的 `UNVERIFIED` 路径。
+`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。本套件要求附录存在并收录主要建模代码，因此必须同时登记 `appendix_start_pdf_page` 与位于附录范围内的 `appendix_code_pdf_page`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。使用兼容配置时保留该内部下限；显式团队配置以其登记的有效区间为准。总页数或任一边界缺失时立即 `BLOCKED_PAGE_BOUNDARY/P0`，正文越界时 `BLOCKED_PAGE_RANGE/P0`，附录代码页缺失或不在附录范围时 `BLOCKED_APPENDIX_CODE/P0`；不再保留退出码 0 的 `UNVERIFIED` 路径。
 
 ## 4. 视觉检查抽样
 

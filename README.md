@@ -1,5 +1,8 @@
 # 中国数学建模竞赛赛时技能套件
 
+团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](cumcm-live-layout-verifier/references/team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
+
+
 一组面向中国大学生数学建模竞赛（CUMCM）比赛进行中的 Codex skills。本套件只支持国赛 A、B、C 题，不支持 D、E 题。技能覆盖赛题拆解、内置方法模式匹配、模型设计、Python/MATLAB 实现、首次结果重复复核、论文成稿、重复排版复核与提交前终审，并用 `CONTRIB-*` 亮点账本把可验证的差异化成果贯穿全链路。
 
 这是“自包含知识版”：通用建模知识已经被原创整理为 Skill 内置的模式卡、决策规则、实现配方和检查表。安装后不需要作者的电脑、移动硬盘、百度网盘或其他私有资料库，也不会在运行时联网检索案例。
@@ -117,3 +120,15 @@ problem_contract -> pattern_matches -> model_contract
 本仓库以 MIT License 发布，详见 [LICENSE](LICENSE)。
 
 该许可证仅覆盖本仓库自身的原创内容，包括模式卡、规则、配方、脚本、模板和测试。它不覆盖、也不授予任何关于当届赛题、官方文件、参赛者自有数据与论文的权利；这些内容仍归各自权利人所有。
+
+## 维护与自动检查
+
+安装开发测试依赖后运行 `python3 -m pytest -q`。GitHub Actions 在 PR 和分支推送时，用 Python 3.10、3.12、3.13 运行测试。`tests/test_pipeline_smoke.py` 用合成数据生成结果及 Word/PDF，实际调用清单、复跑、排版预检和目录审计脚本；它检查脚本交接与失效信号，不代表整届赛题效果评估，也不替代数学独立性判断、人工 Word 编辑检查或真实逐页视觉 QA。
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pytest -q
+```
+
+完整流程冒烟还需要 Poppler 的 `pdfinfo`、`pdffonts`、`pdftotext`。CI 会安装；本地缺失时只跳过相应冒烟测试并明确报告原因。

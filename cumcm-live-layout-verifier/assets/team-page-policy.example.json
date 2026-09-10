@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "policy_id": "team-18-24",
+  "rationale": "本队根据题目规模选择正文 18–24 页；官方限制另行核验。",
+  "min_main_pages": 18,
+  "max_main_pages": 24
+}

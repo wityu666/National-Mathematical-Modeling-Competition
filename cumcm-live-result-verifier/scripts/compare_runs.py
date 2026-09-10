@@ -70,14 +70,16 @@ def short_value(value: Any, limit: int = 160) -> str:
     return rendered[: limit - 3] + "..."
 
 
-def numeric_text(value: str) -> float | None:
+def numeric_text(value: str) -> int | float | None:
     stripped = value.strip()
     if not NUMBER_RE.fullmatch(stripped):
         return None
     if LEADING_ZERO_INTEGER_RE.fullmatch(stripped):
         return None
-    number = float(stripped)
-    return number
+    # Keep integer identifiers/counts lossless, including values above 2**53.
+    if re.fullmatch(r"[+-]?\d+", stripped):
+        return int(stripped)
+    return float(stripped)
 
 
 def compare_scalar(
@@ -98,6 +100,24 @@ def compare_scalar(
         isinstance(actual, (int, float)) and not isinstance(actual, bool)
     )
     if expected_is_number and actual_is_number:
+        # Do not round large integers through binary64 during exact comparison.
+        if rtol == 0 and atol == 0:
+            if any(
+                isinstance(value, float) and not math.isfinite(value)
+                for value in (expected, actual)
+            ):
+                collector.add(
+                    run=run, path=path, code="non-finite-number",
+                    location=location, expected=short_value(expected),
+                    actual=short_value(actual),
+                )
+            elif expected != actual:
+                collector.add(
+                    run=run, path=path, code="numeric-drift",
+                    location=location, expected=expected, actual=actual,
+                    absolute_difference=abs(expected - actual),
+                )
+            return
         expected_number = float(expected)
         actual_number = float(actual)
         if not math.isfinite(expected_number) or not math.isfinite(actual_number):
@@ -462,8 +482,10 @@ def build_parser() -> argparse.ArgumentParser:
         nargs="+",
         help="One or more repeated-run result directories",
     )
-    parser.add_argument("--rtol", type=float, default=1e-9)
-    parser.add_argument("--atol", type=float, default=1e-12)
+    parser.add_argument("--rtol", type=float, default=0.0,
+                        help="Predeclared relative tolerance; default 0 (exact).")
+    parser.add_argument("--atol", type=float, default=0.0,
+                        help="Predeclared absolute tolerance; default 0 (exact).")
     parser.add_argument(
         "--ignore",
         action="append",
@@ -526,6 +548,7 @@ def main(argv: list[str] | None = None) -> int:
             "recheck_dirs": [str(path) for path in rechecks],
             "reference_file_count": len(reference_files),
             "reference_symlink_count": len(reference_symlinks),
+            "comparison_mode": "exact" if args.rtol == args.atol == 0 else "tolerant",
             "rtol": args.rtol,
             "atol": args.atol,
             "ignored_patterns": args.ignore,
