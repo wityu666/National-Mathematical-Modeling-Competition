@@ -56,7 +56,7 @@ def test_target_top_level_sections_exist_in_order() -> None:
     assert positions == sorted(positions)
     for title in target_sections:
         # 锁：每个正式顶层节必须唯一，不能遗漏或重复。
-        assert skeleton.count(title) == EXPECTED_SINGLE_SECTION
+        assert skeleton.splitlines().count(title) == EXPECTED_SINGLE_SECTION
 
     # 锁：AI 使用记录必须位于参考文献之后、附录之前。
     assert skeleton.index("## 参考文献") < skeleton.index(

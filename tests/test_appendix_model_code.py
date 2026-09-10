@@ -13,8 +13,9 @@ def test_skeleton_requires_key_modeling_code_in_appendix() -> None:
     skeleton = read("cumcm-live-paper-writer/assets/cumcm-paper-skeleton.md")
     appendix = skeleton.split("## 附录", 1)[1].split("## 提交前同步表", 1)[0]
 
-    # 锁：附录必须有独立的关键建模代码小节。
-    assert "### A. 关键建模代码" in appendix
+    # 锁：文件表为 A，独立的小问代码为 B。
+    assert "### 附录 B 问题求解代码" in appendix
+    assert appendix.index("### 附录 A 文件名称表") < appendix.index("### 附录 B 问题求解代码")
     # 锁：关键代码必须来自最终模型、求解结果或关键验证。
     assert "实际生成最终模型、求解结果或关键验证的建模代码" in appendix
     # 锁：三个问题都必须有可定位的关键代码展示位置。
@@ -28,7 +29,8 @@ def test_skeleton_requires_key_modeling_code_in_appendix() -> None:
     assert "可复制文本" in appendix and "不使用代码截图" in appendix
     # 锁：完整工程仍随允许的支撑材料提交，但论文不显示路径与哈希索引。
     assert "完整工程另随当届规则允许的支撑材料提交" in appendix
-    assert "### A. 支撑材料清单" not in appendix
+    assert "#### B.4 Q4（问题四）代码" in appendix
+    assert "无 Q4 时删除本节标题、说明和占位内容" in appendix
     assert "运行与完整工程说明" not in appendix
 
 
