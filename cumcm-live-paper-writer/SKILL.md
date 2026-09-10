@@ -33,6 +33,8 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 - A/B/C 图表选择、风格与视觉 QA：[references/abc-figure-design-playbook.md](references/abc-figure-design-playbook.md)
 - 附录代码多色语法高亮：[references/appendix-code-highlighting.md](references/appendix-code-highlighting.md)
 - 附录 A/B 结构与文件名称三线表：[references/appendix-structure.md](references/appendix-structure.md)
+- 图表丰富度与复杂流程图：[references/figure-richness-and-flowcharts.md](references/figure-richness-and-flowcharts.md)
+- 国奖论文逐图学习记录：[references/award-figure-studies.md](references/award-figure-studies.md)
 - 原创论文骨架：[assets/cumcm-paper-skeleton.md](assets/cumcm-paper-skeleton.md)
 - 上游亮点账本模板：[../cumcm-live-model-designer/assets/contribution-ledger.md](../cumcm-live-model-designer/assets/contribution-ledger.md)
 
@@ -173,7 +175,9 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 
 扇形图只采用二维形式，类别原则上不超过 5–6 个并直接标注类别与占比；扇区接近、需要精确比较或类别更多时改用排序水平条形图或 100% 堆积条。水平条形图按有意义的值或题面顺序排列；竖向柱形图原则上从零起；折线图的横轴必须有真实顺序，不得连接无序类别制造趋势。其他散点图、箱线图、热力图、Pareto 图、甘特图、网络图、混淆矩阵等仍可按本题需要选用。
 
-同一论文使用统一视觉语法：团队在开始出图前从 `SET-A` 至 `SET-F` 六组已验证候选中显式选择一组，在 `run-manifest` 记录 `palette_set`，并冻结“对象/变量—颜色角色—线型—标记”的 `object_color_map`；全文不得逐图换组或随机切换。同一对象在正文图表、流程图、表格与附录中始终使用同一视觉映射。每组除五个核心系列色外提供四个同系扩展色阶，用于次级曲线、置信区间、区域填充、流程节点和浅底纹；扩展色不能成为逐图改色的借口。确需 6–8 类时才使用扩展系列，超过 8 类优先分面或小多图。颜色不能作为唯一编码，必须用线型、标记、纹理或直接标签保证灰度和色觉缺陷下仍可区分。多子图共享图例、单位和轴范围，并标注 `(a)(b)(c)`。关键点、基准线、可行边界、置信区间和最优点直接标注，避免读者来回查图例。
+同一论文使用统一视觉语法：团队在开始出图前从 `SET-A` 至 `SET-F` 六组莫兰迪风格候选中显式选择一组，在 `run-manifest` 记录 `palette_set`，并冻结“对象/变量—颜色角色—线型—标记”的 `object_color_map`；全文不得逐图换组或随机切换。同一对象在正文图表、流程图、表格与附录中始终使用同一视觉映射。每组除五个核心系列色外提供四个同系扩展色阶，用于次级曲线、置信区间、区域填充、流程节点和浅底纹；扩展色不能成为逐图改色的借口。确需 6–8 类时才使用扩展系列，超过 8 类优先分面或小多图。颜色不能作为唯一编码，必须用线型、标记、纹理或直接标签保证灰度和色觉缺陷下仍可区分。多子图共享图例、单位和轴范围，并标注 `(a)(b)(c)`。关键点、基准线、可行边界、置信区间和最优点直接标注，避免读者来回查图例。
+
+先按实际小问制作图表设计矩阵，安排总览、数据认识、模型解释、算法流程、结果和真实检验的互补图表。较复杂流程图使用有意义的分组/泳道/条件分支/反馈/局部展开，节点、接口与正文一致；保留公共图例、统一对齐与留白，最终尺寸下文字和箭头可读。学习参考论文时逐图登记页码、题注和具体观察，未读取页面不形成来源结论。配色记录 `palette_family=MORANDI` 与 `palette_revision=MORANDI-2026-09`，附录代码主题继续单独登记。
 
 禁止 3D 饼图、彩虹色带、无说明的双纵轴、未经声明的平滑、没有轴断裂标识的截断坐标、只画拟合线不画原始点，以及缩到最终版后文字不可读的多子图。柱状图原则上从零起；若非零起点对判断确有必要，改用点图/区间图或清楚标出轴断裂。
 

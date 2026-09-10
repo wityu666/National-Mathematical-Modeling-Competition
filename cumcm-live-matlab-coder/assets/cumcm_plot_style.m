@@ -22,100 +22,102 @@ paletteSet = upper(strtrim(string(paletteSet)));
 switch paletteSet
     case "SET-A"
         style.colors = [ ...
-            59 59 144;   ... % primary #3B3B90
-            165 165 74;  ... % contrast #A5A54A
-            217 183 217; ... % auxiliary #D9B7D9
+            65 65 109; ... % primary #41416D
+            164 164 107; ... % contrast #A4A46B
+            212 186 212; ... % auxiliary #D4BAD4
             129 129 129; ... % neutral #818181
-            184 46 46     ... % accent #B82E2E
+            152 76 76 ... % accent #984C4C
             ] / 255;
         style.tones = [ ...
-            104 104 174; ... % primary_mid #6868AE
-            143 143 80;  ... % contrast_mid #8F8F50
-            209 159 159; ... % accent_soft #D19F9F
-            234 234 241   ... % surface_tint #EAEAF1
+            106 106 162; ... % primary_mid #6A6AA2
+            142 142 91; ... % contrast_mid #8E8E5B
+            196 163 163; ... % accent_soft #C4A3A3
+            235 235 239 ... % surface_tint #EBEBEF
             ] / 255;
-        style.paletteBasis = "深蓝主色—红色重点—金黄对比—淡紫辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.24，相邻最小 ΔL*=12.09";
+        style.paletteBasis = "莫兰迪灰蓝与陶红；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.43–78.38，最小相邻 ΔL*=12.16";
     case "SET-B"
         style.colors = [ ...
-            108 44 108;  ... % primary #6C2C6C
-            89 180 89;   ... % contrast #59B459
-            218 186 186; ... % auxiliary #DABABA
+            94 56 94; ... % primary #5E385E
+            122 173 122; ... % contrast #7AAD7A
+            213 188 188; ... % auxiliary #D5BCBC
             129 129 129; ... % neutral #818181
-            102 102 25    ... % accent #666619
+            101 101 51 ... % accent #656533
             ] / 255;
         style.tones = [ ...
-            157 85 157;  ... % primary_mid #9D559D
-            87 154 87;   ... % contrast_mid #579A57
-            175 175 90;  ... % accent_soft #AFAF5A
-            240 233 240   ... % surface_tint #F0E9F0
+            147 92 147; ... % primary_mid #935C93
+            97 152 97; ... % contrast_mid #619861
+            174 174 128; ... % accent_soft #AEAE80
+            238 234 238 ... % surface_tint #EEEAEE
             ] / 255;
-        style.paletteBasis = "深茄紫主色—橄榄重点—绿色对比—淡红辅助；六组同角色色相距均≥60°，CIELAB L*≈29.59–78.21，相邻最小 ΔL*=12.08";
+        style.paletteBasis = "莫兰迪灰紫与橄榄；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.45–78.31，最小相邻 ΔL*=12.11";
     case "SET-C"
         style.colors = [ ...
-            116 48 48;   ... % primary #743030
-            79 175 175;  ... % contrast #4FAFAF
-            197 197 146; ... % auxiliary #C5C592
+            98 59 59; ... % primary #623B3B
+            117 170 170; ... % contrast #75AAAA
+            196 196 161; ... % auxiliary #C4C4A1
             129 129 129; ... % neutral #818181
-            28 114 28     ... % accent #1C721C
+            56 110 56 ... % accent #386E38
             ] / 255;
         style.tones = [ ...
-            166 89 89;   ... % primary_mid #A65959
-            84 150 150;  ... % contrast_mid #549696
-            115 188 115; ... % accent_soft #73BC73
-            240 233 233   ... % surface_tint #F0E9E9
+            153 96 96; ... % primary_mid #996060
+            95 149 149; ... % contrast_mid #5F9595
+            140 182 140; ... % accent_soft #8CB68C
+            238 234 234 ... % surface_tint #EEEAEA
             ] / 255;
-        style.paletteBasis = "深红棕主色—绿色重点—青色对比—淡黄辅助；六组同角色色相距均≥60°，CIELAB L*≈29.51–78.39，相邻最小 ΔL*=12.10";
+        style.paletteBasis = "莫兰迪陶土与鼠尾草；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.51–78.34，最小相邻 ΔL*=12.11";
     case "SET-D"
         style.colors = [ ...
-            71 71 29;    ... % primary #47471D
-            156 156 211; ... % contrast #9C9CD3
-            161 205 161; ... % auxiliary #A1CDA1
+            71 71 43; ... % primary #47472B
+            158 158 195; ... % contrast #9E9EC3
+            170 202 170; ... % auxiliary #AACAAA
             129 129 129; ... % neutral #818181
-            27 109 109    ... % accent #1B6D6D
+            54 107 107 ... % accent #366B6B
             ] / 255;
         style.tones = [ ...
-            114 114 62;  ... % primary_mid #72723E
-            135 135 187; ... % contrast_mid #8787BB
-            107 184 184; ... % accent_soft #6BB8B8
-            235 235 227   ... % surface_tint #EBEBE3
+            114 114 71; ... % primary_mid #727247
+            136 136 179; ... % contrast_mid #8888B3
+            136 179 179; ... % accent_soft #88B3B3
+            235 235 230 ... % surface_tint #EBEBE6
             ] / 255;
-        style.paletteBasis = "深橄榄主色—青色重点—蓝色对比—淡绿辅助；六组同角色色相距均≥60°，CIELAB L*≈29.25–78.35，相邻最小 ΔL*=12.18";
+        style.paletteBasis = "莫兰迪橄榄与灰青；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.46–78.28，最小相邻 ΔL*=12.02";
     case "SET-E"
         style.colors = [ ...
-            32 79 32;    ... % primary #204F20
-            203 139 203; ... % contrast #CB8BCB
-            157 202 202; ... % auxiliary #9DCACA
+            46 77 46; ... % primary #2E4D2E
+            189 148 189; ... % contrast #BD94BD
+            167 200 200; ... % auxiliary #A7C8C8
             129 129 129; ... % neutral #818181
-            81 81 212     ... % accent #5151D4
+            90 90 172 ... % accent #5A5AAC
             ] / 255;
         style.tones = [ ...
-            67 124 67;   ... % primary_mid #437C43
-            179 119 179; ... % contrast_mid #B377B3
-            167 167 213; ... % accent_soft #A7A7D5
-            229 237 229   ... % surface_tint #E5EDE5
+            76 122 76; ... % primary_mid #4C7A4C
+            171 124 171; ... % contrast_mid #AB7CAB
+            169 169 200; ... % accent_soft #A9A9C8
+            231 236 231 ... % surface_tint #E7ECE7
             ] / 255;
-        style.paletteBasis = "深森林绿主色—蓝色重点—品红对比—淡青辅助；六组同角色色相距均≥60°，CIELAB L*≈29.42–78.27，相邻最小 ΔL*=12.14";
+        style.paletteBasis = "莫兰迪森林灰绿与雾蓝；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.63–78.28，最小相邻 ΔL*=12.01";
     case "SET-F"
         style.colors = [ ...
-            31 77 77;    ... % primary #1F4D4D
-            206 145 145; ... % contrast #CE9191
-            191 191 221; ... % auxiliary #BFBFDD
+            45 75 75; ... % primary #2D4B4B
+            191 151 151; ... % contrast #BF9797
+            192 192 215; ... % auxiliary #C0C0D7
             129 129 129; ... % neutral #818181
-            166 41 166    ... % accent #A629A6
+            143 72 143 ... % accent #8F488F
             ] / 255;
         style.tones = [ ...
-            65 120 120;  ... % primary_mid #417878
-            182 125 125; ... % contrast_mid #B67D7D
-            206 154 206; ... % accent_soft #CE9ACE
-            228 237 237   ... % surface_tint #E4EDED
+            75 119 119; ... % primary_mid #4B7777
+            174 128 128; ... % contrast_mid #AE8080
+            195 160 195; ... % accent_soft #C3A0C3
+            231 236 236 ... % surface_tint #E7ECEC
             ] / 255;
-        style.paletteBasis = "深青主色—品红重点—红色对比—淡蓝辅助；六组同角色色相距均≥60°，CIELAB L*≈29.75–78.20，相邻最小 ΔL*=12.06";
+        style.paletteBasis = "莫兰迪灰青与灰玫瑰；彩色核心 HLS 饱和度约 0.22–0.34，L*≈29.66–78.35，最小相邻 ΔL*=12.04";
     otherwise
         error("cumcm_plot_style:UnknownPalette", ...
             "Unknown palette_set %s; choose SET-A through SET-F", paletteSet);
 end
 
 style.paletteSet = paletteSet;
+style.paletteFamily = "MORANDI";
+style.paletteRevision = "MORANDI-2026-09";
 style.toneRoles = ["primary_mid", "contrast_mid", "accent_soft", "surface_tint"];
 style.extendedColors = [style.colors; style.tones(1:3,:)];
 style.surfaceTint = style.tones(4,:);

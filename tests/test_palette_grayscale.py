@@ -26,9 +26,9 @@ MIN_LSTAR_DISTANCE = 10.0
 # 白底学术图的系列色保持在此明度窗口内。
 MIN_VISIBLE_LSTAR = 20.0
 MAX_VISIBLE_LSTAR = 82.0
-# 彩色系列需要可见色相但保持克制，neutral 则维持近无彩。
+# 莫兰迪风格保留可见色相并限制饱和度；neutral 维持近无彩。
 MIN_COLORED_SATURATION = 0.20
-MAX_COLORED_SATURATION = 0.65
+MAX_COLORED_SATURATION = 0.35
 MAX_NEUTRAL_SATURATION = 0.10
 # 同角色跨组至少相隔 60° 才能形成可辨识的组间性格。
 MIN_CROSS_SET_HUE_DISTANCE = 60.0
