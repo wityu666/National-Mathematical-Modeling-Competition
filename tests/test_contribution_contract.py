@@ -195,9 +195,17 @@ def test_layout_verifier_is_integrated_after_paper_and_before_final_audit() -> N
     # 锁：README 必须公开独立排版复核阶段。
     assert "cumcm-live-layout-verifier" in readme
     # 锁：交接顺序必须是写作、排版复核、最终审计。
-    assert suite.index("cumcm-live-paper-writer") < suite.index(
-        "cumcm-live-layout-verifier"
-    ) < suite.index("cumcm-live-final-auditor")
+    # Check actual stage rows, not incidental links in the introduction.
+    ordered_roles = re.findall(
+        r"^\|\s*[^|]+\|\s*`(cumcm-live-[^`]+)`\s*\|", suite, re.MULTILINE,
+    )
+    assert ordered_roles == [
+        "cumcm-live-problem-analyst", "cumcm-live-case-retriever",
+        "cumcm-live-model-designer", "cumcm-live-python-coder",
+        "cumcm-live-matlab-coder", "cumcm-live-result-verifier",
+        "cumcm-live-paper-writer", "cumcm-live-layout-verifier",
+        "cumcm-live-final-auditor",
+    ]
     # 锁：排版复核必须保留自动预检通过状态。
     assert "PRECHECK_PASS" in layout_skill
     # 锁：排版复核必须同时保留自动预检和真实渲染两轮。

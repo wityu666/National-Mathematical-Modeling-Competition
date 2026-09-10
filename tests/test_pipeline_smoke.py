@@ -74,7 +74,7 @@ def make_documents(tmp_path, model_source):
     pdf = tmp_path / "paper.pdf"
     word = tmp_path / "paper.docx"
     document = docx.Document()
-    drawing = canvas.Canvas(str(pdf))
+    drawing = canvas.Canvas(str(pdf), initialFontName="SmokeVera")
     for index, lines in enumerate(pages):
         if index:
             document.add_page_break()
