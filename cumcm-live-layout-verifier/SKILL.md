@@ -58,7 +58,7 @@ python3 scripts/layout_preflight.py /absolute/path/to/final.pdf \
   --json
 ```
 
-`--abstract-end-page`、`--main-start-page`、`--appendix-start-page` 与 `--appendix-code-page` 都使用 PDF 查看器显示的物理页序号，不使用印刷页码。`--main-start-page` 填写第一章“问题重述”所在物理页；摘要、关键词和目录不计入 `main_body_pages`。示例中的第 31 页是附录 A 起始页，第 32 页是附录 B 首个实际主要代码页；实际值以最终 PDF 为准，A/B 也可以在同一物理页，不得把只有文件名称表的页面当作代码页。缺少 PDF 总页数、摘要结束页、正文起始页、附录起始页或主要代码页时，输出 `BLOCKED_PAGE_BOUNDARY` 或 `BLOCKED_APPENDIX_CODE`，返回退出码 1。
+`--abstract-end-page`、`--main-start-page`、`--appendix-start-page` 与 `--appendix-code-page` 都使用 PDF 查看器显示的物理页序号，不使用印刷页码。`--main-start-page` 填写第一章“问题重述”所在物理页；摘要、关键词和目录不计入 `main_body_pages`。示例中的第 31 页是附录 A 起始页，第 32 页是附录 B 首个实际主要代码页；实际值以最终 PDF 为准，A/B 也可以在同一物理页，不得把只有文件名称表的页面当作代码页。缺少 PDF 总页数、摘要结束页、正文起始页、附录起始页或主要代码页时，输出 `BLOCKED_PAGE_BOUNDARY` 或 `BLOCKED_APPENDIX_CODE`，返回退出码 1；不得把 `UNVERIFIED` 当作可通过的预检结果。
 
 `--min-main-pages` 默认 26，`--max-main-pages` 默认 30。26 页下限是用户已确认的内部质量门，不是官方要求；当届官方上限低于 26 页时，若未显式传入下限，工具会把内部下限降为 1，使 26 页门真正失效并只服从官方上限；也可按已确认的提交目标显式传入不高于官方上限的值，例如 `--min-main-pages 20 --max-main-pages 20`。上述限制仅适用于旧版 CLI；团队声明其他范围时使用 `--team-policy`，并单独登记官方上限。
 
