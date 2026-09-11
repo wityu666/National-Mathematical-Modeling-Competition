@@ -1,5 +1,8 @@
 # CUMCM 重复排版复核协议
 
+团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
+
+
 ## 1. 为什么单独复核
 
 源文件正确不代表导出的 PDF 正确，可打开的 Word 也不代表它与 PDF 内容一致。字体缺失、域未更新、浮动体重排、公式截断、图像裁切、跨页表错误和双版本漂移只会在真实打开与渲染后暴露。因此排版复核独立于内容写作，并位于终审之前。
@@ -39,7 +42,7 @@ main_body_pages = appendix_start_pdf_page - main_start_pdf_page
 appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 ```
 
-`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。本套件要求附录存在并收录主要建模代码，因此必须同时登记 `appendix_start_pdf_page` 与位于附录范围内的 `appendix_code_pdf_page`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。当届上限为 26 页或以上时不得调低内部下限。总页数或任一边界缺失时立即 `BLOCKED_PAGE_BOUNDARY/P0`，正文越界时 `BLOCKED_PAGE_RANGE/P0`，附录代码页缺失或不在附录范围时 `BLOCKED_APPENDIX_CODE/P0`；不再保留退出码 0 的 `UNVERIFIED` 路径。
+`main_start_pdf_page` 必须是第一章“问题重述”所在的 PDF 物理页；摘要、关键词和目录等编号正文前置部分不计入 `main_body_pages`，不得把摘要页作为起点。本套件要求附录存在并收录主要建模代码，因此必须同时登记 `appendix_start_pdf_page` 与位于附录范围内的 `appendix_code_pdf_page`。默认执行用户已确认的内部质量门 `26 <= main_body_pages <= 30`；附录页数不设上限。26 页下限不是官方要求：当届官方上限低于 26 页时，该下限自动失效；未显式指定新下限时，工具令 `min_main_pages = 1`，只保留正页数底线并服从官方上限。使用兼容配置时保留该内部下限；显式团队配置以其登记的有效区间为准。总页数或任一边界缺失时立即 `BLOCKED_PAGE_BOUNDARY/P0`，正文越界时 `BLOCKED_PAGE_RANGE/P0`，附录代码页缺失或不在附录范围时 `BLOCKED_APPENDIX_CODE/P0`；不再保留退出码 0 的 `UNVERIFIED` 路径。
 
 ## 4. 视觉检查抽样
 
@@ -66,7 +69,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 所有主排版路线都必须交付 `.docx`。在禁用宏的环境中实际打开它，确认无修复提示，正文、表格、公式和附录代码可选择、可编辑，不是整页截图或伪装扩展名。Word 主路线的 PDF 必须直接来自当前哈希的冻结 Word；LaTeX 主路线的 Word 是从同一冻结内容生成的可编辑伴随版。
 
-附录代码须用真实文本的 token 级字体格式实现 `VS-CODE-LIGHT-MUTED`，不得用编辑器截图。清除深色背景、编辑器界面、选择高亮和网页链接；抽查关键字、字符串、注释等不同颜色的代码，复制到纯文本后字符、空格、缩进和换行必须与冻结源代码一致。
+附录代码须用真实文本的 token 级字体格式实现 `VS-CODE-LIGHT-PLUS`，不得用编辑器截图。清除深色背景、编辑器界面、选择高亮和网页链接；抽查关键字、字符串、注释等不同颜色的代码，复制到纯文本后字符、空格、缩进和换行必须与冻结源代码一致。
 
 ## 6. LaTeX 路线
 
@@ -76,6 +79,15 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 - 检查中文字体、数学字体、浮动体、长表、算法和参考文献；
 - 使用唯一标签和自动交叉引用，不手工维护编号。
 - 附录代码优先使用 `listings` 与 `xcolor` 的冻结样式，不依赖 `minted`、shell escape 或外部运行时高亮服务；语义识别不可靠时宁可保留普通文本色，不得误染或改写代码。
+
+
+### 附录 A/B 结构与页面定位
+
+附录 A 为文件名称表，以“文件名称、文件说明”两列逐项对应实际交付的程序、输入数据和必要结果文件；只保留顶线、表头下横线和底线，无竖线、左右边线或逐行横线。Word 与 PDF 均须实际查看三线表及跨页表头，不把 Markdown 管道表视为排版证据。
+
+附录 B 为问题求解代码，按 Q1、Q2、Q3 分节；有 Q4 时增加 Q4，无 Q4 时删除该节。每节注明附录 A 中的文件名称，检查共享函数的交叉引用与本问调用逻辑，不能只用文件表或“同上”替代代码。结构或三线表错误为 P1；任一实际小问主要代码缺失仍为 `BLOCKED_APPENDIX_CODE/P0`。
+
+`appendix_start_pdf_page` 指向附录 A 起始页，`appendix_file_table_pdf_page` 定位文件表；`appendix_code_pdf_page` 指向附录 B 首个实际主要代码页，`appendix_question_pages` 逐问登记代码页。A/B 可同页，但只有文件表的页面不是代码页。后两个新增记录字段在排版/审计报告中核对；现有脚本只检查其已支持的页数参数，不自动证明 A/B 结构或三线表通过。
 
 ## 7. 图表与公式
 
@@ -92,7 +104,7 @@ appendix_pages = total_pdf_pages - appendix_start_pdf_page + 1
 
 附录关键建模代码必须以可复制的等宽文本呈现，不使用代码截图。检查 `appendix_code_pdf_page`、代码字号、缩进、长行换行、跨页连续性、行号或 `CODE-*` 标识及页边界；不得为了容纳代码把字号缩到不可读，也不得让分页切断关键语句而无法理解。静态预检只确认页码定位，Round B 必须继续确认该页确实包含变量/参数构造、目标与约束、核心求解/预测/仿真或验证逻辑，而不是导包、通用绘图和重复文件读写。
 
-当届允许彩色时，全部附录代码还必须使用同一个 `code_theme=VS-CODE-LIGHT-MUTED`：白底，普通文本、关键字、函数、类、字符串、注释、数值和行号按语义角色固定映射，关键字加粗、注释斜体。代码片段没有某类 token 时无需凑色；不得逐块换主题、随机配色、使用深色编辑器背景或把代码主题与图表 `palette_set/object_color_map` 混为一体。检查 Word/PDF 映射一致、彩色与灰度均可读，并跨不同颜色抽查纯文本复制与冻结源代码一致。若官方要求黑白，必须登记 `MONOCHROME_OFFICIAL_OVERRIDE` 与规则证据。
+当届允许彩色时，全部附录代码还必须使用同一个 `code_theme=VS-CODE-LIGHT-PLUS`：极浅灰底，普通文本、关键字、函数、类、字符串、注释、数值和行号按语义角色固定映射，关键字加粗、注释斜体。代码片段没有某类 token 时无需凑色；不得逐块换主题、随机配色、使用深色编辑器背景或把代码主题与图表 `palette_set/object_color_map` 混为一体。检查 Word/PDF 映射一致、彩色与灰度均可读，并跨不同颜色抽查纯文本复制与冻结源代码一致。若官方要求黑白，必须登记 `MONOCHROME_OFFICIAL_OVERRIDE` 与规则证据。
 
 ## 8. Word/PDF 双版本一致性
 

@@ -166,3 +166,46 @@ def test_empty_reference_returns_exit_two(tmp_path: Path) -> None:
     assert report == {}
     # 锁：错误输出必须明确指出没有可比较文件。
     assert "no comparable files" in completed.stderr
+
+
+def test_default_comparison_rejects_small_numeric_drift(tmp_path: Path) -> None:
+    initial = make_run(tmp_path, "initial", score="1.0")
+    recheck = make_run(tmp_path, "recheck", score="1.0000000005")
+    completed, report = run_compare(initial, recheck)
+    assert completed.returncode == 1
+    assert report["comparison_mode"] == "exact"
+    assert report["rtol"] == report["atol"] == 0
+    assert report["status"] == "BLOCKED"
+
+
+def test_default_comparison_rejects_small_absolute_drift(tmp_path: Path) -> None:
+    initial = make_run(tmp_path, "initial", score="0")
+    recheck = make_run(tmp_path, "recheck", score="0.0000000000001")
+    completed, report = run_compare(initial, recheck)
+    assert completed.returncode == 1
+    assert {item["path"] for item in report["mismatches"]} == {
+        "metrics.csv", "summary.json",
+    }
+
+
+def test_exact_comparison_preserves_large_integers(tmp_path: Path) -> None:
+    initial = make_run(tmp_path, "initial")
+    recheck = make_run(tmp_path, "recheck")
+    for directory, integer in ((initial, 2**53), (recheck, 2**53 + 1)):
+        (directory / "metrics.csv").write_text(f"id,value\nQ1,{integer}\n")
+        (directory / "summary.json").write_text(json.dumps({"count": integer}))
+    completed, report = run_compare(initial, recheck)
+    assert completed.returncode == 1
+    assert {item["path"] for item in report["mismatches"]} == {
+        "metrics.csv", "summary.json",
+    }
+
+
+def test_explicit_absolute_tolerance_is_reported(tmp_path: Path) -> None:
+    initial = make_run(tmp_path, "initial", score="0")
+    recheck = make_run(tmp_path, "recheck", score="0.0000000000001")
+    completed, report = run_compare(initial, recheck, extra_args=("--atol", "1e-12"))
+    assert completed.returncode == 0
+    assert report["comparison_mode"] == "tolerant"
+    assert report["rtol"] == 0
+    assert report["atol"] == 1e-12

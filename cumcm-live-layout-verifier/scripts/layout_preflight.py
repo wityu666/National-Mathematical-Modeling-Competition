@@ -250,7 +250,7 @@ def evaluate_page_limit(
                 "main-body-under-page-floor",
                 pdf,
                 f"正文 {main_pages} 页，低于 {min_main_pages} 页下限；"
-                "正文深度可能不足或存在小问未实质作答。",
+                "不满足本次登记的页数区间；内容完整性仍需独立检查。",
                 "P0",
             )
         )
@@ -503,15 +503,21 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=DEFAULT_MIN_MAIN_PAGES,
         help=(
             "编号正文页数下限，默认 26；仅当当届官方规则的上限低于 26 时"
-            "才允许调低。"
+            "才允许调低；其他区间请使用 --team-policy。"
         ),
     )
     parser.add_argument(
         "--max-main-pages",
         type=int,
         default=MAX_MAIN_PAGES_HARD_CEILING,
-        help="正文页数上限，默认且最高为 30；只允许按更严格规则调低，附录不计入。",
+        help="兼容配置上限默认 30；其他团队区间使用 --team-policy，附录不计入。",
     )
+    parser.add_argument("--team-policy", type=Path,
+                        help="JSON team page policy; overrides the legacy 26–30 profile.")
+    parser.add_argument("--official-max-main-pages", type=int,
+                        help="Verified official body-page cap; takes priority over team policy.")
+    parser.add_argument("--official-page-rule",
+                        help="Source reference for --official-max-main-pages.")
     parser.add_argument("--json", action="store_true")
     parser.add_argument(
         "--skip-external-tools",
@@ -534,7 +540,7 @@ def resolve_main_page_range(
     """Validate the internal page gate and apply an official stricter cap."""
     if not 1 <= max_main_pages <= MAX_MAIN_PAGES_HARD_CEILING:
         raise ValueError(
-            "错误：--max-main-pages 必须在 1–30 之间，不能放宽 30 页硬门。"
+            "错误：旧版参数不能放宽 30 页硬门；其他团队区间请通过 --team-policy 显式声明。"
         )
 
     if (
@@ -556,10 +562,94 @@ def resolve_main_page_range(
         and max_main_pages >= DEFAULT_MIN_MAIN_PAGES
     ):
         raise ValueError(
-            "错误：26 页下限是用户已确认的内部质量门；"
-            "仅当 --max-main-pages 同时低于 26（当届官方上限更严）时才允许调低。"
+            "错误：未指定团队配置时保留兼容配置的 26 页下限；"
+            "仅当 --max-main-pages 同时低于 26（旧版官方上限参数）时才允许调低；其他区间使用 --team-policy。"
         )
     return min_main_pages, max_main_pages
+
+
+
+def unique_policy_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"错误：团队页数配置键重复：{key}")
+        result[key] = value
+    return result
+
+
+def load_team_policy(path: Path) -> dict[str, Any]:
+    source = path.expanduser().resolve()
+    try:
+        raw = source.read_bytes()
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=unique_policy_keys)
+    except (OSError, UnicodeError, ValueError) as exc:
+        raise ValueError(f"错误：无法读取团队页数配置：{exc}") from exc
+    fields = {"schema_version", "policy_id", "rationale", "min_main_pages", "max_main_pages"}
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ValueError("错误：团队页数配置必须且只能包含：" + ", ".join(sorted(fields)))
+    if type(value["schema_version"]) is not int or value["schema_version"] != 1:
+        raise ValueError("错误：团队页数配置 schema_version 必须为整数 1。")
+    for name in ("policy_id", "rationale"):
+        if not isinstance(value[name], str) or not value[name].strip():
+            raise ValueError(f"错误：团队页数配置 {name} 必须为非空文字。")
+    for name in ("min_main_pages", "max_main_pages"):
+        if type(value[name]) is not int or value[name] < 1:
+            raise ValueError(f"错误：团队页数配置 {name} 必须为正整数。")
+    if value["min_main_pages"] > value["max_main_pages"]:
+        raise ValueError("错误：团队页数配置下限不能高于上限。")
+    return {
+        **value,
+        "source": str(source),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "selection": "team_policy",
+    }
+
+
+def resolve_page_policy(
+    args: argparse.Namespace, argv: list[str],
+) -> tuple[int, int, dict[str, Any]]:
+    if args.team_policy is not None:
+        if any(option_was_supplied(argv, option)
+               for option in ("--min-main-pages", "--max-main-pages")):
+            raise ValueError("错误：--team-policy 不得与旧版 --min-main-pages/--max-main-pages 混用。")
+        policy = load_team_policy(args.team_policy)
+        minimum, maximum = policy["min_main_pages"], policy["max_main_pages"]
+    else:
+        minimum, maximum = resolve_main_page_range(
+            args.min_main_pages, args.max_main_pages,
+            min_was_explicit=option_was_supplied(argv, "--min-main-pages"),
+        )
+        policy = {
+            "schema_version": 1,
+            "policy_id": "legacy-26-30",
+            "selection": "legacy_cli" if any(
+                option_was_supplied(argv, option)
+                for option in ("--min-main-pages", "--max-main-pages")
+            ) else "legacy_default",
+            "source": None,
+            "sha256": None,
+            "min_main_pages": minimum,
+            "max_main_pages": maximum,
+        }
+    cap = args.official_max_main_pages
+    rule = args.official_page_rule
+    if cap is not None:
+        if cap < 1 or not rule or not rule.strip():
+            raise ValueError("错误：官方正文上限必须为正整数，并提供 --official-page-rule 来源。")
+        maximum = min(maximum, cap)
+        if minimum > maximum:
+            minimum = 1
+    elif rule is not None:
+        raise ValueError("错误：--official-page-rule 必须与 --official-max-main-pages 同时使用。")
+    policy.update({
+        "official_max_main_pages": cap,
+        "official_page_rule": rule,
+        "effective_min_main_pages": minimum,
+        "effective_max_main_pages": maximum,
+        "internal_floor_disabled_by_official_cap": minimum < policy["min_main_pages"],
+    })
+    return minimum, maximum, policy
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -587,11 +677,7 @@ def main(argv: list[str] | None = None) -> int:
         print("错误：--appendix-code-page 必须大于 0。", file=sys.stderr)
         return 2
     try:
-        min_main_pages, max_main_pages = resolve_main_page_range(
-            args.min_main_pages,
-            args.max_main_pages,
-            min_was_explicit=option_was_supplied(raw_argv, "--min-main-pages"),
-        )
+        min_main_pages, max_main_pages, page_policy = resolve_page_policy(args, raw_argv)
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
@@ -608,10 +694,12 @@ def main(argv: list[str] | None = None) -> int:
         args.abstract_end_page,
         args.appendix_code_page,
     )
+    report["page_policy"] = page_policy
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
         print(f"status={report['status']}")
+        print(f"page_policy={page_policy['policy_id']} source={page_policy['source']}")
         print(f"visual_qa_required={str(report['visual_qa_required']).lower()}")
         print(f"pdf_sha256={report['pdf_sha256']}")
         print(f"page_limit_status={report['page_limit']['status']}")

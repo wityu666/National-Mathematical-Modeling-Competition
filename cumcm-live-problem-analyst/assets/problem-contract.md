@@ -133,3 +133,14 @@
 | Q1 |  |  | COVERED / AT_RISK / BLOCKED |  |  |  |  |
 
 临近截止时优先让所有小问达到 `COVERED`，再优化单问。任一小问仍为 `BLOCKED` 时，问题合同不得宣称可进入完整成稿。
+
+## 内部页数配置记录（不进入提交论文）
+
+| 字段 | 本次值 |
+|---|---|
+| policy_id / selection | |
+| source / sha256 | |
+| effective_min_main_pages / effective_max_main_pages | |
+| official_max_main_pages / official_page_rule | |
+
+核对配置与当前预检报告的 `page_policy` 一致；配置变更后旧页数、LAYOUT 与终审结论失效。

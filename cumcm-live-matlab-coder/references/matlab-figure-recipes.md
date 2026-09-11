@@ -1,5 +1,7 @@
 # MATLAB 国赛 A/B/C 论文图配方
 
+本版使用莫兰迪配色家族 `MORANDI`，固定色值修订为 `MORANDI-2026-09`，从 SET-A 至 SET-F 显式选择并登记。图表组合、多子图和较复杂流程图的结构规则见[设计规范](../../cumcm-live-paper-writer/references/figure-richness-and-flowcharts.md)；先确定本题的读者问题和真实结构，再用样式资产绘图。
+
 本文件规定如何从冻结 MATLAB 结果生成信息丰富、统一、可复现的论文图。不得使用 Plot Tools 手工移动数据点或修改数值。
 
 ## 1. 图型路由

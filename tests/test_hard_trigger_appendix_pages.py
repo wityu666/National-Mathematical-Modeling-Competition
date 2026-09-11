@@ -41,7 +41,8 @@ def test_layout_preflight_requires_appendix_code_page_locator() -> None:
 
     # 锁：CLI 必须要求操作者登记主要建模代码的 PDF 物理页。
     assert '"--appendix-code-page"' in script
-    assert "--appendix-code-page 31" in skill
+    assert "--appendix-code-page 32" in skill
+    assert "不得把只有文件名称表的页面当作代码页" in skill
     # 锁：缺少正文边界与附录代码页必须产生稳定的 P0 问题码。
     assert '"page-limit-unverified"' in script
     assert '"appendix-key-model-code-unverified"' in script

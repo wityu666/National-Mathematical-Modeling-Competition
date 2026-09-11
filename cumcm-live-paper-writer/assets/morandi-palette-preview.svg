@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="660" viewBox="0 0 1140 660" role="img" aria-labelledby="title desc">
+<title id="title">Morandi palettes for modeling papers</title>
+<desc id="desc">Six muted palette sets, five core series colors and four companion tones each. Choose one set per paper.</desc>
+<rect width="1140" height="660" fill="#FFFFFF"/>
+<text x="32" y="46" font-family="sans-serif" font-size="26" fill="#30383C">Morandi · CUMCM figure palettes</text>
+<text x="32" y="72" font-family="sans-serif" font-size="15" fill="#687177">MORANDI-2026-09 · select one set · keep object colors consistent</text>
+<text x="166" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">primary</text>
+<text x="269" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">contrast</text>
+<text x="372" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">auxiliary</text>
+<text x="475" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">neutral</text>
+<text x="578" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">accent</text>
+<text x="681" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">primary_mid</text>
+<text x="784" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">contrast_mid</text>
+<text x="887" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">accent_soft</text>
+<text x="990" y="108" font-family="sans-serif" font-size="11" fill="#4F555A">surface_tint</text>
+<text x="32" y="151" font-family="sans-serif" font-size="19" fill="#30383C">SET-A</text>
+<rect x="164" y="124" width="88" height="43" rx="5" fill="#41416D"/>
+<text x="164" y="186" font-family="monospace" font-size="13" fill="#4F555A">#41416D</text>
+<rect x="267" y="124" width="88" height="43" rx="5" fill="#A4A46B"/>
+<text x="267" y="186" font-family="monospace" font-size="13" fill="#4F555A">#A4A46B</text>
+<rect x="370" y="124" width="88" height="43" rx="5" fill="#D4BAD4"/>
+<text x="370" y="186" font-family="monospace" font-size="13" fill="#4F555A">#D4BAD4</text>
+<rect x="473" y="124" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="186" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="124" width="88" height="43" rx="5" fill="#984C4C"/>
+<text x="576" y="186" font-family="monospace" font-size="13" fill="#4F555A">#984C4C</text>
+<rect x="679" y="124" width="88" height="43" rx="5" fill="#6A6AA2"/>
+<text x="679" y="186" font-family="monospace" font-size="13" fill="#4F555A">#6A6AA2</text>
+<rect x="782" y="124" width="88" height="43" rx="5" fill="#8E8E5B"/>
+<text x="782" y="186" font-family="monospace" font-size="13" fill="#4F555A">#8E8E5B</text>
+<rect x="885" y="124" width="88" height="43" rx="5" fill="#C4A3A3"/>
+<text x="885" y="186" font-family="monospace" font-size="13" fill="#4F555A">#C4A3A3</text>
+<rect x="988" y="124" width="88" height="43" rx="5" fill="#EBEBEF"/>
+<text x="988" y="186" font-family="monospace" font-size="13" fill="#4F555A">#EBEBEF</text>
+<text x="32" y="231" font-family="sans-serif" font-size="19" fill="#30383C">SET-B</text>
+<rect x="164" y="204" width="88" height="43" rx="5" fill="#5E385E"/>
+<text x="164" y="266" font-family="monospace" font-size="13" fill="#4F555A">#5E385E</text>
+<rect x="267" y="204" width="88" height="43" rx="5" fill="#7AAD7A"/>
+<text x="267" y="266" font-family="monospace" font-size="13" fill="#4F555A">#7AAD7A</text>
+<rect x="370" y="204" width="88" height="43" rx="5" fill="#D5BCBC"/>
+<text x="370" y="266" font-family="monospace" font-size="13" fill="#4F555A">#D5BCBC</text>
+<rect x="473" y="204" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="266" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="204" width="88" height="43" rx="5" fill="#656533"/>
+<text x="576" y="266" font-family="monospace" font-size="13" fill="#4F555A">#656533</text>
+<rect x="679" y="204" width="88" height="43" rx="5" fill="#935C93"/>
+<text x="679" y="266" font-family="monospace" font-size="13" fill="#4F555A">#935C93</text>
+<rect x="782" y="204" width="88" height="43" rx="5" fill="#619861"/>
+<text x="782" y="266" font-family="monospace" font-size="13" fill="#4F555A">#619861</text>
+<rect x="885" y="204" width="88" height="43" rx="5" fill="#AEAE80"/>
+<text x="885" y="266" font-family="monospace" font-size="13" fill="#4F555A">#AEAE80</text>
+<rect x="988" y="204" width="88" height="43" rx="5" fill="#EEEAEE"/>
+<text x="988" y="266" font-family="monospace" font-size="13" fill="#4F555A">#EEEAEE</text>
+<text x="32" y="311" font-family="sans-serif" font-size="19" fill="#30383C">SET-C</text>
+<rect x="164" y="284" width="88" height="43" rx="5" fill="#623B3B"/>
+<text x="164" y="346" font-family="monospace" font-size="13" fill="#4F555A">#623B3B</text>
+<rect x="267" y="284" width="88" height="43" rx="5" fill="#75AAAA"/>
+<text x="267" y="346" font-family="monospace" font-size="13" fill="#4F555A">#75AAAA</text>
+<rect x="370" y="284" width="88" height="43" rx="5" fill="#C4C4A1"/>
+<text x="370" y="346" font-family="monospace" font-size="13" fill="#4F555A">#C4C4A1</text>
+<rect x="473" y="284" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="346" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="284" width="88" height="43" rx="5" fill="#386E38"/>
+<text x="576" y="346" font-family="monospace" font-size="13" fill="#4F555A">#386E38</text>
+<rect x="679" y="284" width="88" height="43" rx="5" fill="#996060"/>
+<text x="679" y="346" font-family="monospace" font-size="13" fill="#4F555A">#996060</text>
+<rect x="782" y="284" width="88" height="43" rx="5" fill="#5F9595"/>
+<text x="782" y="346" font-family="monospace" font-size="13" fill="#4F555A">#5F9595</text>
+<rect x="885" y="284" width="88" height="43" rx="5" fill="#8CB68C"/>
+<text x="885" y="346" font-family="monospace" font-size="13" fill="#4F555A">#8CB68C</text>
+<rect x="988" y="284" width="88" height="43" rx="5" fill="#EEEAEA"/>
+<text x="988" y="346" font-family="monospace" font-size="13" fill="#4F555A">#EEEAEA</text>
+<text x="32" y="391" font-family="sans-serif" font-size="19" fill="#30383C">SET-D</text>
+<rect x="164" y="364" width="88" height="43" rx="5" fill="#47472B"/>
+<text x="164" y="426" font-family="monospace" font-size="13" fill="#4F555A">#47472B</text>
+<rect x="267" y="364" width="88" height="43" rx="5" fill="#9E9EC3"/>
+<text x="267" y="426" font-family="monospace" font-size="13" fill="#4F555A">#9E9EC3</text>
+<rect x="370" y="364" width="88" height="43" rx="5" fill="#AACAAA"/>
+<text x="370" y="426" font-family="monospace" font-size="13" fill="#4F555A">#AACAAA</text>
+<rect x="473" y="364" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="426" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="364" width="88" height="43" rx="5" fill="#366B6B"/>
+<text x="576" y="426" font-family="monospace" font-size="13" fill="#4F555A">#366B6B</text>
+<rect x="679" y="364" width="88" height="43" rx="5" fill="#727247"/>
+<text x="679" y="426" font-family="monospace" font-size="13" fill="#4F555A">#727247</text>
+<rect x="782" y="364" width="88" height="43" rx="5" fill="#8888B3"/>
+<text x="782" y="426" font-family="monospace" font-size="13" fill="#4F555A">#8888B3</text>
+<rect x="885" y="364" width="88" height="43" rx="5" fill="#88B3B3"/>
+<text x="885" y="426" font-family="monospace" font-size="13" fill="#4F555A">#88B3B3</text>
+<rect x="988" y="364" width="88" height="43" rx="5" fill="#EBEBE6"/>
+<text x="988" y="426" font-family="monospace" font-size="13" fill="#4F555A">#EBEBE6</text>
+<text x="32" y="471" font-family="sans-serif" font-size="19" fill="#30383C">SET-E</text>
+<rect x="164" y="444" width="88" height="43" rx="5" fill="#2E4D2E"/>
+<text x="164" y="506" font-family="monospace" font-size="13" fill="#4F555A">#2E4D2E</text>
+<rect x="267" y="444" width="88" height="43" rx="5" fill="#BD94BD"/>
+<text x="267" y="506" font-family="monospace" font-size="13" fill="#4F555A">#BD94BD</text>
+<rect x="370" y="444" width="88" height="43" rx="5" fill="#A7C8C8"/>
+<text x="370" y="506" font-family="monospace" font-size="13" fill="#4F555A">#A7C8C8</text>
+<rect x="473" y="444" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="506" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="444" width="88" height="43" rx="5" fill="#5A5AAC"/>
+<text x="576" y="506" font-family="monospace" font-size="13" fill="#4F555A">#5A5AAC</text>
+<rect x="679" y="444" width="88" height="43" rx="5" fill="#4C7A4C"/>
+<text x="679" y="506" font-family="monospace" font-size="13" fill="#4F555A">#4C7A4C</text>
+<rect x="782" y="444" width="88" height="43" rx="5" fill="#AB7CAB"/>
+<text x="782" y="506" font-family="monospace" font-size="13" fill="#4F555A">#AB7CAB</text>
+<rect x="885" y="444" width="88" height="43" rx="5" fill="#A9A9C8"/>
+<text x="885" y="506" font-family="monospace" font-size="13" fill="#4F555A">#A9A9C8</text>
+<rect x="988" y="444" width="88" height="43" rx="5" fill="#E7ECE7"/>
+<text x="988" y="506" font-family="monospace" font-size="13" fill="#4F555A">#E7ECE7</text>
+<text x="32" y="551" font-family="sans-serif" font-size="19" fill="#30383C">SET-F</text>
+<rect x="164" y="524" width="88" height="43" rx="5" fill="#2D4B4B"/>
+<text x="164" y="586" font-family="monospace" font-size="13" fill="#4F555A">#2D4B4B</text>
+<rect x="267" y="524" width="88" height="43" rx="5" fill="#BF9797"/>
+<text x="267" y="586" font-family="monospace" font-size="13" fill="#4F555A">#BF9797</text>
+<rect x="370" y="524" width="88" height="43" rx="5" fill="#C0C0D7"/>
+<text x="370" y="586" font-family="monospace" font-size="13" fill="#4F555A">#C0C0D7</text>
+<rect x="473" y="524" width="88" height="43" rx="5" fill="#818181"/>
+<text x="473" y="586" font-family="monospace" font-size="13" fill="#4F555A">#818181</text>
+<rect x="576" y="524" width="88" height="43" rx="5" fill="#8F488F"/>
+<text x="576" y="586" font-family="monospace" font-size="13" fill="#4F555A">#8F488F</text>
+<rect x="679" y="524" width="88" height="43" rx="5" fill="#4B7777"/>
+<text x="679" y="586" font-family="monospace" font-size="13" fill="#4F555A">#4B7777</text>
+<rect x="782" y="524" width="88" height="43" rx="5" fill="#AE8080"/>
+<text x="782" y="586" font-family="monospace" font-size="13" fill="#4F555A">#AE8080</text>
+<rect x="885" y="524" width="88" height="43" rx="5" fill="#C3A0C3"/>
+<text x="885" y="586" font-family="monospace" font-size="13" fill="#4F555A">#C3A0C3</text>
+<rect x="988" y="524" width="88" height="43" rx="5" fill="#E7ECEC"/>
+<text x="988" y="586" font-family="monospace" font-size="13" fill="#4F555A">#E7ECEC</text>
+<text x="32" y="643" font-family="sans-serif" font-size="13" fill="#687177">Core colors remain separated in lightness. Use labels, markers and line styles for redundant encoding.</text>
+</svg>

@@ -69,6 +69,8 @@
 | timeout_or_stop_condition |  |
 | fallback_deadline |  |
 | palette_set | `SET-A / SET-B / SET-C / SET-D / SET-E / SET-F；出图前显式选择` |
+| palette_family / palette_revision | `MORANDI / MORANDI-2026-09；冻结记录` |
+| 图表设计矩阵 | `【总览/数据/模型/算法/结果/验证的实际图号、任务、子图功能；依题目选择】` |
 | object_color_map | `【对象/变量 → 核心或扩展颜色角色 → 线型/标记；首次出图前冻结，全文复用】` |
 
 ### 精确批处理命令

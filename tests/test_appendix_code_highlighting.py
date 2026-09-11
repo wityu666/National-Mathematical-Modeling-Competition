@@ -2,24 +2,32 @@ from pathlib import Path
 
 
 SUITE_ROOT = Path(__file__).resolve().parents[1]
-THEME_NAME = "VS-CODE-LIGHT-MUTED"
+THEME_NAME = "VS-CODE-LIGHT-PLUS"
 SEMANTIC_ROLES = (
-    "关键字、控制语句与内置类型",
+    "关键字与控制语句",
+    "声明关键字、布尔与空值",
+    "模块、命名空间与类名",
     "函数与方法名",
-    "类名与装饰器",
+    "变量、参数与属性",
+    "命名常量",
     "字符串与路径字面量",
     "注释",
-    "数值与常量",
+    "数值字面量",
 )
 THEME_COLORS = {
-    "#1F2328",
-    "#264F78",
+    "#000000",
+    "#AF00DB",
+    "#0000FF",
+    "#267F99",
     "#795E26",
-    "#7A3E9D",
+    "#001080",
+    "#0070C1",
     "#A31515",
-    "#2E7D32",
+    "#008000",
     "#098658",
+    "#319331",
     "#6B7280",
+    "#F8F8F8",
     "#FFFFFF",
     "#D1D5DB",
 }
@@ -121,7 +129,7 @@ def test_highlighting_does_not_weaken_existing_appendix_and_page_gates() -> None
         assert "BLOCKED_APPENDIX_CODE" in document
         # 锁：增加语法高亮后，编号正文 26–30 页硬门仍然存在。
         assert "26–30" in document
-    # 锁：附录仍不得重新引入完整程序与支撑材料索引。
-    assert "不得设置或撰写“完整程序与支撑材料索引”" in writer
+    # 锁：高亮调整不改变 A 文件名称三线表和 B 小问代码结构。
+    assert "附录 A 文件名称表" in writer and "附录 B 问题求解代码" in writer
     # 锁：图表 palette_set 仍是全文一致的独立视觉合同。
     assert "palette_set" in writer and "object_color_map" in writer

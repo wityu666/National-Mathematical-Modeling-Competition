@@ -49,3 +49,7 @@
 ## 适配依据
 
 依据 2026-09-05 核对的 [OpenAI GPT-6 Astra 使用与迁移指南](https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md)，针对指令边界、赛中续做、代理分工和可观察的完成证据作定点适配。本约定不是微调、模型自动切换或完整国赛效果评测的声明；实际可用模型与工具以当前 Codex 宿主为准。
+
+## 团队页数配置的恢复
+
+任务采用显式正文页数配置时，按[团队正文页数配置](../../cumcm-live-layout-verifier/references/team-page-policy.md)传递 `page_policy` 的来源、哈希与有效区间。不要把兼容默认 26–30 页改写为所有用户已确认的要求；续做沿用本队已登记的选择，官方规则优先。配置变化须重新核验受影响的页数、排版与终审，不无故重跑未变化的数学结果。
