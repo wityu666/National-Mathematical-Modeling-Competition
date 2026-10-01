@@ -7,9 +7,9 @@ description: 面向中国大学生数学建模竞赛 A、B、C 题进行中的�
 默认 `--rtol 0 --atol 0`，报告以 `comparison_mode=exact` 标识；只有合同事先声明允许容差时才显式传入非零参数，报告标为 `tolerant`。这是解析后的数值比较，JSON 空白、CSV 数值格式不必逐字节相同；整数不会先转浮点，避免大整数精度丢失。排序、分类和方案选择等结论级不变量仍须另行精确核验，不能用整目录容差替代。
 
 
-## GPT-6 Astra 执行约定
+## GPT-6 系列执行约定
 
-首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+首次执行或恢复任务时读取 [GPT-6 系列赛时执行约定](../cumcm-live-problem-analyst/references/model-execution-contract.md)，据当前冻结文件接续本角色；支持 GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol；沿用 Codex 当前选择，本技能不自动切换模型。
 
 生产者与复核者可以分代理，但身份不同不等于方法独立；Round B 仍从题面和冻结合同构造第二方法，不复用主求解函数。恢复时先核对 VER 报告绑定的 run_id 和哈希，只有当前有效证据才可承接，不能为赶进度减少复核轮次。
 

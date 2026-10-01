@@ -5,9 +5,9 @@ description: 面向中国大学生数学建模竞赛（CUMCM）A、B、C 题正�
 
 # CUMCM 赛时拆题分析
 
-## GPT-6 Astra 执行约定
+## GPT-6 系列执行约定
 
-首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+首次执行或恢复任务时读取 [GPT-6 系列赛时执行约定](references/model-execution-contract.md)，据当前冻结文件接续本角色；支持 GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol；沿用 Codex 当前选择，本技能不自动切换模型。
 
 优先从当前题面、规则和附件消除歧义，只把会改变选题、口径或提交要求的未决项交给用户；全新任务仍先执行下列规则与范围门，不把已确认选项再次问一遍。
 

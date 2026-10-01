@@ -5,11 +5,11 @@ description: 面向中国大学生数学建模竞赛（CUMCM）A、B、C 题进�
 
 # CUMCM 赛时方法模式匹配
 
-## GPT-6 Astra 执行约定
+## GPT-6 系列执行约定
 
-首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+首次执行或恢复任务时读取 [GPT-6 系列赛时执行约定](../cumcm-live-problem-analyst/references/model-execution-contract.md)，据当前冻结文件接续本角色；支持 GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol；沿用 Codex 当前选择，本技能不自动切换模型。
 
-不同小问签名可并行匹配内置模式卡，但不能把 Astra 的记忆或生成的案例当作检索证据；将可迁移条件、排除原因和待验证差异交给模型设计，不直接升级为本题结论。
+不同小问签名可并行匹配内置模式卡，但不能把 模型的记忆或生成的案例当作检索证据；将可迁移条件、排除原因和待验证差异交给模型设计，不直接升级为本题结论。
 
 ## 定位
 

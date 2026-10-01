@@ -8,9 +8,9 @@ description: 比赛进行中用于中国大学生数学建模竞赛 A、B、C �
 团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](../cumcm-live-layout-verifier/references/team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
 
 
-## GPT-6 Astra 执行约定
+## GPT-6 系列执行约定
 
-首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+首次执行或恢复任务时读取 [GPT-6 系列赛时执行约定](../cumcm-live-problem-analyst/references/model-execution-contract.md)，据当前冻结文件接续本角色；支持 GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol；沿用 Codex 当前选择，本技能不自动切换模型。
 
 终审可以并行核对内容、复现与版式，但本角色负责核对证据绑定、汇总全部 P0/P1 和最终结论；不以其他代理的自报 PASS 代替审计。只有用户授权提交或发布时才执行该外部动作，本地审计通过本身不是授权。
 

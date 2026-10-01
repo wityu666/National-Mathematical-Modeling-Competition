@@ -3,7 +3,7 @@
 团队页数配置：本文的 26–30 页及相关常量均为兼容默认。显式团队配置可替换该区间，官方限制优先；新用户的确认不得由模板代填。执行时按[团队正文页数配置](cumcm-live-layout-verifier/references/team-page-policy.md)记录 `page_policy` 的来源、哈希与有效区间，写作、排版和终审使用同一配置。
 
 
-一组面向中国大学生数学建模竞赛（CUMCM）比赛进行中的 Codex skills。兼用模型：**GPT-6 Astra**（`gpt-6-astra`）。本套件只支持国赛 A、B、C 题，不支持 D、E 题。技能覆盖赛题拆解、内置方法模式匹配、模型设计、Python/MATLAB 实现、首次结果重复复核、论文成稿、重复排版复核与提交前终审，并用 `CONTRIB-*` 亮点账本把可验证的差异化成果贯穿全链路。
+一组面向中国大学生数学建模竞赛（CUMCM）比赛进行中的 Codex skills。兼用模型：**GPT-6 Sol**（`gpt-6-sol`）、**GPT-6 Astra**（`gpt-6-astra`）、**GPT-6.1 Sol**（`gpt-6.1-sol`）。本套件只支持国赛 A、B、C 题，不支持 D、E 题。技能覆盖赛题拆解、内置方法模式匹配、模型设计、Python/MATLAB 实现、首次结果重复复核、论文成稿、重复排版复核与提交前终审，并用 `CONTRIB-*` 亮点账本把可验证的差异化成果贯穿全链路。
 
 这是“自包含知识版”：通用建模知识已经被原创整理为 Skill 内置的模式卡、决策规则、实现配方和检查表。安装后不需要作者的电脑、移动硬盘、百度网盘或其他私有资料库，也不会在运行时联网检索案例。
 
@@ -43,20 +43,20 @@ cp -R cumcm-live-* "${CODEX_HOME:-$HOME/.codex}/skills/"
 python3 -m pytest -q
 ```
 
-## GPT-6 Astra 适配与续做
+## GPT-6 Sol / GPT-6 Astra / GPT-6.1 Sol 适配与续做
 
-九个技能均已加入 GPT-6 Astra（`gpt-6-astra`）执行约定与分角色要求，重点覆盖长任务恢复、并行分工、运行结果收回和独立验证。请在 Codex 模型选择器中选择 GPT-6 Astra；安装技能不会自动切换模型，不修改全局配置，`agents/openai.yaml` 只保存受支持的 UI 元数据。推理强度沿用当前可用设置，不要求一律最高。
+九个技能均支持上述三个模型，并共用执行约定与分角色要求，重点覆盖长任务恢复、并行分工、运行结果收回和独立验证。请在 Codex 模型选择器中选择上述任一可用模型；没有指定时沿用当前模型；安装技能不会自动切换模型，不修改全局配置，`agents/openai.yaml` 只保存受支持的 UI 元数据。推理强度沿用当前可用设置，不要求一律最高。
 
 全新比赛任务从 `cumcm-live-problem-analyst` 开始；续做先核对当前冻结文件、哈希与报告，再从首个未通过门禁的阶段继续。用户要求完整交付时，可在已有授权内接续下游；只要求某个角色或指定检查点暂停时，仍按该范围执行。子代理身份不等于数学独立性，后台作业未结束也不等于已冻结。
 
-共享说明位于 [GPT-6 Astra 赛时执行约定](cumcm-live-problem-analyst/references/astra-execution-contract.md)，九个入口均有直达链接。按上面的安装命令保留九个技能的同级目录，不要只复制单个 `SKILL.md`；它们仍是本仓库内完整提供的套件，不依赖额外总控。
+共享说明位于 [GPT-6 系列赛时执行约定](cumcm-live-problem-analyst/references/model-execution-contract.md)，九个入口均有直达链接。按上面的安装命令保留九个技能的同级目录，不要只复制单个 `SKILL.md`；它们仍是本仓库内完整提供的套件，不依赖额外总控。
 
 ```text
-请使用 $cumcm-live-problem-analyst，按 GPT-6 Astra 执行约定处理当前 A/B/C 题。
+请使用 $cumcm-live-problem-analyst，按 GPT-6 系列执行约定处理当前 A/B/C 题。
 如果已有冻结产物，请先核对版本并从未完成阶段继续；保持我已确认的选择与暂停点。
 ```
 
-适配依据为 [OpenAI GPT-6 Astra 官方指南](https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md)。这是工作流与提示指令适配，不是权重训练，也不代表已完成整届赛题的效果评测；原有数值、诚信、范围和论文交付门禁不变。
+三个模型均可执行全部九个角色，不要求按角色切换模型；模型切换时记录实际模型与交接版本，从未完成阶段续做。这里的支持是工作流与提示指令兼容，不是权重训练或三模型效果等价的声明，也不代表已完成三模型整届赛题评测；原有数值、诚信、范围和论文交付门禁不变。
 
 ## 自包含知识库
 
