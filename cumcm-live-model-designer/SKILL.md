@@ -5,9 +5,9 @@ description: 面向中国大学生数学建模竞赛 A、B、C 题正在进行�
 
 # CUMCM 赛时模型设计
 
-## GPT-6 Astra 执行约定
+## GPT-6 系列执行约定
 
-首次执行或恢复任务时读取 [GPT-6 Astra 赛时执行约定](../cumcm-live-problem-analyst/references/astra-execution-contract.md)，据当前冻结文件接续本角色；模型由 Codex 选择，本技能不自动切换模型。
+首次执行或恢复任务时读取 [GPT-6 系列赛时执行约定](../cumcm-live-problem-analyst/references/model-execution-contract.md)，据当前冻结文件接续本角色；支持 GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol；沿用 Codex 当前选择，本技能不自动切换模型。
 
 可把候选路线的适用性检查分派给独立代理，由本角色统一冻结同一套变量、目标、约束和验证标准；不因代理多数赞成或模型更强而跳过 baseline、验证门或把候选亮点写成 PROVEN。
 

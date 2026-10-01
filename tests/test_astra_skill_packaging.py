@@ -6,7 +6,7 @@ SUITE_ROOT = Path(__file__).resolve().parents[1]
 SKILL_DIRS = sorted(SUITE_ROOT.glob("cumcm-live-*"))
 SHARED_CONTRACT = (
     SUITE_ROOT
-    / "cumcm-live-problem-analyst/references/astra-execution-contract.md"
+    / "cumcm-live-problem-analyst/references/model-execution-contract.md"
 )
 # Codex UI 元数据支持的顶层键；模型选择由宿主负责，不是技能 YAML 字段。
 SUPPORTED_METADATA_KEYS = {"interface", "dependencies", "policy"}
@@ -16,13 +16,13 @@ def read(relative_path: str) -> str:
     return (SUITE_ROOT / relative_path).read_text(encoding="utf-8")
 
 
-def test_every_skill_resolves_the_bundled_astra_contract() -> None:
+def test_every_skill_resolves_the_bundled_model_contract() -> None:
     # 锁：共享执行说明必须随套件实际存在，不能指向作者私有路径。
     assert SHARED_CONTRACT.is_file(), SHARED_CONTRACT.relative_to(SUITE_ROOT)
     for skill_dir in SKILL_DIRS:
         skill_path = skill_dir / "SKILL.md"
         links = re.findall(
-            r"\[[^\]]+\]\(([^)]*astra-execution-contract\.md)\)",
+            r"\[[^\]]+\]\(([^)]*model-execution-contract\.md)\)",
             read(str(skill_path.relative_to(SUITE_ROOT))),
         )
         # 锁：每个阶段直接调用时都能发现共享运行约定。
@@ -34,7 +34,7 @@ def test_every_skill_resolves_the_bundled_astra_contract() -> None:
             assert target.is_file(), (skill_dir.name, link)
 
 
-def test_astra_invocation_metadata_uses_supported_fields() -> None:
+def test_model_invocation_metadata_uses_supported_fields() -> None:
     for skill_dir in SKILL_DIRS:
         metadata = read(
             str((skill_dir / "agents/openai.yaml").relative_to(SUITE_ROOT))
@@ -50,3 +50,10 @@ def test_astra_invocation_metadata_uses_supported_fields() -> None:
         assert prompts and all(
             f"$" + skill_dir.name in prompt for prompt in prompts
         ), skill_dir.name
+
+
+def test_legacy_astra_entry_resolves_shared_contract() -> None:
+    legacy = SHARED_CONTRACT.with_name("astra-execution-contract.md")
+    links = re.findall(r"\[[^\]]+\]\(([^)]+)\)", legacy.read_text(encoding="utf-8"))
+    assert links
+    assert all((legacy.parent / link).resolve() == SHARED_CONTRACT.resolve() for link in links)
